@@ -1,0 +1,17 @@
+{
+  "name": "@bigbang/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "tsconfig.app.json",
+    "tsconfig.node.json",
+    "package.json"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
