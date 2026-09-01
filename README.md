@@ -177,6 +177,11 @@ scopes the build to the selected app.
 - To switch to Next.js: change Root Directory to `apps/nextjs` and
   redeploy. No repository changes are required; both apps have
   self-contained builds and resolve the Bun workspace root correctly.
+- Each frontend commits its framework in `vercel.json`
+  (`"framework": "vite"` / `"framework": "nextjs"`), which overrides the
+  project's dashboard Framework Preset. Root Directory is therefore the
+  only setting that changes when switching — the deployment never
+  depends on a dashboard preset.
 
 ### Why there is no `apps/default`
 
