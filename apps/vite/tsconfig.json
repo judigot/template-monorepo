@@ -6,5 +6,5 @@
     },
     "types": ["vite/client", "bun"]
   },
-  "include": ["src"]
+  "include": ["src", "test"]
 }

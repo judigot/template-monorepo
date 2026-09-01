@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { app, createApp, resolveAllowedOrigins } from './app.ts';
+import { app, createApp, resolveAllowedOrigins } from '../src/app.ts';
 
 describe('GET /api/hello', () => {
   it('returns 200', async () => {
