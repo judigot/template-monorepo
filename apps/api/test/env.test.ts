@@ -18,6 +18,18 @@ describe('parseEnv', () => {
     ]);
   });
 
+  it('treats an empty PORT as unset so Vercel functions can boot', () => {
+    const env = parseEnv({
+      PORT: '',
+      VERCEL: '1',
+      CORS_ORIGINS: 'https://template-monorepo-vite.vercel.app',
+    });
+    expect(env.PORT).toBe(3000);
+    expect(env.CORS_ORIGINS).toEqual([
+      'https://template-monorepo-vite.vercel.app',
+    ]);
+  });
+
   it('rejects CORS_ORIGINS entries that are not full origins', () => {
     let caught: unknown;
     try {
