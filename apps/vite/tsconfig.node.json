@@ -1,4 +1,4 @@
 {
-  "extends": "@judigot/typescript-config/api.json",
+  "extends": "@bigbang/typescript-config/api.json",
   "include": ["vite.config.ts"]
 }

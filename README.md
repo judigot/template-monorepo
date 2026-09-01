@@ -9,14 +9,14 @@ and deployable to Vercel.
 ```text
 .
 ├── apps/
-│   ├── api/                  # Hono REST API (@judigot/api)
+│   ├── api/                  # Hono REST API (@bigbang/api)
 │   │   ├── api/index.js      # Vercel Function placeholder (overwritten by build)
 │   │   ├── src/app.ts        # Runtime-neutral Hono application
 │   │   ├── src/index.ts      # Local dev entry (Bun or Node.js)
 │   │   ├── src/vercel.ts     # Bundle entry for the Vercel Function
 │   │   └── vercel.json       # /api/* routing rewrite
-│   ├── vite/                 # Vite + React frontend (@judigot/vite) — primary example
-│   └── nextjs/               # Next.js App Router frontend (@judigot/nextjs)
+│   ├── vite/                 # Vite + React frontend (@bigbang/vite) — primary example
+│   └── nextjs/               # Next.js App Router frontend (@bigbang/nextjs)
 ├── packages/
 │   ├── api-client/           # Shared API contracts + typed fetch client
 │   └── typescript-config/    # Shared TypeScript configurations
@@ -133,7 +133,7 @@ for load balancers and deploy verification.
 ## How Both Frontends Consume the API
 
 Both frontends call `GET /api/hello` through the shared
-`@judigot/api-client` package (`getHello`), which owns the
+`@bigbang/api-client` package (`getHello`), which owns the
 `IHelloResponse` contract, status checking, JSON validation, and typed
 errors. Nothing is hard-coded: the Vite app fetches client-side with
 loading/error states, and the Next.js app fetches in a Server Component
@@ -170,7 +170,7 @@ in at build time, so changing it requires a redeploy.
 
 ```sh
 bun run test                                    # unit tests, all workspaces
-bun run test --filter=@judigot/api              # one workspace
+bun run test --filter=@bigbang/api              # one workspace
 bun run test:e2e                                # Playwright against production builds
 ```
 
@@ -245,11 +245,7 @@ them.
 ## Updating this template
 
 Copy the block below into a new agent session when bumping the stack against
-the current official Vite and Next.js scaffolds (the same generators
-[BigBangVite.sh](https://github.com/judigot/user/blob/main/scripts/BigBangVite.sh)
-and
-[BigBangNext.sh](https://github.com/judigot/user/blob/main/scripts/BigBangNext.sh)
-use).
+the current official Vite and Next.js scaffolds.
 
 ```text
 Update this production Bun monorepo template against the latest official Vite and Next.js scaffolds.
@@ -257,10 +253,6 @@ Update this production Bun monorepo template against the latest official Vite an
 Reference generators (do not convert this repo to pnpm):
 - pnpm create vite $PROJECT_NAME --template react-ts
 - pnpm create next-app@latest $PROJECT_NAME --use-pnpm --ts --tailwind --eslint --app --src-dir --import-alias @/* --turbopack
-
-Also read:
-- https://github.com/judigot/user/blob/main/scripts/BigBangVite.sh
-- https://github.com/judigot/user/blob/main/scripts/BigBangNext.sh
 
 Procedure:
 1. Scaffold both official templates in a temp directory (do not commit them).

@@ -1,5 +1,5 @@
 {
-  "extends": "@judigot/typescript-config/vite.json",
+  "extends": "@bigbang/typescript-config/vite.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

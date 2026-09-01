@@ -4,8 +4,8 @@ Reusable code consumed by the applications in `apps/`.
 
 | Package                     | Purpose                                            |
 | --------------------------- | -------------------------------------------------- |
-| `@judigot/api-client`       | API contracts and a typed client for the Hono API  |
-| `@judigot/typescript-config`| Shared TypeScript configurations                   |
+| `@bigbang/api-client`       | API contracts and a typed client for the Hono API  |
+| `@bigbang/typescript-config`| Shared TypeScript configurations                   |
 
 ## Creating a New Package
 
@@ -13,7 +13,7 @@ Reusable code consumed by the applications in `apps/`.
 
    ```json
    {
-     "name": "@judigot/my-package",
+     "name": "@bigbang/my-package",
      "version": "0.0.0",
      "private": true,
      "type": "module",
@@ -28,7 +28,7 @@ Reusable code consumed by the applications in `apps/`.
    ```json
    {
      "dependencies": {
-       "@judigot/my-package": "workspace:*"
+       "@bigbang/my-package": "workspace:*"
      }
    }
    ```

@@ -1,4 +1,4 @@
-import { getHello } from '@judigot/api-client';
+import { getHello } from '@bigbang/api-client';
 import { useEffect, useState } from 'react';
 
 interface IHelloLoading {
