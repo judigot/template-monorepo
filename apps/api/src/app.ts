@@ -1,5 +1,9 @@
 import { Hono } from 'hono';
+import { bodyLimit } from 'hono/body-limit';
 import { cors } from 'hono/cors';
+import { secureHeaders } from 'hono/secure-headers';
+import { parseEnv } from './env.ts';
+import { healthRouter } from './routes/health.ts';
 import { helloRouter } from './routes/hello.ts';
 
 /*
@@ -13,17 +17,16 @@ const DEVELOPMENT_ORIGINS = [
   'http://127.0.0.1:3002',
 ];
 
-export function resolveAllowedOrigins(): string[] {
-  const configured = process.env.CORS_ORIGINS;
+const MAX_REQUEST_BODY_BYTES = 1024 * 1024;
 
-  if (configured === undefined || configured.trim() === '') {
+export function resolveAllowedOrigins(): string[] {
+  const { CORS_ORIGINS } = parseEnv();
+
+  if (CORS_ORIGINS === undefined || CORS_ORIGINS.length === 0) {
     return DEVELOPMENT_ORIGINS;
   }
 
-  return configured
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter((origin) => origin !== '');
+  return CORS_ORIGINS;
 }
 
 /**
@@ -36,6 +39,7 @@ export function resolveAllowedOrigins(): string[] {
 export function createApp(): Hono {
   const app = new Hono().basePath('/api');
 
+  app.use('*', secureHeaders());
   app.use(
     '*',
     cors({
@@ -43,8 +47,10 @@ export function createApp(): Hono {
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     }),
   );
+  app.use('*', bodyLimit({ maxSize: MAX_REQUEST_BODY_BYTES }));
 
   app.route('/hello', helloRouter);
+  app.route('/health', healthRouter);
 
   app.notFound((c) => {
     return c.json({ error: 'Not Found' }, 404);

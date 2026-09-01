@@ -11,6 +11,7 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
+    "erasableSyntaxOnly": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,

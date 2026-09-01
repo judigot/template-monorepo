@@ -18,6 +18,20 @@ export interface IGetHelloOptions {
    */
   baseUrl?: string;
   signal?: AbortSignal;
+  /** Milliseconds before the request aborts. Defaults to 10 seconds. */
+  timeoutMs?: number;
+}
+
+const DEFAULT_TIMEOUT_MS = 10_000;
+
+function combineSignals(
+  signal: AbortSignal | undefined,
+  timeoutMs: number,
+): AbortSignal {
+  const timeoutSignal = AbortSignal.timeout(timeoutMs);
+  return signal === undefined
+    ? timeoutSignal
+    : AbortSignal.any([signal, timeoutSignal]);
 }
 
 export class ApiRequestError extends Error {
@@ -50,12 +64,12 @@ function isHelloResponse(value: unknown): value is IHelloResponse {
 export async function getHello(
   options: IGetHelloOptions = {},
 ): Promise<IHelloResponse> {
-  const { baseUrl = '', signal } = options;
+  const { baseUrl = '', signal, timeoutMs = DEFAULT_TIMEOUT_MS } = options;
   const url = buildApiUrl(baseUrl, '/api/hello');
 
   const response = await fetch(url, {
     headers: { Accept: 'application/json' },
-    signal,
+    signal: combineSignals(signal, timeoutMs),
   });
 
   if (!response.ok) {
