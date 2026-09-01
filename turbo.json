@@ -10,7 +10,8 @@
     },
     "@judigot/api#build": {
       "dependsOn": ["^build"],
-      "outputs": []
+      "outputs": [],
+      "env": ["CORS_ORIGINS", "PORT"]
     },
     "dev": {
       "cache": false,
