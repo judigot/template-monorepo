@@ -27,6 +27,7 @@ describe('HomePage', () => {
 
     expect(screen.getByRole('heading').textContent).toBe('Hello, world!');
     expect(requested).toBe(true);
+    expect(screen.getByTestId('framework-badge').textContent).toBe('Next.js');
   });
 
   it('rejects when the API is unavailable so error.tsx takes over', async () => {
