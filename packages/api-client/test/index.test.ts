@@ -4,7 +4,7 @@ import {
   buildApiUrl,
   getHello,
   type IHelloResponse,
-} from './index.ts';
+} from '../src/index.ts';
 
 const originalFetch = globalThis.fetch;
 

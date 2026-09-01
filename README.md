@@ -140,9 +140,13 @@ bun run test                                    # all workspaces
 bun run test --filter=@judigot/api              # one workspace
 ```
 
-Tests run with `bun test`; frontend component tests use happy-dom +
-Testing Library. `apps/api/src/integration.test.ts` boots the real HTTP
-server on an ephemeral port and exercises the shared client against it.
+Tests run with `bun test` and live in a `test/` directory inside each
+workspace (`apps/api/test`, `apps/vite/test`, `apps/nextjs/test`,
+`packages/api-client/test`), keeping every package independently
+testable. Frontend component tests use happy-dom + Testing Library and
+preload `test/setup.ts` via each app's `bunfig.toml`.
+`apps/api/test/integration.test.ts` boots the real HTTP server on an
+ephemeral port and exercises the shared client against it.
 
 ## Vercel Deployment
 

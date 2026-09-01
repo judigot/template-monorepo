@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
 import type { ServerType } from '@hono/node-server';
 import { serve } from '@hono/node-server';
 import { getHello } from '@judigot/api-client';
-import { app } from './app.ts';
+import { app } from '../src/app.ts';
 
 /*
  * Boots the real HTTP server on an ephemeral port and exercises the
