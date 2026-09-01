@@ -28,7 +28,10 @@ and deployable to Vercel.
 
 ## Requirements
 
-- **Bun** `1.4.0` (pinned in `packageManager`) — the sole package manager.
+- **Bun** `1.3.14` (pinned in `packageManager`) — the sole package manager.
+  This matches the Bun version on Vercel's default build image; do not
+  regenerate `bun.lock` with Bun 1.4+ until Vercel's default supports its
+  lockfile format.
 - **Node.js** `>= 24` (current LTS, the default Vercel runtime) — only
   needed to run the API under Node; everything else runs through Bun.
 
