@@ -1,11 +1,16 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": ["**/.env.*local", "bunfig.toml"],
+  "globalEnv": ["NODE_ENV"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "build/**", "!.next/cache/**"],
-      "env": ["NODE_ENV"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["VITE_API_URL", "API_URL", "NEXT_PUBLIC_API_URL", "CORS_ORIGINS"]
+    },
+    "@judigot/api#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
     },
     "dev": {
       "cache": false,
@@ -13,24 +18,10 @@
     },
     "test": {
       "dependsOn": ["^build"],
-      "outputs": ["coverage/**"],
-      "inputs": [
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "test/**/*.ts",
-        "**/*.test.ts",
-        "**/*.spec.ts"
-      ]
+      "env": ["CORS_ORIGINS"]
     },
-    "lint": {
-      "outputs": [],
-      "inputs": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
-    },
-    "typecheck": {
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "inputs": ["**/*.ts", "**/*.tsx", "tsconfig.json"]
-    },
+    "typecheck": {},
+    "lint": {},
     "clean": {
       "cache": false
     }

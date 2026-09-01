@@ -1,0 +1,23 @@
+{
+  "name": "@judigot/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared API contracts and a typed client for the Hono API",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --config ../../.oxlintrc.json .",
+    "clean": "rm -rf .turbo"
+  },
+  "devDependencies": {
+    "@judigot/typescript-config": "workspace:*",
+    "@types/bun": "^1.4.0",
+    "@types/node": "^24.10.1",
+    "oxlint": "^1.80.0",
+    "typescript": "^7.0.2"
+  }
+}

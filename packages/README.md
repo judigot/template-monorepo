@@ -1,57 +1,43 @@
 # Shared Packages
 
-This directory contains shared packages that can be reused across apps in the monorepo.
+Reusable code consumed by the applications in `apps/`.
+
+| Package                     | Purpose                                            |
+| --------------------------- | -------------------------------------------------- |
+| `@judigot/api-client`       | API contracts and a typed client for the Hono API  |
+| `@judigot/typescript-config`| Shared TypeScript configurations                   |
 
 ## Creating a New Package
 
-1. Create a new directory under `packages/`:
-   ```bash
-   mkdir packages/my-package
-   ```
+1. Create a new directory under `packages/` with a `package.json`:
 
-2. Create a `package.json` with a unique name:
    ```json
    {
-     "name": "@bigbang/my-package",
+     "name": "@judigot/my-package",
      "version": "0.0.0",
+     "private": true,
      "type": "module",
-     "main": "./src/index.ts",
-     "types": "./src/index.ts",
      "exports": {
        ".": "./src/index.ts"
      }
    }
    ```
 
-3. Add the package as a dependency in your app:
+2. Add the package as a dependency in an app:
+
    ```json
    {
      "dependencies": {
-       "@bigbang/my-package": "workspace:*"
+       "@judigot/my-package": "workspace:*"
      }
    }
    ```
 
-4. Install dependencies:
-   ```bash
-   pnpm install
+3. Install dependencies:
+
+   ```sh
+   bun install
    ```
 
-## Using Packages
-
-Import packages using their workspace name:
-
-```typescript
-import { something } from '@bigbang/my-package';
-```
-
-## Package Structure Example
-
-```
-packages/
-  my-package/
-    package.json
-    src/
-      index.ts
-    tsconfig.json
-```
+Packages ship TypeScript source directly; consumers compile it. Next.js
+consumers must list the package in `transpilePackages`.
