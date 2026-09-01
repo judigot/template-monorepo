@@ -117,6 +117,10 @@ errors. Nothing is hard-coded: the Vite app fetches client-side with
 loading/error states, and the Next.js app fetches in a Server Component
 with `loading.tsx`/`error.tsx` boundaries.
 
+Each frontend renders a framework badge above the heading (blue/purple
+"VITE" or green/teal "NEXT.JS") in every state, so you can always tell
+which application a deployment is serving.
+
 ## Environment Variables
 
 | Variable              | Consumed by     | Purpose                                              |
@@ -132,6 +136,13 @@ the Vite dev server proxies `/api` to `http://localhost:3000`, the
 Next.js server falls back to the same URL, and the API allow-lists the
 local dev origins. Never put secrets in `VITE_`- or `NEXT_PUBLIC`-
 prefixed variables — they are embedded in client bundles.
+
+Deployed values must use `https://` (e.g.
+`VITE_API_URL=https://your-api.vercel.app`): browsers silently block
+plain-HTTP requests from an HTTPS page as mixed content. None of these
+are secrets — on Vercel, store them as plain Config variables, enabled
+for both Production and Preview. Remember that `VITE_API_URL` is baked
+in at build time, so changing it requires a redeploy.
 
 ## Testing
 
@@ -182,6 +193,11 @@ scopes the build to the selected app.
   project's dashboard Framework Preset. Root Directory is therefore the
   only setting that changes when switching — the deployment never
   depends on a dashboard preset.
+- The dashboard Framework Preset is consequently cosmetic. Vercel shows
+  a "Configuration Settings … differ" banner whenever the current
+  settings differ from those of the live production deployment; to keep
+  it away, set the preset to match the current Root Directory and
+  redeploy. Ignoring the banner is also fine — it never affects builds.
 
 ### Why there is no `apps/default`
 
