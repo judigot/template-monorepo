@@ -10,7 +10,7 @@
     "dev": "bun --hot src/index.ts",
     "start": "bun src/index.ts",
     "start:node": "node src/index.ts",
-    "build": "tsc --noEmit",
+    "build": "tsc --noEmit && bun build src/vercel.ts --outfile api/index.js --target node --format esm --minify",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --config ../../.oxlintrc.json .",
@@ -26,6 +26,6 @@
     "@types/bun": "^1.3.14",
     "@types/node": "^24.10.1",
     "oxlint": "^1.80.0",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }

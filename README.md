@@ -10,9 +10,10 @@ and deployable to Vercel.
 .
 ├── apps/
 │   ├── api/                  # Hono REST API (@judigot/api)
-│   │   ├── api/index.ts      # Thin Vercel Function entry point
+│   │   ├── api/index.js      # Vercel Function placeholder (overwritten by build)
 │   │   ├── src/app.ts        # Runtime-neutral Hono application
 │   │   ├── src/index.ts      # Local dev entry (Bun or Node.js)
+│   │   ├── src/vercel.ts     # Bundle entry for the Vercel Function
 │   │   └── vercel.json       # /api/* routing rewrite
 │   ├── vite/                 # Vite + React frontend (@judigot/vite) — primary example
 │   └── nextjs/               # Next.js App Router frontend (@judigot/nextjs)
@@ -101,7 +102,11 @@ enabled.
   `Request`/`Response`.
 - `apps/api/src/index.ts` serves it locally: `bun src/index.ts` or
   `node src/index.ts` (Node ≥ 24 runs TypeScript natively).
-- `apps/api/api/index.ts` adapts it for Vercel via `hono/vercel`.
+- `apps/api/src/vercel.ts` adapts it for Vercel. The build script
+  bundles it into `apps/api/api/index.js` (self-contained JavaScript),
+  so Vercel deploys plain JS and never compiles TypeScript or resolves
+  workspace imports. The committed `api/index.js` is a placeholder that
+  the build overwrites — never commit the bundled output.
 
 ## How Both Frontends Consume the API
 
@@ -148,15 +153,10 @@ scopes the build to the selected app.
 ### 1. API project
 
 - **Root Directory:** `apps/api`
-- The Vercel Function entry point is `apps/api/api/index.ts`;
-  `apps/api/vercel.json` rewrites `/api/(.*)` to it, so
+- The build bundles `src/vercel.ts` into `api/index.js`;
+  `apps/api/vercel.json` rewrites `/api/(.*)` to that function, so
   `GET /api/hello` reaches the Hono route.
 - Set `CORS_ORIGINS` to the deployed frontend origin(s).
-- `apps/api` pins TypeScript `^5.9` (the rest of the monorepo uses 7.x):
-  Vercel's Node builder compiles the function through the TypeScript JS
-  API, and TypeScript 7's executable-only transpile mode fails to
-  resolve `types` libraries in this isolated-linker monorepo. Do not
-  bump this workspace to 7.x until `@vercel/node` supports it.
 
 ### 2. Frontend project (interchangeable)
 

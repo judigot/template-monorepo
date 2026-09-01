@@ -6,7 +6,13 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!bun.lock", "!**/.next/**", "!**/next-env.d.ts"]
+    "includes": [
+      "**",
+      "!bun.lock",
+      "!**/.next/**",
+      "!**/next-env.d.ts",
+      "!apps/api/api/index.js"
+    ]
   },
   "formatter": {
     "enabled": true,

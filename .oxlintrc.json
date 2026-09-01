@@ -24,5 +24,11 @@
     "browser": true,
     "node": true
   },
-  "ignorePatterns": ["dist/**", ".next/**", "node_modules/**", ".turbo/**"]
+  "ignorePatterns": [
+    "dist/**",
+    ".next/**",
+    "node_modules/**",
+    ".turbo/**",
+    "**/api/index.js"
+  ]
 }
