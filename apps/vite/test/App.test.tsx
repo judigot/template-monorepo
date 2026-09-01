@@ -44,6 +44,15 @@ describe('App', () => {
     expect(requested).toBe(true);
   });
 
+  it('identifies itself as the Vite frontend', () => {
+    globalThis.fetch = mock(
+      () => new Promise<Response>(() => undefined),
+    ) as unknown as typeof fetch;
+
+    render(<App />);
+    expect(screen.getByTestId('framework-badge').textContent).toBe('Vite');
+  });
+
   it('renders an error state when the API responds with an error', async () => {
     mockFetchOnce(new Response('Internal Server Error', { status: 500 }));
 
