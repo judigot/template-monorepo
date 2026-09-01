@@ -85,6 +85,30 @@ describe('getHello', () => {
     }
   });
 
+  it('aborts when the request exceeds the timeout', async () => {
+    globalThis.fetch = mock(
+      (_input: Parameters<typeof fetch>[0], init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => {
+            reject(
+              init.signal?.reason instanceof Error
+                ? init.signal.reason
+                : new Error('aborted'),
+            );
+          });
+        }),
+    ) as unknown as typeof fetch;
+
+    let caught: unknown;
+    try {
+      await getHello({ baseUrl: 'https://api.example.com', timeoutMs: 20 });
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toBeInstanceOf(Error);
+  });
+
   it('throws a typed error for an unexpected response shape', async () => {
     mockFetch(
       () =>

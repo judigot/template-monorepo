@@ -18,6 +18,8 @@ export default defineConfig([
 
     // Generated Vercel Function bundle (placeholder is overwritten by builds)
     'apps/api/api/**',
+    '**/playwright-report/**',
+    '**/test-results/**',
 
     // Config files outside the per-workspace TypeScript projects
     '**/eslint.config.js',

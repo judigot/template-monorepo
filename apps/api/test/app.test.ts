@@ -47,6 +47,34 @@ describe('error handling', () => {
   });
 });
 
+describe('GET /api/health', () => {
+  it('returns a healthy status with a timestamp', async () => {
+    const response = await app.request('/api/health');
+    expect(response.status).toBe(200);
+
+    const payload: unknown = await response.json();
+    expect(payload).toMatchObject({ status: 'healthy' });
+    if (
+      typeof payload === 'object' &&
+      payload !== null &&
+      'timestamp' in payload &&
+      typeof payload.timestamp === 'string'
+    ) {
+      expect(Number.isNaN(Date.parse(payload.timestamp))).toBe(false);
+    } else {
+      throw new Error('health response is missing a timestamp string');
+    }
+  });
+});
+
+describe('security middleware', () => {
+  it('sets secure headers on responses', async () => {
+    const response = await app.request('/api/hello');
+    expect(response.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(response.headers.get('x-frame-options')).toBe('SAMEORIGIN');
+  });
+});
+
 describe('CORS configuration', () => {
   it('allows the local dev origins by default', async () => {
     const response = await app.request('/api/hello', {

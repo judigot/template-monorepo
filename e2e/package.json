@@ -1,0 +1,21 @@
+{
+  "name": "@judigot/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end tests covering the API and both frontends",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --config ../.oxlintrc.json .",
+    "clean": "rm -rf playwright-report test-results .turbo"
+  },
+  "devDependencies": {
+    "@judigot/typescript-config": "workspace:*",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^24.10.1",
+    "oxlint": "^1.80.0",
+    "typescript": "^7.0.2"
+  }
+}

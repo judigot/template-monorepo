@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Vercel build image cannot parse Bun 1.4 lockfiles",
+      "matchPackageNames": ["bun", "@types/bun"],
+      "allowedVersions": "<1.4.0"
+    },
+    {
+      "description": "JS API consumers (ESLint, Vercel) need TypeScript <6.1",
+      "matchPackageNames": ["typescript"],
+      "matchFileNames": ["package.json", "apps/api/package.json"],
+      "allowedVersions": "<6.1.0"
+    },
+    {
+      "description": "eslint-plugin-react does not support ESLint 10 yet",
+      "matchPackageNames": ["eslint", "@eslint/js"],
+      "allowedVersions": "<10.0.0"
+    }
+  ]
+}

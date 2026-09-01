@@ -21,6 +21,10 @@
       "dependsOn": ["^build"],
       "env": ["CORS_ORIGINS"]
     },
+    "test:e2e": {
+      "cache": false,
+      "env": ["CI", "CORS_ORIGINS", "API_URL", "VITE_API_URL"]
+    },
     "typecheck": {},
     "lint": {},
     "clean": {
