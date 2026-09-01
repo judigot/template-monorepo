@@ -1,5 +1,5 @@
 {
-  "name": "@judigot/e2e",
+  "name": "@bigbang/e2e",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "clean": "rm -rf playwright-report test-results .turbo"
   },
   "devDependencies": {
-    "@judigot/typescript-config": "workspace:*",
+    "@bigbang/typescript-config": "workspace:*",
     "@playwright/test": "^1.62.1",
     "@types/node": "^24.10.1",
     "oxlint": "^1.80.0",

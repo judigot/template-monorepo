@@ -1,5 +1,5 @@
 {
-  "extends": "@judigot/typescript-config/api.json",
+  "extends": "@bigbang/typescript-config/api.json",
   "compilerOptions": {
     "types": ["node", "bun"]
   },

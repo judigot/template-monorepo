@@ -9,14 +9,14 @@ and deployable to Vercel.
 ```text
 .
 ├── apps/
-│   ├── api/                  # Hono REST API (@judigot/api)
+│   ├── api/                  # Hono REST API (@bigbang/api)
 │   │   ├── api/index.js      # Vercel Function placeholder (overwritten by build)
 │   │   ├── src/app.ts        # Runtime-neutral Hono application
 │   │   ├── src/index.ts      # Local dev entry (Bun or Node.js)
 │   │   ├── src/vercel.ts     # Bundle entry for the Vercel Function
 │   │   └── vercel.json       # /api/* routing rewrite
-│   ├── vite/                 # Vite + React frontend (@judigot/vite) — primary example
-│   └── nextjs/               # Next.js App Router frontend (@judigot/nextjs)
+│   ├── vite/                 # Vite + React frontend (@bigbang/vite) — primary example
+│   └── nextjs/               # Next.js App Router frontend (@bigbang/nextjs)
 ├── packages/
 │   ├── api-client/           # Shared API contracts + typed fetch client
 │   └── typescript-config/    # Shared TypeScript configurations
@@ -133,7 +133,7 @@ for load balancers and deploy verification.
 ## How Both Frontends Consume the API
 
 Both frontends call `GET /api/hello` through the shared
-`@judigot/api-client` package (`getHello`), which owns the
+`@bigbang/api-client` package (`getHello`), which owns the
 `IHelloResponse` contract, status checking, JSON validation, and typed
 errors. Nothing is hard-coded: the Vite app fetches client-side with
 loading/error states, and the Next.js app fetches in a Server Component
@@ -170,7 +170,7 @@ in at build time, so changing it requires a redeploy.
 
 ```sh
 bun run test                                    # unit tests, all workspaces
-bun run test --filter=@judigot/api              # one workspace
+bun run test --filter=@bigbang/api              # one workspace
 bun run test:e2e                                # Playwright against production builds
 ```
 

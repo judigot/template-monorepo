@@ -1,5 +1,5 @@
 {
-  "name": "@judigot/api",
+  "name": "@bigbang/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -18,12 +18,12 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.1",
-    "@judigot/api-client": "workspace:*",
+    "@bigbang/api-client": "workspace:*",
     "hono": "^4.13.5",
     "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@judigot/typescript-config": "workspace:*",
+    "@bigbang/typescript-config": "workspace:*",
     "@types/bun": "^1.3.14",
     "@types/node": "^24.10.1",
     "oxlint": "^1.80.0",
