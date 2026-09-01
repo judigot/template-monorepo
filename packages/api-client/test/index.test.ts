@@ -71,18 +71,17 @@ describe('getHello', () => {
   it('throws a typed error for non-2xx responses', async () => {
     mockFetch(() => new Response('Server exploded', { status: 500 }));
 
-    const promise = getHello({ baseUrl: 'https://api.example.com' });
-    await expect(promise).rejects.toBeInstanceOf(ApiRequestError);
-
+    let caught: unknown;
     try {
       await getHello({ baseUrl: 'https://api.example.com' });
     } catch (error) {
-      if (error instanceof ApiRequestError) {
-        expect(error.status).toBe(500);
-        expect(error.url).toBe('https://api.example.com/api/hello');
-      } else {
-        throw error;
-      }
+      caught = error;
+    }
+
+    expect(caught).toBeInstanceOf(ApiRequestError);
+    if (caught instanceof ApiRequestError) {
+      expect(caught.status).toBe(500);
+      expect(caught.url).toBe('https://api.example.com/api/hello');
     }
   });
 
@@ -95,7 +94,13 @@ describe('getHello', () => {
         }),
     );
 
-    const promise = getHello({ baseUrl: 'https://api.example.com' });
-    await expect(promise).rejects.toBeInstanceOf(ApiRequestError);
+    let caught: unknown;
+    try {
+      await getHello({ baseUrl: 'https://api.example.com' });
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toBeInstanceOf(ApiRequestError);
   });
 });

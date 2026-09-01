@@ -36,9 +36,8 @@ and deployable to Vercel.
 - **Node.js** `>= 24` (current LTS, the default Vercel runtime) — only
   needed to run the API under Node; everything else runs through Bun.
 
-pnpm is not required: Bun owns installation, the lockfile, and script
-execution. All former pnpm files (`pnpm-workspace.yaml`, `.npmrc`,
-`pnpm-lock.yaml`) were removed.
+Bun owns installation, the lockfile, and script execution; no other
+package manager (npm, pnpm, Yarn) is required.
 
 ## Install
 
@@ -77,17 +76,30 @@ bun run dev:primary
 | ---------------------- | -------------------------------------------------- |
 | `bun run format`       | Biome writes formatting + organizes imports        |
 | `bun run format:check` | Biome verifies formatting (non-mutating)           |
-| `bun run lint`         | Oxlint per workspace + Biome static analysis       |
+| `bun run lint`         | Oxlint per workspace + Biome + ESLint (type-aware) |
 | `bun run typecheck`    | `tsc --noEmit` per workspace                       |
 | `bun run test`         | `bun test` per workspace                           |
 | `bun run build`        | Production builds (Vite, Next.js, API typecheck)   |
 | `bun run check`        | All of the above, in order                         |
 
-ESLint and Prettier were removed entirely; Biome covers formatting and
-selected static analysis, Oxlint is the primary linter (TypeScript,
-React, hooks, imports, promises, Node, Next.js plugins enabled).
-Type-aware Oxlint (`oxlint-tsgolint`) is still pre-1.0 and therefore not
-enabled.
+Biome owns formatting. Linting runs as a chain with a strictness
+hierarchy (highest last):
+
+1. **Oxlint** (fast, per workspace): correctness rules with TypeScript,
+   React, hooks, import, promise, Node, and Next.js plugins.
+2. **Biome**: selected a11y/suspicious/style/security rules alongside
+   formatting and import organization.
+3. **ESLint** (strictest, final judge): the type-aware rules the other
+   tools cannot provide yet — `strict-type-checked` +
+   `stylistic-type-checked`, `strict-boolean-expressions`,
+   `no-type-assertion` (no `as` outside tests), and `naming-convention`
+   (`I`-prefixed interfaces).
+
+ESLint requires the TypeScript JS API, which TypeScript 7 does not ship
+(planned for 7.1) — that is why the root workspace pins TypeScript
+`^5.9` for the linter while app workspaces use 7.x for their own `tsc`.
+Type-aware Oxlint (`oxlint-tsgolint`) is still pre-1.0; revisit dropping
+ESLint only when it stabilizes and typescript-eslint supports TS 7.
 
 ## API
 
