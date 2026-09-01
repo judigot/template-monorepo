@@ -35,7 +35,14 @@ describe('HomePage', () => {
       Promise.resolve(new Response('Bad Gateway', { status: 502 })),
     ) as unknown as typeof fetch;
 
-    await expect(HomePage()).rejects.toThrow();
+    let caught: unknown;
+    try {
+      await HomePage();
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toBeInstanceOf(Error);
   });
 });
 

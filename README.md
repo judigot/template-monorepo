@@ -77,7 +77,7 @@ bun run dev:primary
 | ---------------------- | -------------------------------------------------- |
 | `bun run format`       | Biome writes formatting + organizes imports        |
 | `bun run format:check` | Biome verifies formatting (non-mutating)           |
-| `bun run lint`         | Oxlint per workspace + Biome static analysis       |
+| `bun run lint`         | Oxlint per workspace + Biome + ESLint (type-aware) |
 | `bun run typecheck`    | `tsc --noEmit` per workspace                       |
 | `bun run test`         | `bun test` per workspace                           |
 | `bun run build`        | Production builds (Vite, Next.js, API typecheck)   |
