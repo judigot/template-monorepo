@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
-import { parseEnv } from './env.ts';
+import { parseCorsOrigins } from './env.ts';
 import { healthRouter } from './routes/health.ts';
 import { helloRouter } from './routes/hello.ts';
 
@@ -20,13 +20,13 @@ const DEVELOPMENT_ORIGINS = [
 const MAX_REQUEST_BODY_BYTES = 1024 * 1024;
 
 export function resolveAllowedOrigins(): string[] {
-  const { CORS_ORIGINS } = parseEnv();
+  const configured = parseCorsOrigins();
 
-  if (CORS_ORIGINS === undefined || CORS_ORIGINS.length === 0) {
+  if (configured === undefined || configured.length === 0) {
     return DEVELOPMENT_ORIGINS;
   }
 
-  return CORS_ORIGINS;
+  return configured;
 }
 
 /**
