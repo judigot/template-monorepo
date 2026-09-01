@@ -157,6 +157,11 @@ scopes the build to the selected app.
   `apps/api/vercel.json` rewrites `/api/(.*)` to that function, so
   `GET /api/hello` reaches the Hono route.
 - Set `CORS_ORIGINS` to the deployed frontend origin(s).
+- `apps/api` pins TypeScript `^5.9` (the rest of the monorepo uses 7.x):
+  Vercel's function builder initializes its TypeScript pipeline from the
+  workspace tsconfig even for JavaScript entries, and TypeScript 7's
+  executable-only mode fails to resolve `types` libraries there. Keep
+  the pin until `@vercel/node` supports TypeScript 7.
 
 ### 2. Frontend project (interchangeable)
 
