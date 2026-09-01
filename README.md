@@ -242,6 +242,41 @@ package. Vite is the default example (README, quick start,
 deployables — a third `default` application would only duplicate one of
 them.
 
+## Updating this template
+
+Copy the block below into a new agent session when bumping the stack against
+the current official Vite and Next.js scaffolds (the same generators
+[BigBangVite.sh](https://github.com/judigot/user/blob/main/scripts/BigBangVite.sh)
+and
+[BigBangNext.sh](https://github.com/judigot/user/blob/main/scripts/BigBangNext.sh)
+use).
+
+```text
+Update this production Bun monorepo template against the latest official Vite and Next.js scaffolds.
+
+Reference generators (do not convert this repo to pnpm):
+- pnpm create vite $PROJECT_NAME --template react-ts
+- pnpm create next-app@latest $PROJECT_NAME --use-pnpm --ts --tailwind --eslint --app --src-dir --import-alias @/* --turbopack
+
+Also read:
+- https://github.com/judigot/user/blob/main/scripts/BigBangVite.sh
+- https://github.com/judigot/user/blob/main/scripts/BigBangNext.sh
+
+Procedure:
+1. Scaffold both official templates in a temp directory (do not commit them).
+2. Diff their package.json, tsconfig, vite.config, next.config, eslint, postcss, and default scripts against apps/vite and apps/nextjs.
+3. Adopt only changes that help a production/enterprise template: compiler flags, config includes, security defaults, test/e2e ground truth, documented version pins.
+4. Do not add app-specific layers (auth, database, DI, feature flags) or a third frontend.
+5. Keep Bun as the sole package manager. Do not regenerate bun.lock with Bun 1.4+ until Vercel’s default build image parses that lockfile.
+6. Keep ESLint as the strictest type-aware lint fallback (Oxlint → Biome → ESLint). Keep TypeScript ~6.0.x on the root and apps/api until typescript-eslint and @vercel/node support TypeScript 7’s JS API.
+7. Keep Playwright e2e in e2e/ against production builds (API, vite preview, next start) so agents can trust results without a human.
+8. Preserve the two-project Vercel layout (apps/api + interchangeable apps/vite or apps/nextjs), framework fields in each vercel.json, and the thin api/index.js bundle for Vercel.
+9. Empty PORT must not fail API boot (Vercel sets PORT=""). CORS_ORIGINS stays an explicit allow-list; no wildcard in production.
+10. Run bun run check:full (or check + test:e2e). Fix real failures. Do not mention historical migrations in the README — describe the repo as-is.
+
+This is a template for future production apps. Prefer maintainable, explicit architecture over speculative complexity.
+```
+
 ## Versioning
 
 Internal releases use [Changesets](https://github.com/changesets/changesets):
