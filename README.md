@@ -82,8 +82,8 @@ bun run dev:primary
 | `bun run build`        | Production builds (Vite, Next.js, API typecheck)   |
 | `bun run check`        | All of the above, in order                         |
 
-Prettier was removed entirely; Biome owns formatting. Linting runs as a
-chain with a strictness hierarchy (highest last):
+Biome owns formatting. Linting runs as a chain with a strictness
+hierarchy (highest last):
 
 1. **Oxlint** (fast, per workspace): correctness rules with TypeScript,
    React, hooks, import, promise, Node, and Next.js plugins.
