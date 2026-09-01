@@ -245,7 +245,11 @@ them.
 ## Updating this template
 
 Copy the block below into a new agent session when bumping the stack against
-the current official Vite and Next.js scaffolds.
+the current official Vite and Next.js scaffolds (the same generators
+[BigBangVite.sh](https://github.com/judigot/user/blob/main/scripts/BigBangVite.sh)
+and
+[BigBangNext.sh](https://github.com/judigot/user/blob/main/scripts/BigBangNext.sh)
+use).
 
 ```text
 Update this production Bun monorepo template against the latest official Vite and Next.js scaffolds.
@@ -253,6 +257,10 @@ Update this production Bun monorepo template against the latest official Vite an
 Reference generators (do not convert this repo to pnpm):
 - pnpm create vite $PROJECT_NAME --template react-ts
 - pnpm create next-app@latest $PROJECT_NAME --use-pnpm --ts --tailwind --eslint --app --src-dir --import-alias @/* --turbopack
+
+Also read:
+- https://github.com/judigot/user/blob/main/scripts/BigBangVite.sh
+- https://github.com/judigot/user/blob/main/scripts/BigBangNext.sh
 
 Procedure:
 1. Scaffold both official templates in a temp directory (do not commit them).
