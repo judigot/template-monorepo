@@ -95,9 +95,8 @@ hold:
 When promoting from a diverged product, re-implement on this stack. Do not
 copy ecommerce-app files verbatim into `@bigbang/*` packages.
 
-The template supports projects; it does not dictate them. If a shared
-abstraction creates unnecessary complexity, keep the implementation local and
-reconsider the abstraction later.
+The template supports projects; it does not dictate them. Product repos stay
+standalone. They must not document this charter or the promotion loop.
 
 ## Current foundation
 

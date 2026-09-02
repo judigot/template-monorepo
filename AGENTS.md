@@ -1,6 +1,6 @@
 # Template Monorepo
 
-Shared application foundation. Per-project stub from `judigot/project-core`.
+Shared application foundation.
 
 @~/ai/settings/rules.md
 @~/ai/settings/workflow.md
