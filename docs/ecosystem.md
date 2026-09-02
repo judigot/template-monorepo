@@ -21,10 +21,10 @@ the next one.
 | Repository | Role |
 | --- | --- |
 | `judigot/template-monorepo` | Shared foundation. Generic, intentional, reusable. |
-| `judigot/project-core` | Per-project agent stub. Copy into every app. Not application code. |
-| `judigot/bookingwars` | Active product created from this template. Evolves independently; also a source of patterns that may be promoted here. |
-| `judigot/ecommerce-app` | Active product. Same dual role as bookingwars. Stack divergence is allowed when requirements differ. |
-| `judigot/ai` | Agent overlay (rules, workflow, skills). Not application code. |
+| https://github.com/judigot/project-core | Agent workspace files in every app (`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `agents/`). Not application code. |
+| https://github.com/judigot/bookingwars | Active product created from this template. Evolves independently; also a source of patterns that may be promoted here. |
+| https://github.com/judigot/ecommerce-app | Active product. Same dual role as bookingwars. Stack divergence is allowed when requirements differ. |
+| https://github.com/judigot/ai | Agent overlay (rules, workflow, skills). Not application code. |
 | `judigot/user` | Dotfiles, generators, and IDE scaffolding. Complementary to this template, not a replacement for it. |
 | Previous projects (`frontend`, `stp`, others) | References. Proven implementations, failed approaches, and tooling — consult, do not copy automatically. |
 
@@ -98,11 +98,12 @@ copy ecommerce-app files verbatim into `@bigbang/*` packages.
 The template supports projects; it does not dictate them. Product repos stay
 standalone. They must not document this charter or the promotion loop.
 
-Apps load agent rules from `judigot/ai` through one entrypoint: fetch that
-overlay's `AGENTS.md` from GitHub raw. Always use that live tree. Do not clone
-the overlay, and do not read `~/ai` or other local clones (those copies can be
-stale). This repository additionally loads `docs/ecosystem.md`. Product
-`AGENTS.md` files stay product-only after the overlay loader.
+Apps load agent rules from https://github.com/judigot/ai through one
+entrypoint: fetch that overlay's `AGENTS.md` from GitHub raw. Always use that
+live tree. Do not clone the overlay, and do not read `~/ai` or other local
+clones (those copies can be stale). This repository additionally loads
+`docs/ecosystem.md`. Product `AGENTS.md` files stay product-only after the
+overlay loader.
 
 ## Current foundation
 
