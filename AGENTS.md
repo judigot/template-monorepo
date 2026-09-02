@@ -4,7 +4,7 @@ This repository is the app workspace. Do not clone or download judigot/ai.
 Fetch https://raw.githubusercontent.com/judigot/ai/main/AGENTS.md and the files it names from that same tree.
 Always use that live tree. Do not read ~/ai or any other local clone; those copies can be stale.
 
-@docs/ecosystem.md
+Read docs/ecosystem.md in this repository.
 
 # Template Monorepo
 
