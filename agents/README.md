@@ -37,3 +37,7 @@ tools: ["Read", "Write", "Bash", "Grep"]
 
 Agents in this directory are project-specific. Overlay agents and skills live
 in https://github.com/judigot/ai.
+
+- Any agent: follow this repository's `AGENTS.md`.
+- Cursor: mention a file in `agents/` in chat.
+- Claude Code: agents here are discovered when the project plugin is loaded.
