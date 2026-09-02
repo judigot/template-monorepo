@@ -1,30 +1,24 @@
-# Template Monorepo
+Load the overlay from github.com/judigot/ai. Start at AGENTS.md.
+This repository is the app workspace; do not clone or treat judigot/ai as the project.
 
-Shared application foundation.
-
-@~/ai/settings/rules.md
-@~/ai/settings/workflow.md
-@~/ai/settings/stack.md
-@~/ai/settings/references.md
-@~/ai/settings/ecosystem.md
+- If ~/ai exists, read ~/ai/AGENTS.md and follow its includes.
+- Else fetch https://raw.githubusercontent.com/judigot/ai/main/AGENTS.md and the files it names from that same tree.
 
 @docs/ecosystem.md
 
-## This repository
+# Template Monorepo
 
-Keep this template generic, intentional, and reusable. It is the starting
-point for new apps and the place proven generic improvements return to.
+Shared application foundation. Keep this generic. Put product-specific
+behavior in product repos.
 
-Do not add bookingwars, ecommerce-app, or other product behavior here.
+## Promote
 
-- Change foundation tooling, shared packages, and generic app patterns only.
-- Before adding a package or abstraction, confirm it is needed beyond one
-  product, or is clearly shared infrastructure (TypeScript, lint, test, CI).
-- Prefer improving an existing package over creating a new one.
-- When adopting a pattern from a product, generalize it onto this stack
-  (Bun, `@bigbang/*`, Biome, Oxlint, ESLint). Do not copy product files
-  verbatim.
-- Do not force products to consume a new abstraction.
+Promote into this repo only after a pattern is proven in a real product and
+the API is generic. Do not copy product-specific code here.
 
-Product repos may diverge when their requirements differ. Record that
-divergence in the product's `AGENTS.md` rather than weakening this template.
+## Search
+
+1. This repository
+2. Active products (`bookingwars`, `ecommerce-app`)
+3. Previous projects as references
+4. Then invent
