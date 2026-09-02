@@ -4,6 +4,11 @@ Production-ready Bun monorepo with a shared Hono REST API and two
 interchangeable frontends (Vite and Next.js), orchestrated by Turborepo
 and deployable to Vercel.
 
+This repository is the shared application foundation in a personal software
+ecosystem. Product repos such as `bookingwars` and `ecommerce-app` start from
+or learn from it, then feed proven generic improvements back. See
+[docs/ecosystem.md](./docs/ecosystem.md).
+
 ## Structure
 
 ```text
