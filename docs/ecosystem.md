@@ -101,9 +101,10 @@ standalone. They must not document this charter or the promotion loop.
 Apps load agent rules from https://github.com/judigot/ai through one
 entrypoint: fetch that overlay's `AGENTS.md` from GitHub raw. Always use that
 live tree. Do not clone the overlay, and do not read `~/ai` or other local
-clones (those copies can be stale). This repository additionally loads
-`docs/ecosystem.md`. Product `AGENTS.md` files stay product-only after the
-overlay loader.
+clones (those copies can be stale). When the workspace is this template, the
+overlay also loads `docs/ecosystem.md`. Do not put that charter in `AGENTS.md`;
+it would copy into new projects. Product `AGENTS.md` files stay product-only
+after the overlay loader.
 
 ## Current foundation
 
