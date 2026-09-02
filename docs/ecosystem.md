@@ -98,10 +98,11 @@ copy ecommerce-app files verbatim into `@bigbang/*` packages.
 The template supports projects; it does not dictate them. Product repos stay
 standalone. They must not document this charter or the promotion loop.
 
-Apps load agent rules from `judigot/ai` through one entrypoint: that overlay's
-`AGENTS.md` (`~/ai/AGENTS.md` or GitHub raw). This repository additionally
-loads `docs/ecosystem.md`. Product `AGENTS.md` files stay product-only after
-the overlay loader.
+Apps load agent rules from `judigot/ai` through one entrypoint: fetch that
+overlay's `AGENTS.md` from GitHub raw. Always use that live tree. Do not clone
+the overlay, and do not read `~/ai` or other local clones (those copies can be
+stale). This repository additionally loads `docs/ecosystem.md`. Product
+`AGENTS.md` files stay product-only after the overlay loader.
 
 ## Current foundation
 

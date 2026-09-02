@@ -1,8 +1,8 @@
 Load the overlay from github.com/judigot/ai. Start at AGENTS.md.
-This repository is the app workspace; do not clone or treat judigot/ai as the project.
+This repository is the app workspace. Do not clone or download judigot/ai.
 
-- If ~/ai exists, read ~/ai/AGENTS.md and follow its includes.
-- Else fetch https://raw.githubusercontent.com/judigot/ai/main/AGENTS.md and the files it names from that same tree.
+Fetch https://raw.githubusercontent.com/judigot/ai/main/AGENTS.md and the files it names from that same tree.
+Always use that live tree. Do not read ~/ai or any other local clone; those copies can be stale.
 
 @docs/ecosystem.md
 
