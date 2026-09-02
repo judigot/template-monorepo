@@ -21,6 +21,7 @@ the next one.
 | Repository | Role |
 | --- | --- |
 | `judigot/template-monorepo` | Shared foundation. Generic, intentional, reusable. |
+| `judigot/project-core` | Per-project agent stub. Copy into every app. Not application code. |
 | `judigot/bookingwars` | Active product created from this template. Evolves independently; also a source of patterns that may be promoted here. |
 | `judigot/ecommerce-app` | Active product. Same dual role as bookingwars. Stack divergence is allowed when requirements differ. |
 | `judigot/ai` | Agent overlay (rules, workflow, skills). Not application code. |
