@@ -123,6 +123,34 @@
   gap: var(--ds-space-2);
 }
 
+.ui-showcase__form-grid {
+  display: grid;
+  gap: var(--ds-space-field);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ui-showcase__form-grid > :last-child,
+.ui-showcase__form-grid > .ui-form-options {
+  min-width: 0;
+}
+
+.ui-input-group {
+  align-items: stretch;
+  display: flex;
+}
+
+.ui-input-group > .ui-form-control {
+  min-width: 0;
+}
+
+.ui-input-group__addon {
+  align-items: center;
+  background: var(--ds-color-surface-subtle);
+  border: 1px solid var(--ds-color-border);
+  display: inline-flex;
+  padding: 0 var(--ds-space-2);
+}
+
 .ui-form-field--full {
   grid-column: 1 / -1;
 }
