@@ -1,5 +1,5 @@
 import { getHello } from '@monorepo/api-client';
-import { ProfileForm } from '@monorepo/components';
+import { ProfileForm, Showcase } from '@monorepo/components';
 import { useEffect, useState } from 'react';
 
 interface IHelloLoading {
@@ -71,6 +71,7 @@ function App() {
         )}
       </div>
       <ProfileForm />
+      <Showcase />
     </div>
   );
 }
