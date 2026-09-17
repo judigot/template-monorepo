@@ -36,6 +36,14 @@ const surfaces = (
 
 export const THEME_SURFACES: Record<keyof typeof THEMES, IThemeSurfaces> = {
   default: surfaces('#f8fafc', '#0f172a', '#ffffff', '#1e293b'),
+  glass: surfaces(
+    '#e8eef7',
+    '#111827',
+    'color-mix(in srgb, #ffffff 72%, transparent)',
+    'color-mix(in srgb, #1f2937 76%, transparent)',
+    'color-mix(in srgb, #ffffff 82%, transparent)',
+    'color-mix(in srgb, #1f2937 88%, transparent)',
+  ),
   light: surfaces('#ffffff', '#0f172a', '#ffffff', '#1e293b'),
   dark: surfaces('#ffffff', '#0f172a', '#ffffff', '#1e293b'),
   google: surfaces('#ffffff', '#202124', '#f8fafd', '#303134'),

@@ -111,6 +111,7 @@ function App() {
           }}
         >
           <option value="default">Default</option>
+          <option value="glass">Glass</option>
           <optgroup label="Popular systems">
             <option value="google">Google</option>
             <option value="youtube">YouTube</option>

@@ -21,6 +21,15 @@
   min-height: 100vh;
   padding: var(--ds-space-page);
 }
+
+[data-design-system="glass"] .ui-form-card,
+[data-design-system="glass"] .ui-showcase,
+[data-design-system="glass"] .ui-hello-card {
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  backdrop-filter: blur(18px) saturate(135%);
+  border-color: color-mix(in srgb, var(--ds-color-border) 55%, transparent);
+  box-shadow: var(--ds-shadow-lg);
+}
 .ui-hello-card {
   background: var(--ds-color-surface);
   border-radius: var(--ds-radius-container);
