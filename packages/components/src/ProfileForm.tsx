@@ -1,6 +1,7 @@
 import type { ReactNode, SyntheticEvent } from 'react';
 import { useState } from 'react';
 import { Modal } from './Modal.tsx';
+import { TagInput } from './TagInput.tsx';
 
 interface IProfileFormState {
   bio: string;
@@ -12,6 +13,7 @@ interface IProfileFormState {
   role: string;
   startDate: string;
   termsAccepted: boolean;
+  tags: string[];
   website: string;
 }
 
@@ -25,18 +27,20 @@ const INITIAL_PROFILE: IProfileFormState = {
   role: '',
   startDate: '',
   termsAccepted: false,
+  tags: [],
   website: '',
 };
 
 type ITextProfileField = Exclude<
   keyof IProfileFormState,
-  'deliveryPreference' | 'termsAccepted'
+  'deliveryPreference' | 'termsAccepted' | 'tags'
 >;
 
 export function ProfileForm(): ReactNode {
   const [profile, setProfile] = useState<IProfileFormState>(INITIAL_PROFILE);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [tagError, setTagError] = useState('');
 
   const updateTextField = (field: ITextProfileField, value: string): void => {
     setProfile((currentProfile) => ({ ...currentProfile, [field]: value }));
@@ -45,6 +49,11 @@ export function ProfileForm(): ReactNode {
 
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    if (profile.tags.length === 0) {
+      setTagError('Add at least one technology.');
+      return;
+    }
+    setTagError('');
     setIsReviewOpen(true);
   };
 
@@ -56,6 +65,7 @@ export function ProfileForm(): ReactNode {
   const handleReset = (): void => {
     setProfile(INITIAL_PROFILE);
     setIsSaved(false);
+    setTagError('');
   };
 
   return (
@@ -224,6 +234,32 @@ export function ProfileForm(): ReactNode {
               value={profile.bio}
             />
           </label>
+          <div className="ui-form-field ui-form-field--full">
+            <TagInput
+              id="profile-tags"
+              label="Technologies"
+              onChange={(tags) => {
+                setProfile((currentProfile) => ({ ...currentProfile, tags }));
+                setTagError('');
+                setIsSaved(false);
+              }}
+              suggestions={[
+                'React',
+                'TypeScript',
+                'Vite',
+                'Design system',
+                'Accessibility',
+              ]}
+              tags={profile.tags}
+            />
+            {tagError ? (
+              <span className="ui-form-error" role="alert">
+                {tagError}
+              </span>
+            ) : (
+              <span className="ui-form-help">Add the tools you use most.</span>
+            )}
+          </div>
           <label className="ui-checkbox ui-form-field--full">
             <input
               checked={profile.termsAccepted}
@@ -288,6 +324,7 @@ export function ProfileForm(): ReactNode {
         <p>
           Save profile details for {profile.firstName} {profile.lastName}?
         </p>
+        <p className="ui-form-help">Technologies: {profile.tags.join(', ')}</p>
       </Modal>
     </>
   );

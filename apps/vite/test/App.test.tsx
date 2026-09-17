@@ -83,6 +83,12 @@ describe('App', () => {
       throw new Error('Profile form was not rendered');
     }
 
+    const technologies = document.getElementById('profile-tags');
+    if (technologies === null) {
+      throw new Error('Profile tag input was not rendered');
+    }
+    fireEvent.change(technologies, { target: { value: 'React' } });
+    fireEvent.keyDown(technologies, { key: 'Enter' });
     fireEvent.submit(form);
     expect(
       screen.getByRole('dialog', { name: 'Review profile' }),

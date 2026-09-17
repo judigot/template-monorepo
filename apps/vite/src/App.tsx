@@ -44,8 +44,8 @@ function App() {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-10 bg-gradient-to-br from-blue-500 to-purple-600 px-6 py-12">
-      <div className="rounded-3xl bg-white/90 px-10 py-16 shadow-2xl">
+    <div className="ui-app-shell">
+      <div className="ui-hello-card">
         <p className="mb-6 flex justify-center">
           <span
             data-testid="framework-badge"
@@ -70,8 +70,10 @@ function App() {
           </p>
         )}
       </div>
-      <ProfileForm />
-      <Showcase />
+      <main className="ui-workspace-grid">
+        <Showcase />
+        <ProfileForm />
+      </main>
     </div>
   );
 }
