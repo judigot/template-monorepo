@@ -93,7 +93,7 @@ hold:
 5. It was validated in a real project, not designed in the abstract.
 
 When promoting from a diverged product, re-implement on this stack. Do not
-copy ecommerce-app files verbatim into `@bigbang/*` packages.
+copy ecommerce-app files verbatim into `@monorepo/*` packages.
 
 The template supports projects; it does not dictate them. Product repos stay
 standalone. They must not document this charter or the promotion loop.
@@ -113,7 +113,7 @@ Already in this repository and worth keeping generic:
 - Bun workspaces + Turborepo
 - Hono API (`health`, `hello`) with Zod env validation and Vercel adapter
 - Interchangeable Vite and Next.js frontends
-- `@bigbang/api-client` and `@bigbang/typescript-config`
+- `@monorepo/api-client` and `@monorepo/typescript-config`
 - Oxlint → Biome → ESLint `strict-type-checked`
 - `bun test` plus Playwright against production builds
 - Two-project Vercel layout, Changesets, Renovate, Husky

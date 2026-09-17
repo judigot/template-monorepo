@@ -1,4 +1,4 @@
-# @bigbang/typescript-config
+# @monorepo/typescript-config
 
 Shared TypeScript configurations for every workspace in this monorepo.
 
@@ -13,7 +13,7 @@ Shared TypeScript configurations for every workspace in this monorepo.
 
 ```json
 {
-  "extends": "@bigbang/typescript-config/vite.json",
+  "extends": "@monorepo/typescript-config/vite.json",
   "include": ["src"]
 }
 ```
@@ -23,7 +23,7 @@ Add the package as a `devDependency`:
 ```json
 {
   "devDependencies": {
-    "@bigbang/typescript-config": "workspace:*"
+    "@monorepo/typescript-config": "workspace:*"
   }
 }
 ```

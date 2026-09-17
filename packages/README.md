@@ -4,8 +4,8 @@ Reusable code consumed by the applications in `apps/`.
 
 | Package                     | Purpose                                            |
 | --------------------------- | -------------------------------------------------- |
-| `@bigbang/api-client`       | API contracts and a typed client for the Hono API  |
-| `@bigbang/typescript-config`| Shared TypeScript configurations                   |
+| `@monorepo/api-client`       | API contracts and a typed client for the Hono API  |
+| `@monorepo/typescript-config`| Shared TypeScript configurations                   |
 
 ## Creating a New Package
 
@@ -13,7 +13,7 @@ Reusable code consumed by the applications in `apps/`.
 
    ```json
    {
-     "name": "@bigbang/my-package",
+     "name": "@monorepo/my-package",
      "version": "0.0.0",
      "private": true,
      "type": "module",
@@ -28,7 +28,7 @@ Reusable code consumed by the applications in `apps/`.
    ```json
    {
      "dependencies": {
-       "@bigbang/my-package": "workspace:*"
+       "@monorepo/my-package": "workspace:*"
      }
    }
    ```

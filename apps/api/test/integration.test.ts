@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
-import { getHello } from '@bigbang/api-client';
 import type { ServerType } from '@hono/node-server';
 import { serve } from '@hono/node-server';
+import { getHello } from '@monorepo/api-client';
 import { app } from '../src/app.ts';
 
 /*

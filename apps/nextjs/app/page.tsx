@@ -1,4 +1,4 @@
-import { getHello } from '@bigbang/api-client';
+import { getHello } from '@monorepo/api-client';
 import { FrameworkBadge } from '@/app/framework-badge.tsx';
 
 /*

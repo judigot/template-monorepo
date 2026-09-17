@@ -1,4 +1,4 @@
-import type { IHelloResponse } from '@bigbang/api-client';
+import type { IHelloResponse } from '@monorepo/api-client';
 import { Hono } from 'hono';
 
 export const helloRouter = new Hono();

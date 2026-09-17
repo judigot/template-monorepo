@@ -1,5 +1,5 @@
 {
-  "extends": "@bigbang/typescript-config/nextjs.json",
+  "extends": "@monorepo/typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"]

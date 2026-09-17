@@ -1,5 +1,5 @@
 {
-  "extends": "@bigbang/typescript-config/api.json",
+  "extends": "@monorepo/typescript-config/api.json",
   "compilerOptions": {
     "types": ["node"]
   },

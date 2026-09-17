@@ -1,4 +1,4 @@
-import { getHello } from '@bigbang/api-client';
+import { getHello } from '@monorepo/api-client';
 import { useEffect, useState } from 'react';
 
 interface IHelloLoading {

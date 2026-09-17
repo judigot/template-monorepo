@@ -1,5 +1,5 @@
 {
-  "name": "@bigbang/api",
+  "name": "@monorepo/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -18,12 +18,12 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.1",
-    "@bigbang/api-client": "workspace:*",
+    "@monorepo/api-client": "workspace:*",
     "hono": "^4.13.5",
     "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@bigbang/typescript-config": "workspace:*",
+    "@monorepo/typescript-config": "workspace:*",
     "@types/bun": "^1.4.2",
     "@types/node": "^24.10.1",
     "oxlint": "^1.80.0",

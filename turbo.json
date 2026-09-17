@@ -8,7 +8,7 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "env": ["VITE_API_URL", "API_URL", "NEXT_PUBLIC_API_URL", "CORS_ORIGINS"]
     },
-    "@bigbang/api#build": {
+    "@monorepo/api#build": {
       "dependsOn": ["^build"],
       "outputs": ["api/index.js"],
       "env": ["CORS_ORIGINS", "PORT"]
