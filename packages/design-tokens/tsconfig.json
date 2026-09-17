@@ -1,7 +1,5 @@
 {
   "extends": "../typescript-config/base.json",
-  "compilerOptions": {
-    "types": ["node", "bun"]
-  },
+  "compilerOptions": { "types": ["bun"] },
   "include": ["src", "test"]
 }

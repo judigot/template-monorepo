@@ -7,12 +7,14 @@
     "base.json",
     "vite.json",
     "nextjs.json",
-    "api.json"
+    "api.json",
+    "react.json"
   ],
   "exports": {
     "./base.json": "./base.json",
     "./vite.json": "./vite.json",
     "./nextjs.json": "./nextjs.json",
-    "./api.json": "./api.json"
+    "./api.json": "./api.json",
+    "./react.json": "./react.json"
   }
 }

@@ -84,7 +84,7 @@ export function Modal({
       ref={dialogRef}
     >
       <button
-        aria-label="Close dialog"
+        aria-label="Dismiss dialog backdrop"
         className="ui-modal__backdrop"
         onClick={onClose}
         type="button"
