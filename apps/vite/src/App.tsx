@@ -27,10 +27,11 @@ type IHelloState = IHelloLoading | IHelloSuccess | IHelloError;
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? '';
 const isThemeName = (value: string): value is keyof typeof THEMES =>
   value in THEMES;
+type ThemeSelection = keyof typeof THEMES | 'system';
 
 function App() {
   const [hello, setHello] = useState<IHelloState>({ status: 'loading' });
-  const [theme, setTheme] = useState<keyof typeof THEMES>('default');
+  const [theme, setTheme] = useState<ThemeSelection>('default');
 
   useEffect(() => {
     const controller = new AbortController();
@@ -53,11 +54,25 @@ function App() {
   }, []);
 
   useEffect(() => {
-    applyTokenGroups(
-      createThemeTokenGroups(theme),
-      document.documentElement.style,
-    );
-    document.documentElement.dataset.designSystem = theme;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const applyTheme = () => {
+      const resolved =
+        theme === 'system' ? (media.matches ? 'dark' : 'light') : theme;
+      applyTokenGroups(
+        createThemeTokenGroups(resolved),
+        document.documentElement.style,
+      );
+      document.documentElement.dataset.designSystem = resolved;
+      document.documentElement.dataset.themePreference = theme;
+    };
+    applyTheme();
+    if (theme !== 'system') {
+      return;
+    }
+    media.addEventListener('change', applyTheme);
+    return () => {
+      media.removeEventListener('change', applyTheme);
+    };
   }, [theme]);
 
   return (
@@ -86,7 +101,9 @@ function App() {
           id="design-system-theme"
           value={theme}
           onChange={(event) => {
-            if (isThemeName(event.target.value)) {
+            if (event.target.value === 'system') {
+              setTheme('system');
+            } else if (isThemeName(event.target.value)) {
               setTheme(event.target.value);
             }
           }}
@@ -94,6 +111,7 @@ function App() {
           <option value="default">Default</option>
           <option value="light">Light</option>
           <option value="dark">Dark</option>
+          <option value="system">System default</option>
           <optgroup label="Popular systems">
             <option value="google">Google</option>
             <option value="youtube">YouTube</option>
