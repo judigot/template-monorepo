@@ -134,15 +134,15 @@ test.describe('theme contrast regressions', () => {
           .first();
         await expect(option).toBeVisible();
         expect(
-          await contrast(page, '.ui-tag-suggestions [role="option"]'),
+          await contrast(page, '.ui-tag-suggestions [role="option"] button'),
         ).toBeGreaterThanOrEqual(7);
         await option.hover();
         expect(
-          await contrast(page, '.ui-tag-suggestions [role="option"]'),
+          await contrast(page, '.ui-tag-suggestions [role="option"] button'),
         ).toBeGreaterThanOrEqual(7);
         await input.press('ArrowDown');
         expect(
-          await contrast(page, '.ui-tag-suggestions [role="option"]'),
+          await contrast(page, '.ui-tag-suggestions [role="option"] button'),
         ).toBeGreaterThanOrEqual(7);
       }
     });
