@@ -1,3 +1,4 @@
+/* oxlint-disable jsx-a11y/prefer-tag-over-role -- custom searchable listbox semantics */
 import type { ChangeEvent, KeyboardEvent, ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -18,9 +19,11 @@ export function TagInput({
 }: ITagInputProps): ReactNode {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedTagIndex, setSelectedTagIndex] = useState<number | null>(null);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
   const [placement, setPlacement] = useState<'below' | 'above'>('below');
-  const suggestionsRef = useRef<HTMLUListElement | null>(null);
+  const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  const [selectedTagIndex, setSelectedTagIndex] = useState<number | null>(null);
+  const suggestionsRef = useRef<HTMLDivElement | null>(null);
   const availableSuggestions = useMemo(() => {
     const query = value.trim().toLowerCase();
     return suggestions.filter(
@@ -52,9 +55,38 @@ export function TagInput({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+    if (availableSuggestions.length > 0 && event.key === 'ArrowDown') {
+      event.preventDefault();
+      setIsFocused(true);
+      setIsSuggestionsOpen(true);
+      setActiveSuggestion(
+        (current) => (current + 1) % availableSuggestions.length,
+      );
+      return;
+    }
+    if (availableSuggestions.length > 0 && event.key === 'ArrowUp') {
+      event.preventDefault();
+      setIsFocused(true);
+      setIsSuggestionsOpen(true);
+      setActiveSuggestion(
+        (current) =>
+          (current - 1 + availableSuggestions.length) %
+          availableSuggestions.length,
+      );
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setIsSuggestionsOpen(false);
+      return;
+    }
     if (event.key === 'Enter' || event.key === ',') {
       event.preventDefault();
-      addTag(value);
+      const selectedSuggestion =
+        activeSuggestion >= 0
+          ? availableSuggestions[activeSuggestion]
+          : undefined;
+      addTag(selectedSuggestion ?? value);
       return;
     }
     if (event.key === 'Backspace' && value.length === 0 && tags.length > 0) {
@@ -74,7 +106,10 @@ export function TagInput({
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setIsFocused(true);
+    setIsSuggestionsOpen(true);
     setValue(event.target.value);
+    setActiveSuggestion(-1);
     setSelectedTagIndex(null);
   };
 
@@ -104,13 +139,24 @@ export function TagInput({
         ))}
         <input
           aria-labelledby={`${id}-label`}
+          aria-activedescendant={
+            isFocused && availableSuggestions.length > 0
+              ? `${id}-suggestion-${String(activeSuggestion)}`
+              : undefined
+          }
+          aria-autocomplete="list"
+          aria-controls={`${id}-suggestions`}
+          aria-expanded={isSuggestionsOpen && availableSuggestions.length > 0}
+          role="combobox"
           id={id}
           onBlur={() => {
             setIsFocused(false);
+            setIsSuggestionsOpen(false);
           }}
           onChange={handleChange}
           onFocus={() => {
             setIsFocused(true);
+            setIsSuggestionsOpen(true);
             setSelectedTagIndex(null);
           }}
           onKeyDown={handleKeyDown}
@@ -120,14 +166,21 @@ export function TagInput({
           value={value}
         />
       </div>
-      {isFocused && availableSuggestions.length > 0 ? (
-        <ul
+      {isSuggestionsOpen && availableSuggestions.length > 0 ? (
+        <div
+          id={`${id}-suggestions`}
           className={`ui-tag-suggestions ui-tag-suggestions--${placement}`}
           aria-label={`${label} suggestions`}
+          role="listbox"
           ref={suggestionsRef}
         >
-          {availableSuggestions.map((suggestion) => (
-            <li key={suggestion}>
+          {availableSuggestions.map((suggestion, index) => (
+            <div
+              key={suggestion}
+              id={`${id}-suggestion-${String(index)}`}
+              role="option"
+              aria-selected={index === activeSuggestion}
+            >
               <button
                 type="button"
                 onMouseDown={(event) => {
@@ -136,12 +189,13 @@ export function TagInput({
                 onClick={() => {
                   addTag(suggestion);
                 }}
+                data-active={index === activeSuggestion ? 'true' : undefined}
               >
                 {suggestion}
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : null}
     </div>
   );
