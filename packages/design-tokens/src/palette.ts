@@ -75,6 +75,16 @@ const brandPalette = (
 });
 
 export const BRAND_PALETTES = {
+  glass: {
+    ...PALETTE,
+    roles: {
+      canvas: '#e8eef7',
+      surface: 'color-mix(in srgb, #ffffff 72%, transparent)',
+      'surface-subtle': 'color-mix(in srgb, #ffffff 52%, transparent)',
+      dialog: 'color-mix(in srgb, #ffffff 82%, transparent)',
+      input: 'color-mix(in srgb, #ffffff 64%, transparent)',
+    },
+  },
   google: brandPalette(['#e0f2fe', '#0284c7', '#0369a1', '#075985'], '#16a34a'),
   youtube: brandPalette(
     ['#fee2e2', '#dc2626', '#b91c1c', '#991b1b'],

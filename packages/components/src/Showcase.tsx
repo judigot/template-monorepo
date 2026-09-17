@@ -138,13 +138,14 @@ export function Showcase(): ReactNode {
           <h3>Form primitives</h3>
           <div className="ui-showcase__form-grid">
             <FormField
-              description="Use a work email."
+              description="Use a work email for notifications."
               htmlFor="showcase-email"
               label="Email"
             >
               <input
                 className="ui-form-control"
                 id="showcase-email"
+                placeholder="you@example.com"
                 type="email"
               />
             </FormField>
@@ -183,6 +184,14 @@ export function Showcase(): ReactNode {
               ]}
               values={updates}
             />
+            <FormField htmlFor="showcase-notes" label="Notes">
+              <textarea
+                className="ui-form-control"
+                id="showcase-notes"
+                placeholder="Add context"
+                rows={3}
+              />
+            </FormField>
           </div>
         </article>
       </div>

@@ -13,6 +13,15 @@ test('named systems provide distinct background tokens', () => {
   );
 });
 
+test('glass provides translucent container tokens', () => {
+  const colorTokens = createThemeTokenGroups('glass')[0]?.tokens;
+  if (!colorTokens) {
+    throw new Error('color token group is required');
+  }
+  expect(colorTokens.surface).toContain('color-mix');
+  expect(colorTokens.dialog).toContain('color-mix');
+});
+
 test('X applies its dark canvas and independent button, panel, and dialog shapes', () => {
   const values = new Map<string, string>();
   applyTokenGroups(createThemeTokenGroups('x', 'dark'), {

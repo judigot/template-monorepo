@@ -8,6 +8,7 @@ export interface IFormFieldProps {
   label: string;
 }
 
+/** Accessible label/description/error composition for native and shadcn-style controls. */
 export function FormField({
   children,
   description,
@@ -15,6 +16,8 @@ export function FormField({
   htmlFor,
   label,
 }: IFormFieldProps): ReactNode {
+  const descriptionId = `${htmlFor}-description`;
+  const errorId = `${htmlFor}-error`;
   return (
     <div className="ui-form-field">
       <label className="ui-form-label" htmlFor={htmlFor}>
@@ -22,12 +25,12 @@ export function FormField({
       </label>
       {children}
       {description !== undefined ? (
-        <span className="ui-form-help" id={`${htmlFor}-description`}>
+        <span className="ui-form-help" id={descriptionId}>
           {description}
         </span>
       ) : null}
       {error !== undefined ? (
-        <span className="ui-form-error" id={`${htmlFor}-error`} role="alert">
+        <span className="ui-form-error" id={errorId} role="alert">
           {error}
         </span>
       ) : null}
