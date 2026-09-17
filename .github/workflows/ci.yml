@@ -104,3 +104,37 @@ jobs:
           curl -fsS http://localhost:3000/api/health > /tmp/health.json
           node -e "const fs = require('node:fs'); const body = JSON.parse(fs.readFileSync('/tmp/health.json', 'utf8')); if (body.status !== 'healthy') { throw new Error('Unexpected health: ' + JSON.stringify(body)); }"
           kill "$SERVER_PID"
+
+  api-bun-runtime:
+    name: API on Bun
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Serve the API with Bun and verify /api/hello
+        working-directory: apps/api
+        run: |
+          bun src/index.ts > server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/api/hello > /tmp/hello.json; then
+              break
+            fi
+            echo "Waiting for API server ($i/30)"
+            sleep 1
+          done
+          cat /tmp/hello.json
+          bun -e "const body = await Bun.file('/tmp/hello.json').json(); if (body.message !== 'Hello, world!') throw new Error('Unexpected response: ' + JSON.stringify(body));"
+          curl -fsS http://127.0.0.1:3000/api/health > /tmp/health.json
+          bun -e "const body = await Bun.file('/tmp/health.json').json(); if (body.status !== 'healthy') throw new Error('Unexpected health: ' + JSON.stringify(body));"
