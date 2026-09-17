@@ -22,6 +22,7 @@ export function TagInput({
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
   const [placement, setPlacement] = useState<'below' | 'above'>('below');
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  const [selectedTagIndex, setSelectedTagIndex] = useState<number | null>(null);
   const suggestionsRef = useRef<HTMLDivElement | null>(null);
   const availableSuggestions = useMemo(() => {
     const query = value.trim().toLowerCase();
@@ -50,6 +51,7 @@ export function TagInput({
     }
     onChange([...tags, normalized]);
     setValue('');
+    setSelectedTagIndex(null);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -85,9 +87,21 @@ export function TagInput({
           ? availableSuggestions[activeSuggestion]
           : undefined;
       addTag(selectedSuggestion ?? value);
+      return;
     }
     if (event.key === 'Backspace' && value.length === 0 && tags.length > 0) {
-      onChange(tags.slice(0, -1));
+      event.preventDefault();
+      if (selectedTagIndex === null) {
+        setSelectedTagIndex(tags.length - 1);
+        return;
+      }
+      const nextTags = tags.filter((_, index) => index !== selectedTagIndex);
+      onChange(nextTags);
+      setSelectedTagIndex(
+        nextTags.length === 0
+          ? null
+          : Math.min(selectedTagIndex - 1, nextTags.length - 1),
+      );
     }
   };
 
@@ -96,6 +110,7 @@ export function TagInput({
     setIsSuggestionsOpen(true);
     setValue(event.target.value);
     setActiveSuggestion(-1);
+    setSelectedTagIndex(null);
   };
 
   return (
@@ -104,8 +119,12 @@ export function TagInput({
         {label}
       </span>
       <div className={`ui-tag-input${isFocused ? ' is-focused' : ''}`}>
-        {tags.map((tag) => (
-          <span className="ui-tag" key={tag}>
+        {tags.map((tag, index) => (
+          <span
+            aria-selected={index === selectedTagIndex}
+            className={`ui-tag${index === selectedTagIndex ? ' is-selected' : ''}`}
+            key={tag}
+          >
             {tag}
             <button
               type="button"
@@ -132,11 +151,13 @@ export function TagInput({
           id={id}
           onBlur={() => {
             setIsFocused(false);
+            setIsSuggestionsOpen(false);
           }}
           onChange={handleChange}
           onFocus={() => {
             setIsFocused(true);
             setIsSuggestionsOpen(true);
+            setSelectedTagIndex(null);
           }}
           onKeyDown={handleKeyDown}
           placeholder={
