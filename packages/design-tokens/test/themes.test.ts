@@ -1,6 +1,18 @@
 import { expect, test } from 'bun:test';
 import { applyTokenGroups, createThemeTokenGroups } from '../src/index.ts';
 
+test('named systems provide distinct background tokens', () => {
+  const google = createThemeTokenGroups('google')[0];
+  const spotify = createThemeTokenGroups('spotify')[0];
+  if (!google || !spotify) {
+    throw new Error('color token groups are required');
+  }
+  expect(google.tokens.canvas).not.toBe(spotify.tokens.canvas);
+  expect(google.tokens['surface-subtle']).not.toBe(
+    spotify.tokens['surface-subtle'],
+  );
+});
+
 test('X applies its dark canvas and independent button, panel, and dialog shapes', () => {
   const values = new Map<string, string>();
   applyTokenGroups(createThemeTokenGroups('x'), {

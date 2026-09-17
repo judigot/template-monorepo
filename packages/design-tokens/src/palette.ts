@@ -1,7 +1,9 @@
 export interface IPalette {
   roles?: Partial<
     Record<
+      | 'canvas'
       | 'surface'
+      | 'surface-subtle'
       | 'dialog'
       | 'input'
       | 'on-primary'
@@ -66,6 +68,7 @@ const brandPalette = (
     700: primary[3],
   },
   teal: { 600: info },
+  roles: { canvas: primary[0], 'surface-subtle': primary[0] },
 });
 
 export const BRAND_PALETTES = {
