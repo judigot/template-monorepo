@@ -129,7 +129,6 @@ test.describe('theme contrast regressions', () => {
         ).toBeGreaterThanOrEqual(4.5);
         const input = page.locator('.ui-tag-input input').first();
         await input.click();
-        await input.fill('Re');
         const option = page
           .locator('.ui-tag-suggestions [role="option"]')
           .first();
