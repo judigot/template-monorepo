@@ -7,7 +7,7 @@ type Rgb = readonly [number, number, number];
 function rgb(color: string, canvas?: Rgb): Rgb {
   const hex = /^#([\da-f]{6})$/i.exec(color);
   const value = hex?.[1];
-  if (value) {
+  if (value !== undefined && value.length > 0) {
     return [
       Number.parseInt(value.slice(0, 2), 16),
       Number.parseInt(value.slice(2, 4), 16),
@@ -20,7 +20,13 @@ function rgb(color: string, canvas?: Rgb): Rgb {
     );
   const foregroundColor = glass?.[1];
   const percentage = glass?.[2];
-  if (!foregroundColor || !percentage || !canvas) {
+  if (
+    foregroundColor === undefined ||
+    foregroundColor.length === 0 ||
+    percentage === undefined ||
+    percentage.length === 0 ||
+    canvas === undefined
+  ) {
     throw new Error(`Unexpected test color ${color}`);
   }
   const foreground = rgb(foregroundColor);

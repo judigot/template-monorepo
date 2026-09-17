@@ -122,7 +122,7 @@ export function TagInput({
           aria-labelledby={`${id}-label`}
           aria-activedescendant={
             isFocused && availableSuggestions.length > 0
-              ? `${id}-suggestion-${activeSuggestion}`
+              ? `${id}-suggestion-${String(activeSuggestion)}`
               : undefined
           }
           aria-autocomplete="list"
@@ -156,7 +156,7 @@ export function TagInput({
           {availableSuggestions.map((suggestion, index) => (
             <div
               key={suggestion}
-              id={`${id}-suggestion-${index}`}
+              id={`${id}-suggestion-${String(index)}`}
               role="option"
               aria-selected={index === activeSuggestion}
             >

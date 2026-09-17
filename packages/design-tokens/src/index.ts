@@ -31,7 +31,7 @@ type Rgb = readonly [number, number, number];
 function parseHex(color: string): Rgb {
   const match = /^#([\da-f]{6})$/i.exec(color);
   const hex = match?.[1];
-  if (!hex) {
+  if (hex === undefined || hex.length === 0) {
     throw new Error(
       `Expected an opaque six-digit hex color, received ${color}`,
     );
@@ -67,7 +67,12 @@ function resolveSurface(color: string, canvas: Rgb): Rgb {
   }
   const foreground = match[1];
   const percentage = match[2];
-  if (!foreground || !percentage) {
+  if (
+    foreground === undefined ||
+    foreground.length === 0 ||
+    percentage === undefined ||
+    percentage.length === 0
+  ) {
     throw new Error(`Invalid glass surface ${color}`);
   }
   const alpha = Number(percentage) / 100;
@@ -128,7 +133,7 @@ function safest(
     );
   if (mostContrasting.score < minimum) {
     throw new Error(
-      `${role} cannot meet ${minimum}:1 contrast (best is ${mostContrasting.score.toFixed(2)}:1)`,
+      `${role} cannot meet ${String(minimum)}:1 contrast (best is ${mostContrasting.score.toFixed(2)}:1)`,
     );
   }
   return mostContrasting.color;

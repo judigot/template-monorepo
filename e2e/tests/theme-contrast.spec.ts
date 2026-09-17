@@ -44,11 +44,13 @@ async function contrast(
         if (!m) {
           return null;
         }
-        const alpha = m[4]
-          ? m[4].endsWith('%')
-            ? Number(m[4].slice(0, -1)) / 100
-            : Number(m[4])
-          : 1;
+        const alphaValue = m[4];
+        const alpha =
+          alphaValue === undefined || alphaValue.length === 0
+            ? 1
+            : alphaValue.endsWith('%')
+              ? Number(alphaValue.slice(0, -1)) / 100
+              : Number(alphaValue);
         const isSrgb = value.trim().toLowerCase().startsWith('color(');
         const channels: [number, number, number] = isSrgb
           ? [Number(m[1]), Number(m[2]), Number(m[3])]
