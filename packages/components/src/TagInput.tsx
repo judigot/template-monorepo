@@ -1,5 +1,5 @@
 import type { ChangeEvent, KeyboardEvent, ReactNode } from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export interface ITagInputProps {
   id: string;
@@ -18,6 +18,8 @@ export function TagInput({
 }: ITagInputProps): ReactNode {
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [placement, setPlacement] = useState<'below' | 'above'>('below');
+  const suggestionsRef = useRef<HTMLUListElement | null>(null);
   const availableSuggestions = useMemo(() => {
     const query = value.trim().toLowerCase();
     return suggestions.filter(
@@ -26,6 +28,17 @@ export function TagInput({
         (query.length === 0 || suggestion.toLowerCase().includes(query)),
     );
   }, [suggestions, tags, value]);
+
+  useEffect(() => {
+    const list = suggestionsRef.current;
+    if (!isFocused || list === null) {
+      return;
+    }
+    const rect = list.getBoundingClientRect();
+    const shouldFlip =
+      rect.bottom > window.innerHeight && rect.top > rect.height;
+    setPlacement(shouldFlip ? 'above' : 'below');
+  }, [isFocused, availableSuggestions.length]);
 
   const addTag = (tag: string): void => {
     const normalized = tag.trim();
@@ -88,7 +101,11 @@ export function TagInput({
         />
       </div>
       {isFocused && availableSuggestions.length > 0 ? (
-        <ul className="ui-tag-suggestions" aria-label={`${label} suggestions`}>
+        <ul
+          className={`ui-tag-suggestions ui-tag-suggestions--${placement}`}
+          aria-label={`${label} suggestions`}
+          ref={suggestionsRef}
+        >
           {availableSuggestions.map((suggestion) => (
             <li key={suggestion}>
               <button

@@ -13,6 +13,7 @@ const TAG_SUGGESTIONS = [
 
 export function Showcase(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNestedModalOpen, setIsNestedModalOpen] = useState(false);
   const [isToggled, setIsToggled] = useState(true);
   const [tags, setTags] = useState(['React', 'Design system']);
   const [notice, setNotice] = useState('');
@@ -30,6 +31,15 @@ export function Showcase(): ReactNode {
       <div className="ui-showcase__grid">
         <article className="ui-showcase__panel ui-showcase__panel--wide">
           <h3>Buttons</h3>
+          <button
+            className="ui-button ui-button--info ui-showcase__open-modal"
+            type="button"
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            Open modal
+          </button>
           <div className="ui-showcase__row">
             <button
               className="ui-button ui-button--primary"
@@ -66,15 +76,6 @@ export function Showcase(): ReactNode {
               }}
             >
               Danger
-            </button>
-            <button
-              className="ui-button ui-button--info"
-              type="button"
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
-            >
-              Open modal
             </button>
           </div>
           {notice ? (
@@ -127,6 +128,7 @@ export function Showcase(): ReactNode {
       <Modal
         isOpen={isModalOpen}
         onClose={() => {
+          setIsNestedModalOpen(false);
           setIsModalOpen(false);
         }}
         title="Blank modal"
@@ -136,6 +138,7 @@ export function Showcase(): ReactNode {
               className="ui-button ui-button--secondary"
               type="button"
               onClick={() => {
+                setIsNestedModalOpen(false);
                 setIsModalOpen(false);
               }}
             >
@@ -157,6 +160,38 @@ export function Showcase(): ReactNode {
         <p>
           This reusable modal mirrors the showcase interaction from BigBang
           while using the accessible native dialog implementation.
+        </p>
+        <button
+          className="ui-button ui-button--secondary"
+          type="button"
+          onClick={() => {
+            setIsNestedModalOpen(true);
+          }}
+        >
+          Open nested modal
+        </button>
+      </Modal>
+      <Modal
+        isOpen={isNestedModalOpen}
+        onClose={() => {
+          setIsNestedModalOpen(false);
+        }}
+        title="Nested modal"
+        footer={
+          <button
+            className="ui-button ui-button--primary"
+            type="button"
+            onClick={() => {
+              setIsNestedModalOpen(false);
+            }}
+          >
+            Done
+          </button>
+        }
+      >
+        <p>
+          The nested dialog stays above its parent and returns focus to its
+          trigger when closed.
         </p>
       </Modal>
     </section>

@@ -1,7 +1,6 @@
+import { Modal, TagInput } from '@monorepo/components';
 import type { ReactNode, SyntheticEvent } from 'react';
 import { useState } from 'react';
-import { Modal } from './Modal.tsx';
-import { TagInput } from './TagInput.tsx';
 
 interface IProfileFormState {
   bio: string;

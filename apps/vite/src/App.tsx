@@ -1,6 +1,12 @@
 import { getHello } from '@monorepo/api-client';
-import { ProfileForm, Showcase } from '@monorepo/components';
+import { Showcase } from '@monorepo/components';
+import {
+  applyTokenGroups,
+  createTokenGroups,
+  THEMES,
+} from '@monorepo/design-tokens';
 import { useEffect, useState } from 'react';
+import { ProfileForm } from './examples/ProfileForm.tsx';
 
 interface IHelloLoading {
   status: 'loading';
@@ -19,9 +25,12 @@ interface IHelloError {
 type IHelloState = IHelloLoading | IHelloSuccess | IHelloError;
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? '';
+const isThemeName = (value: string): value is keyof typeof THEMES =>
+  value in THEMES;
 
 function App() {
   const [hello, setHello] = useState<IHelloState>({ status: 'loading' });
+  const [theme, setTheme] = useState<keyof typeof THEMES>('default');
 
   useEffect(() => {
     const controller = new AbortController();
@@ -43,32 +52,48 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    applyTokenGroups(
+      createTokenGroups(THEMES[theme]),
+      document.documentElement.style,
+    );
+  }, [theme]);
+
   return (
     <div className="ui-app-shell">
       <div className="ui-hello-card">
         <p className="mb-6 flex justify-center">
-          <span
-            data-testid="framework-badge"
-            className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-1 text-sm font-semibold uppercase tracking-widest text-white"
-          >
+          <span data-testid="framework-badge" className="ui-hello-badge">
             Vite
           </span>
         </p>
         {hello.status === 'loading' && (
-          <output className="block text-2xl text-center text-gray-500">
-            Loading…
-          </output>
+          <output className="ui-hello-loading">Loading…</output>
         )}
         {hello.status === 'success' && (
-          <h1 className="text-5xl md:text-6xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 drop-shadow-lg tracking-tight">
-            {hello.message}
-          </h1>
+          <h1 className="ui-hello-title">{hello.message}</h1>
         )}
         {hello.status === 'error' && (
-          <p className="text-2xl text-center text-red-600" role="alert">
+          <p className="ui-hello-error" role="alert">
             {hello.message}
           </p>
         )}
+      </div>
+      <div className="ui-theme-switcher">
+        <label htmlFor="design-system-theme">Design system</label>
+        <select
+          id="design-system-theme"
+          value={theme}
+          onChange={(event) => {
+            if (isThemeName(event.target.value)) {
+              setTheme(event.target.value);
+            }
+          }}
+        >
+          <option value="default">Default</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
       </div>
       <main className="ui-workspace-grid">
         <Showcase />

@@ -1,0 +1,34 @@
+:root {
+  --ds-color-canvas: #f8fafc;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-subtle: #f1f5f9;
+  --ds-color-text: #334155;
+  --ds-color-text-muted: #64748b;
+  --ds-color-border: #cbd5e1;
+  --ds-color-border-strong: #64748b;
+  --ds-color-primary: #1d4ed8;
+  --ds-color-primary-hover: #1e40af;
+  --ds-color-primary-subtle: #dbeafe;
+  --ds-color-danger: #b91c1c;
+  --ds-color-danger-subtle: #fee2e2;
+  --ds-color-success: #15803d;
+  --ds-color-info: #0f766e;
+  --ds-color-on-primary: #ffffff;
+  --ds-color-on-danger: #ffffff;
+  --ds-radius-sm: 0.5rem;
+  --ds-radius-md: 0.75rem;
+  --ds-radius-lg: 1rem;
+  --ds-radius-pill: 999px;
+  --ds-type-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --ds-type-body: 1rem;
+  --ds-type-small: 0.8125rem;
+  --ds-type-heading: 1.125rem;
+  --ds-shadow-sm: 0 1px 2px rgb(17 24 39 / 8%);
+  --ds-shadow-lg: 0 20px 50px rgb(17 24 39 / 20%);
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.5rem;
+  --ds-space-6: 2rem;
+}

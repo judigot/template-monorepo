@@ -18,6 +18,8 @@
   "dependencies": {
     "@monorepo/api-client": "workspace:*",
     "@monorepo/components": "workspace:*",
+    "@monorepo/design-system": "workspace:*",
+    "@monorepo/design-tokens": "workspace:*",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
