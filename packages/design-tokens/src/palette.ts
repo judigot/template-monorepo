@@ -120,3 +120,37 @@ export const THEMES = {
   },
   ...BRAND_PALETTES,
 } as const satisfies Record<string, IPalette>;
+
+export const THEME_STYLES = {
+  default: {
+    font: 'Inter, ui-sans-serif, system-ui, sans-serif',
+    density: '1',
+  },
+  light: { font: 'Inter, ui-sans-serif, system-ui, sans-serif', density: '1' },
+  dark: { font: 'Inter, ui-sans-serif, system-ui, sans-serif', density: '1' },
+  google: { font: 'Arial, Helvetica, sans-serif', density: '1' },
+  youtube: { font: 'Roboto, Arial, sans-serif', density: '0.95' },
+  wikipedia: { font: 'Georgia, serif', density: '1.05' },
+  netflix: { font: 'Helvetica Neue, Arial, sans-serif', density: '0.9' },
+  spotify: { font: 'Circular, Arial, sans-serif', density: '0.95' },
+  facebook: { font: 'Arial, sans-serif', density: '1' },
+  instagram: { font: 'system-ui, sans-serif', density: '1' },
+  x: { font: 'Arial, sans-serif', density: '0.95' },
+  reddit: { font: 'Verdana, sans-serif', density: '1' },
+  linkedin: { font: 'Arial, sans-serif', density: '1' },
+  amazon: { font: 'Arial, sans-serif', density: '0.95' },
+  microsoft: { font: 'Segoe UI, sans-serif', density: '1' },
+  github: {
+    font: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+    density: '1',
+  },
+  notion: { font: 'ui-sans-serif, system-ui, sans-serif', density: '1.05' },
+  chatgpt: {
+    font: 'Söhne, ui-sans-serif, system-ui, sans-serif',
+    density: '1',
+  },
+  adobe: { font: 'Adobe Clean, Arial, sans-serif', density: '0.95' },
+} as const satisfies Record<
+  keyof typeof THEMES,
+  { font: string; density: string }
+>;

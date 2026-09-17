@@ -152,7 +152,7 @@
   background: var(--ds-color-surface);
   color: var(--ds-color-text);
   font: inherit;
-  min-height: 2.75rem;
+  min-height: calc(2.75rem * var(--ds-density, 1));
   padding: 0.625rem 0.75rem;
 }
 

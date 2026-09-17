@@ -3,6 +3,7 @@ import { Showcase } from '@monorepo/components';
 import {
   applyTokenGroups,
   createTokenGroups,
+  THEME_STYLES,
   THEMES,
 } from '@monorepo/design-tokens';
 import { useEffect, useState } from 'react';
@@ -56,6 +57,14 @@ function App() {
     applyTokenGroups(
       createTokenGroups(THEMES[theme]),
       document.documentElement.style,
+    );
+    document.documentElement.style.setProperty(
+      '--ds-type-sans',
+      THEME_STYLES[theme].font,
+    );
+    document.documentElement.style.setProperty(
+      '--ds-density',
+      THEME_STYLES[theme].density,
     );
   }, [theme]);
 

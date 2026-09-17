@@ -2,7 +2,7 @@ import type { IPalette } from './palette.ts';
 import { PALETTE } from './palette.ts';
 
 export type { IPalette } from './palette.ts';
-export { LIGHT_PALETTE, PALETTE, THEMES } from './palette.ts';
+export { LIGHT_PALETTE, PALETTE, THEME_STYLES, THEMES } from './palette.ts';
 
 export interface ITokenGroup {
   cssPrefix: string;
