@@ -78,6 +78,27 @@ describe('TagInput suggestions', () => {
     expect(onChange).toHaveBeenCalledWith(['Ada']);
   });
 
+  it('selects every tag with Ctrl+A and anchors the border on the last tag', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    fireEvent.keyDown(screen.getByRole('combobox'), {
+      key: 'a',
+      ctrlKey: true,
+    });
+    expect(screen.getByText('Ada').closest('.ui-tag')?.className).toContain(
+      'is-bulk-selected',
+    );
+    expect(screen.getByText('Grace').closest('.ui-tag')?.className).toContain(
+      'is-selected',
+    );
+  });
+
   it('closes suggestions when focus leaves the input', async () => {
     render(
       <TagInput

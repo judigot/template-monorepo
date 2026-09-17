@@ -23,6 +23,7 @@ export function TagInput({
   const [placement, setPlacement] = useState<'below' | 'above'>('below');
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [selectedTagIndex, setSelectedTagIndex] = useState<number | null>(null);
+  const [areTagsSelected, setAreTagsSelected] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement | null>(null);
   const availableSuggestions = useMemo(() => {
     const query = value.trim().toLowerCase();
@@ -52,9 +53,21 @@ export function TagInput({
     onChange([...tags, normalized]);
     setValue('');
     setSelectedTagIndex(null);
+    setAreTagsSelected(false);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.key.toLowerCase() === 'a' &&
+      value.length === 0 &&
+      tags.length > 0
+    ) {
+      event.preventDefault();
+      setAreTagsSelected(true);
+      setSelectedTagIndex(tags.length - 1);
+      return;
+    }
     if (availableSuggestions.length > 0 && event.key === 'ArrowDown') {
       event.preventDefault();
       setIsFocused(true);
@@ -97,6 +110,7 @@ export function TagInput({
       }
       const nextTags = tags.filter((_, index) => index !== selectedTagIndex);
       onChange(nextTags);
+      setAreTagsSelected(false);
       setSelectedTagIndex(
         nextTags.length === 0
           ? null
@@ -111,6 +125,7 @@ export function TagInput({
     setValue(event.target.value);
     setActiveSuggestion(-1);
     setSelectedTagIndex(null);
+    setAreTagsSelected(false);
   };
 
   return (
@@ -122,7 +137,7 @@ export function TagInput({
         {tags.map((tag, index) => (
           <span
             aria-selected={index === selectedTagIndex}
-            className={`ui-tag${index === selectedTagIndex ? ' is-selected' : ''}`}
+            className={`ui-tag${areTagsSelected ? ' is-bulk-selected' : ''}${index === selectedTagIndex ? ' is-selected' : ''}`}
             key={tag}
           >
             {tag}

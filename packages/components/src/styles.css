@@ -491,6 +491,10 @@
   border-color: var(--ds-color-primary);
   color: var(--ds-color-option-selected-text);
 }
+.ui-tag.is-bulk-selected {
+  background: var(--ds-color-option-selected);
+  color: var(--ds-color-option-selected-text);
+}
 .ui-tag button {
   background: transparent;
   border: 0;
