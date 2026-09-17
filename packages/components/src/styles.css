@@ -485,6 +485,10 @@
   gap: var(--ds-space-1);
   padding: 0.25rem 0.5rem 0.25rem 0.625rem;
 }
+.ui-tag.is-selected {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 1px;
+}
 .ui-tag button {
   background: transparent;
   border: 0;

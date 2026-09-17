@@ -1,57 +1,47 @@
-import { describe, expect, it, mock } from 'bun:test';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'bun:test';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { TagInput } from '../src/TagInput.tsx';
 
-describe('TagInput suggestions', () => {
-  it('selects the active suggestion with arrows and Enter', async () => {
-    const onChange = mock(() => undefined);
+describe('TagInput', () => {
+  it('selects then removes tags with consecutive Backspace presses', () => {
+    const onChange = vi.fn();
     render(
       <TagInput
-        id="tags"
-        label="Tags"
+        id="recipients"
+        label="Recipients"
         onChange={onChange}
-        suggestions={['React', 'Relay']}
-        tags={[]}
+        tags={['Ada', 'Grace']}
       />,
     );
-    const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    await waitFor(() => {
-      expect(screen.getAllByRole('option')).toHaveLength(2);
-    });
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    await waitFor(() => {
-      expect(
-        screen
-          .getByRole('option', { name: 'React' })
-          .getAttribute('aria-selected'),
-      ).toBe('true');
-    });
+    const input = screen.getByRole('textbox');
+
+    fireEvent.keyDown(input, { key: 'Backspace' });
     expect(
       screen
-        .getByRole('option', { name: 'React' })
-        .getAttribute('aria-selected'),
+        .getByText('Grace')
+        .closest('.ui-tag')
+        ?.getAttribute('aria-selected'),
     ).toBe('true');
-    fireEvent.keyDown(input, { key: 'Enter' });
-    expect(onChange).toHaveBeenCalledWith(['React']);
+    expect(onChange).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(input, { key: 'Backspace' });
+    expect(onChange).toHaveBeenCalledWith(['Ada']);
   });
 
-  it('closes suggestions on Escape while retaining focus', async () => {
+  it('closes suggestions when focus leaves the input', () => {
     render(
       <TagInput
-        id="tags"
-        label="Tags"
-        onChange={() => undefined}
+        id="technologies"
+        label="Technologies"
+        onChange={vi.fn()}
         suggestions={['React']}
         tags={[]}
       />,
     );
-    const input = screen.getByRole('combobox');
+    const input = screen.getByRole('textbox');
     fireEvent.focus(input);
-    await waitFor(() => {
-      expect(screen.getByRole('option')).toBeDefined();
-    });
-    fireEvent.keyDown(input, { key: 'Escape' });
-    expect(screen.queryByRole('option')).toBeNull();
+    expect(screen.queryByRole('list')).not.toBeNull();
+    fireEvent.blur(input);
+    expect(screen.queryByRole('list')).toBeNull();
   });
 });
