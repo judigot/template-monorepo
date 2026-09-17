@@ -173,6 +173,8 @@ export function TagInput({
           onBlur={() => {
             setIsFocused(false);
             setIsSuggestionsOpen(false);
+            setSelectedTagIndex(null);
+            setAreTagsSelected(false);
           }}
           onChange={handleChange}
           onFocus={() => {

@@ -109,15 +109,25 @@ describe('TagInput suggestions', () => {
         label="Tags"
         onChange={() => undefined}
         suggestions={['React']}
-        tags={[]}
+        tags={['Ada', 'Grace']}
       />,
     );
     const input = screen.getByRole('combobox');
     fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: 'a', ctrlKey: true });
+    expect(screen.getByText('Ada').closest('.ui-tag')?.className).toContain(
+      'is-bulk-selected',
+    );
     await waitFor(() => {
       expect(screen.queryByRole('listbox')).not.toBeNull();
     });
     fireEvent.blur(input);
     expect(screen.queryByRole('listbox')).toBeNull();
+    expect(screen.getByText('Ada').closest('.ui-tag')?.className).not.toContain(
+      'is-bulk-selected',
+    );
+    expect(
+      screen.getByText('Grace').closest('.ui-tag')?.className,
+    ).not.toContain('is-selected');
   });
 });
