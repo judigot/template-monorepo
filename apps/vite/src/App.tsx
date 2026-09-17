@@ -111,8 +111,6 @@ function App() {
           }}
         >
           <option value="default">Default</option>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
           <optgroup label="Popular systems">
             <option value="google">Google</option>
             <option value="youtube">YouTube</option>

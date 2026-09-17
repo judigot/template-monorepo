@@ -55,6 +55,31 @@ describe('App', () => {
     expect(screen.getByTestId('framework-badge').textContent).toBe('Vite');
   });
 
+  it('keeps appearance modes separate from design system choices', () => {
+    globalThis.fetch = mock(
+      () => new Promise<Response>(() => undefined),
+    ) as unknown as typeof fetch;
+
+    render(<App />);
+    const designSystem = screen.getByLabelText('Design system');
+    const appearance = screen.getByLabelText('Appearance');
+    if (
+      !(designSystem instanceof HTMLSelectElement) ||
+      !(appearance instanceof HTMLSelectElement)
+    ) {
+      throw new Error('theme controls must be select elements');
+    }
+    expect(
+      Array.from(designSystem.options).map((option) => option.value),
+    ).not.toContain('light');
+    expect(
+      Array.from(designSystem.options).map((option) => option.value),
+    ).not.toContain('dark');
+    expect(
+      Array.from(appearance.options).map((option) => option.value),
+    ).toEqual(['system', 'light', 'dark']);
+  });
+
   it('renders the reusable profile form below the hello world message', () => {
     globalThis.fetch = mock(
       () => new Promise<Response>(() => undefined),
