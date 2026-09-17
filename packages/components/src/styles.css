@@ -247,7 +247,7 @@
 }
 
 .ui-button {
-  border: 1px solid transparent;
+  border: 1px solid var(--ds-color-border-strong);
   border-radius: var(--ds-radius-button);
   cursor: pointer;
   font: inherit;
@@ -488,7 +488,7 @@
 }
 .ui-tag.is-selected {
   background: var(--ds-color-option-selected);
-  border-color: var(--ds-color-primary);
+  border: 2px solid var(--ds-color-primary);
   color: var(--ds-color-option-selected-text);
 }
 .ui-tag.is-bulk-selected {

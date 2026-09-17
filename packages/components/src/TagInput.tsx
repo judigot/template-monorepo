@@ -104,6 +104,12 @@ export function TagInput({
     }
     if (event.key === 'Backspace' && value.length === 0 && tags.length > 0) {
       event.preventDefault();
+      if (areTagsSelected) {
+        onChange([]);
+        setAreTagsSelected(false);
+        setSelectedTagIndex(null);
+        return;
+      }
       if (selectedTagIndex === null) {
         setSelectedTagIndex(tags.length - 1);
         return;

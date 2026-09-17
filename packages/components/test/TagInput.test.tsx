@@ -79,11 +79,12 @@ describe('TagInput suggestions', () => {
   });
 
   it('selects every tag with Ctrl+A and anchors the border on the last tag', () => {
+    const onChange = mock(() => undefined);
     render(
       <TagInput
         id="tags"
         label="Tags"
-        onChange={() => undefined}
+        onChange={onChange}
         tags={['Ada', 'Grace']}
       />,
     );
@@ -97,6 +98,8 @@ describe('TagInput suggestions', () => {
     expect(screen.getByText('Grace').closest('.ui-tag')?.className).toContain(
       'is-selected',
     );
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Backspace' });
+    expect(onChange).toHaveBeenCalledWith([]);
   });
 
   it('closes suggestions when focus leaves the input', async () => {
