@@ -478,12 +478,18 @@
 .ui-tag {
   align-items: center;
   background: var(--ds-color-primary-subtle);
+  border: 1px solid transparent;
   border-radius: var(--ds-radius-tag);
   color: var(--ds-color-primary-subtle-text);
   display: inline-flex;
   font-size: var(--ds-type-small);
   gap: var(--ds-space-1);
   padding: 0.25rem 0.5rem 0.25rem 0.625rem;
+}
+.ui-tag.is-selected {
+  background: var(--ds-color-option-selected);
+  border-color: var(--ds-color-primary);
+  color: var(--ds-color-option-selected-text);
 }
 .ui-tag button {
   background: transparent;
