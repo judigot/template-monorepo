@@ -1,5 +1,13 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { FormField } from './FormField.tsx';
+import {
+  CheckboxGroup,
+  Combobox,
+  DatePicker,
+  PasswordInput,
+  RadioGroup,
+} from './FormPrimitives.tsx';
 import { Modal } from './Modal.tsx';
 import { TagInput } from './TagInput.tsx';
 
@@ -17,6 +25,8 @@ export function Showcase(): ReactNode {
   const [isToggled, setIsToggled] = useState(true);
   const [tags, setTags] = useState(['React', 'Design system']);
   const [notice, setNotice] = useState('');
+  const [role, setRole] = useState('');
+  const [updates, setUpdates] = useState<string[]>(['email']);
 
   return (
     <section className="ui-showcase" aria-labelledby="showcase-title">
@@ -123,6 +133,57 @@ export function Showcase(): ReactNode {
             suggestions={TAG_SUGGESTIONS}
             tags={tags}
           />
+        </article>
+        <article className="ui-showcase__panel ui-showcase__panel--wide">
+          <h3>Form primitives</h3>
+          <div className="ui-showcase__form-grid">
+            <FormField
+              description="Use a work email."
+              htmlFor="showcase-email"
+              label="Email"
+            >
+              <input
+                className="ui-form-control"
+                id="showcase-email"
+                type="email"
+              />
+            </FormField>
+            <Combobox
+              id="showcase-role"
+              label="Role"
+              onChange={setRole}
+              options={[
+                { label: 'Designer', value: 'designer' },
+                { label: 'Engineer', value: 'engineer' },
+              ]}
+              value={role}
+            />
+            <FormField htmlFor="showcase-password" label="Password">
+              <PasswordInput id="showcase-password" />
+            </FormField>
+            <FormField htmlFor="showcase-date" label="Start date">
+              <DatePicker id="showcase-date" />
+            </FormField>
+            <RadioGroup
+              legend="Delivery"
+              name="showcase-delivery"
+              onChange={() => undefined}
+              options={[
+                { label: 'Email', value: 'email' },
+                { label: 'SMS', value: 'sms' },
+              ]}
+              value="email"
+            />
+            <CheckboxGroup
+              legend="Updates"
+              onChange={setUpdates}
+              options={[
+                { label: 'Email', value: 'email' },
+                { label: 'SMS', value: 'sms' },
+              ]}
+              values={updates}
+            />
+          </div>
         </article>
       </div>
       <Modal
