@@ -16,15 +16,17 @@ describe('TagInput suggestions', () => {
     );
     const input = screen.getByRole('combobox');
     fireEvent.focus(input);
-    await waitFor(() => expect(screen.getAllByRole('option')).toHaveLength(2));
+    await waitFor(() => {
+      expect(screen.getAllByRole('option')).toHaveLength(2);
+    });
     fireEvent.keyDown(input, { key: 'ArrowDown' });
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen
           .getByRole('option', { name: 'React' })
           .getAttribute('aria-selected'),
-      ).toBe('true'),
-    );
+      ).toBe('true');
+    });
     expect(
       screen
         .getByRole('option', { name: 'React' })
@@ -46,7 +48,9 @@ describe('TagInput suggestions', () => {
     );
     const input = screen.getByRole('combobox');
     fireEvent.focus(input);
-    await waitFor(() => expect(screen.getByRole('option')).toBeDefined());
+    await waitFor(() => {
+      expect(screen.getByRole('option')).toBeDefined();
+    });
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(screen.queryByRole('option')).toBeNull();
   });

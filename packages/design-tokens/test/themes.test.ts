@@ -20,8 +20,9 @@ function rgb(color: string, canvas?: Rgb): Rgb {
     );
   const foregroundColor = glass?.[1];
   const percentage = glass?.[2];
-  if (!foregroundColor || !percentage || !canvas)
+  if (!foregroundColor || !percentage || !canvas) {
     throw new Error(`Unexpected test color ${color}`);
+  }
   const foreground = rgb(foregroundColor);
   const alpha = Number(percentage) / 100;
   return [
@@ -69,7 +70,9 @@ function expectContrast(
 
 function token(tokens: Record<string, string>, name: string): string {
   const value = tokens[name];
-  if (value === undefined) throw new Error(`Missing ${name} token`);
+  if (value === undefined) {
+    throw new Error(`Missing ${name} token`);
+  }
   return value;
 }
 
@@ -130,10 +133,12 @@ test('switching themes replaces every token, leaving no dark theme residue', () 
 });
 
 test('every named theme and mode meets the token contrast contract', () => {
-  for (const name of Object.keys(THEMES) as Array<keyof typeof THEMES>) {
+  for (const name of Object.keys(THEMES) as (keyof typeof THEMES)[]) {
     for (const mode of ['light', 'dark'] as const) {
       const tokens = createThemeTokenGroups(name, mode)[0]?.tokens;
-      if (!tokens) throw new Error(`${name}/${mode} requires color tokens`);
+      if (!tokens) {
+        throw new Error(`${name}/${mode} requires color tokens`);
+      }
       const canvas = rgb(token(tokens, 'canvas'));
       const readingSurfaces = [
         'canvas',

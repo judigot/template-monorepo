@@ -53,7 +53,9 @@ function composite(foreground: Rgb, alpha: number, background: Rgb): Rgb {
 
 /** Resolves the only translucent surface syntax emitted by the palette. */
 function resolveSurface(color: string, canvas: Rgb): Rgb {
-  if (color.startsWith('#')) return parseHex(color);
+  if (color.startsWith('#')) {
+    return parseHex(color);
+  }
   const match =
     /^color-mix\(in srgb, (#[\da-f]{6}) (\d{1,3})%, transparent\)$/i.exec(
       color,
@@ -65,11 +67,13 @@ function resolveSurface(color: string, canvas: Rgb): Rgb {
   }
   const foreground = match[1];
   const percentage = match[2];
-  if (!foreground || !percentage)
+  if (!foreground || !percentage) {
     throw new Error(`Invalid glass surface ${color}`);
+  }
   const alpha = Number(percentage) / 100;
-  if (alpha < 0 || alpha > 1)
+  if (alpha < 0 || alpha > 1) {
     throw new Error(`Invalid glass opacity in ${color}`);
+  }
   return composite(parseHex(foreground), alpha, canvas);
 }
 
@@ -108,9 +112,13 @@ function safest(
   // Keep the palette's intended hue when it is already accessible.  The most
   // contrasting fallback is only for colors that cannot clear the requirement.
   const passing = scored.find((candidate) => candidate.score >= minimum);
-  if (passing) return passing.color;
+  if (passing) {
+    return passing.color;
+  }
   const best = scored[0];
-  if (!best) throw new Error(`No color candidates were supplied for ${role}`);
+  if (!best) {
+    throw new Error(`No color candidates were supplied for ${role}`);
+  }
   const mostContrasting = scored
     .slice(1)
     .reduce(

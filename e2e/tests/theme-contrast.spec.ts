@@ -35,13 +35,15 @@ async function contrast(
         value: string,
       ): [number, number, number, number] | null => {
         const m =
-          value.match(
-            /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?\s*\)/i,
+          /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?\s*\)/i.exec(
+            value,
           ) ??
-          value.match(
-            /color\(\s*srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+%?))?\s*\)/i,
+          /color\(\s*srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+%?))?\s*\)/i.exec(
+            value,
           );
-        if (!m) return null;
+        if (!m) {
+          return null;
+        }
         const alpha = m[4]
           ? m[4].endsWith('%')
             ? Number(m[4].slice(0, -1)) / 100
@@ -74,15 +76,17 @@ async function contrast(
           : [1, 1, 1, 1];
         const raw = getComputedStyle(node).backgroundColor;
         const color = parse(raw);
-        if (!color && raw !== 'transparent')
+        if (!color && raw !== 'transparent') {
           throw new Error(`Cannot parse background color: ${raw}`);
+        }
         return color ? blend(color, underneath) : underneath;
       };
       const fg = parse(getComputedStyle(element).color);
-      if (!fg)
+      if (!fg) {
         throw new Error(
           `Cannot parse foreground color: ${getComputedStyle(element).color}`,
         );
+      }
       const b = bg(element);
       const lum = (c: [number, number, number, number]): number => {
         const linear = (v: number): number =>
@@ -100,7 +104,7 @@ async function contrast(
 }
 
 test.describe('theme contrast regressions', () => {
-  for (const theme of themes)
+  for (const theme of themes) {
     test(`theme ${theme}`, async ({ page }) => {
       await page.goto('http://127.0.0.1:3001/');
       await page.selectOption('#design-system-theme', theme);
@@ -140,6 +144,7 @@ test.describe('theme contrast regressions', () => {
         ).toBeGreaterThanOrEqual(7);
       }
     });
+  }
 
   test('system appearance responds to media changes', async ({ page }) => {
     await page.goto('http://127.0.0.1:3001/');
