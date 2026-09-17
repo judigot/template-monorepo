@@ -1,0 +1,39 @@
+name: API Hello Preview
+
+on:
+  pull_request:
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: read
+  statuses: read
+
+jobs:
+  preview-api-smoke-test:
+    name: Smoke-test the Vercel API preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for Vercel preview
+        id: deployment
+        uses: vercel/wait-for-deployment-action@0e2b0c5c5cce31f1648108aeec56467187aca037
+        with:
+          environment: preview
+
+      - name: Test /api/hello
+        env:
+          PREVIEW_URL: ${{ steps.deployment.outputs.deployment-url }}
+        run: |
+          curl --fail-with-body --retry 5 --retry-delay 2 "$PREVIEW_URL/api/hello" \
+            | tee /tmp/hello.json
+          python3 -c "import json; body=json.load(open('/tmp/hello.json')); assert body.get('message') == 'Hello, world!', body"
+
+      - name: Test /api/health
+        env:
+          PREVIEW_URL: ${{ steps.deployment.outputs.deployment-url }}
+        run: curl --fail-with-body --retry 5 --retry-delay 2 "$PREVIEW_URL/api/health"
