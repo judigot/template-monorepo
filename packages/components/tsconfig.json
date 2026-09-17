@@ -1,0 +1,7 @@
+{
+  "extends": "@monorepo/typescript-config/vite.json",
+  "compilerOptions": {
+    "types": ["bun"]
+  },
+  "include": ["src"]
+}
