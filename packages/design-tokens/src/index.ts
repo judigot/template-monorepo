@@ -6,6 +6,34 @@ import {
 import type { IPalette } from './palette.ts';
 import { PALETTE, THEMES } from './palette.ts';
 
+export type ThemeMode = 'system' | 'light' | 'dark';
+
+/** Public product surfaces used for the showcase's light/dark canvas treatment. */
+export const THEME_SURFACES: Record<
+  keyof typeof THEMES,
+  { light: string; dark: string }
+> = {
+  default: { light: '#f8fafc', dark: '#0f172a' },
+  light: { light: '#ffffff', dark: '#0f172a' },
+  dark: { light: '#ffffff', dark: '#0f172a' },
+  google: { light: '#ffffff', dark: '#202124' },
+  youtube: { light: '#ffffff', dark: '#0f0f0f' },
+  wikipedia: { light: '#ffffff', dark: '#101418' },
+  netflix: { light: '#ffffff', dark: '#141414' },
+  spotify: { light: '#121212', dark: '#000000' },
+  facebook: { light: '#f0f2f5', dark: '#18191a' },
+  instagram: { light: '#ffffff', dark: '#000000' },
+  x: { light: '#ffffff', dark: '#000000' },
+  reddit: { light: '#ffffff', dark: '#0b1416' },
+  linkedin: { light: '#f3f2ef', dark: '#1d2226' },
+  amazon: { light: '#ffffff', dark: '#131921' },
+  microsoft: { light: '#ffffff', dark: '#1f1f1f' },
+  github: { light: '#ffffff', dark: '#0d1117' },
+  notion: { light: '#ffffff', dark: '#191919' },
+  chatgpt: { light: '#ffffff', dark: '#212121' },
+  adobe: { light: '#ffffff', dark: '#1d1d1d' },
+};
+
 export { THEME_APPEARANCES } from './appearance.ts';
 export type { IPalette } from './palette.ts';
 export { LIGHT_PALETTE, PALETTE, THEMES } from './palette.ts';
@@ -65,8 +93,28 @@ export function createTokenGroups(
 
 export function createThemeTokenGroups(
   name: keyof typeof THEMES,
+  mode: Exclude<ThemeMode, 'system'> = 'light',
 ): ITokenGroup[] {
-  return createTokenGroups(THEMES[name], THEME_APPEARANCES[name]);
+  const surfaces = THEME_SURFACES[name];
+  const basePalette: IPalette = THEMES[name];
+  const palette: IPalette = {
+    ...basePalette,
+    roles: {
+      ...basePalette.roles,
+      canvas: surfaces[mode],
+      'surface-subtle': mode === 'dark' ? surfaces.dark : surfaces.light,
+      surface: mode === 'dark' ? surfaces.dark : surfaces.light,
+      dialog: mode === 'dark' ? surfaces.dark : surfaces.light,
+      input: mode === 'dark' ? surfaces.dark : surfaces.light,
+      ...(mode === 'dark'
+        ? { text: '#f1f5f9', 'text-muted': '#a1a1aa', border: '#2b2e31' }
+        : {}),
+    },
+  };
+  return createTokenGroups(palette, {
+    ...THEME_APPEARANCES[name],
+    scheme: { mode },
+  });
 }
 
 export function renderTokensCss(

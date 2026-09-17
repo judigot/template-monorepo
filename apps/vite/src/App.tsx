@@ -4,6 +4,7 @@ import {
   applyTokenGroups,
   createThemeTokenGroups,
   THEMES,
+  type ThemeMode,
 } from '@monorepo/design-tokens';
 import { useEffect, useState } from 'react';
 import { ProfileForm } from './examples/ProfileForm.tsx';
@@ -27,11 +28,14 @@ type IHelloState = IHelloLoading | IHelloSuccess | IHelloError;
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? '';
 const isThemeName = (value: string): value is keyof typeof THEMES =>
   value in THEMES;
-type ThemeSelection = keyof typeof THEMES | 'system';
+type ThemeSelection = keyof typeof THEMES;
+const isThemeMode = (value: string): value is ThemeMode =>
+  value === 'system' || value === 'light' || value === 'dark';
 
 function App() {
   const [hello, setHello] = useState<IHelloState>({ status: 'loading' });
   const [theme, setTheme] = useState<ThemeSelection>('default');
+  const [mode, setMode] = useState<ThemeMode>('system');
 
   useEffect(() => {
     const controller = new AbortController();
@@ -56,24 +60,24 @@ function App() {
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const applyTheme = () => {
-      const resolved =
-        theme === 'system' ? (media.matches ? 'dark' : 'light') : theme;
+      const resolvedMode =
+        mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;
       applyTokenGroups(
-        createThemeTokenGroups(resolved),
+        createThemeTokenGroups(theme, resolvedMode),
         document.documentElement.style,
       );
-      document.documentElement.dataset.designSystem = resolved;
-      document.documentElement.dataset.themePreference = theme;
+      document.documentElement.dataset.designSystem = theme;
+      document.documentElement.dataset.themePreference = resolvedMode;
     };
     applyTheme();
-    if (theme !== 'system') {
+    if (mode !== 'system') {
       return;
     }
     media.addEventListener('change', applyTheme);
     return () => {
       media.removeEventListener('change', applyTheme);
     };
-  }, [theme]);
+  }, [theme, mode]);
 
   return (
     <div className="ui-app-shell">
@@ -101,9 +105,7 @@ function App() {
           id="design-system-theme"
           value={theme}
           onChange={(event) => {
-            if (event.target.value === 'system') {
-              setTheme('system');
-            } else if (isThemeName(event.target.value)) {
+            if (isThemeName(event.target.value)) {
               setTheme(event.target.value);
             }
           }}
@@ -111,7 +113,6 @@ function App() {
           <option value="default">Default</option>
           <option value="light">Light</option>
           <option value="dark">Dark</option>
-          <option value="system">System default</option>
           <optgroup label="Popular systems">
             <option value="google">Google</option>
             <option value="youtube">YouTube</option>
@@ -130,6 +131,20 @@ function App() {
             <option value="chatgpt">ChatGPT</option>
             <option value="adobe">Adobe</option>
           </optgroup>
+        </select>
+        <label htmlFor="appearance-mode">Appearance</label>
+        <select
+          id="appearance-mode"
+          value={mode}
+          onChange={(event) => {
+            if (isThemeMode(event.target.value)) {
+              setMode(event.target.value);
+            }
+          }}
+        >
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
         </select>
       </div>
       <main className="ui-workspace-grid">

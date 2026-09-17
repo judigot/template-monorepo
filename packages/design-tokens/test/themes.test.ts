@@ -15,7 +15,7 @@ test('named systems provide distinct background tokens', () => {
 
 test('X applies its dark canvas and independent button, panel, and dialog shapes', () => {
   const values = new Map<string, string>();
-  applyTokenGroups(createThemeTokenGroups('x'), {
+  applyTokenGroups(createThemeTokenGroups('x', 'dark'), {
     setProperty: (key, value) => {
       values.set(key, value);
     },
@@ -37,10 +37,10 @@ test('switching themes replaces every token, leaving no dark theme residue', () 
       values.set(key, value);
     },
   };
-  applyTokenGroups(createThemeTokenGroups('x'), target);
-  applyTokenGroups(createThemeTokenGroups('default'), target);
+  applyTokenGroups(createThemeTokenGroups('x', 'dark'), target);
+  applyTokenGroups(createThemeTokenGroups('default', 'light'), target);
   const defaults = new Map<string, string>();
-  applyTokenGroups(createThemeTokenGroups('default'), {
+  applyTokenGroups(createThemeTokenGroups('default', 'light'), {
     setProperty: (key, value) => {
       defaults.set(key, value);
     },
