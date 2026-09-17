@@ -28,17 +28,17 @@ export function Showcase(): ReactNode {
           style-guide pages.
         </p>
       </header>
+      <button
+        className="ui-button ui-button--info ui-showcase__open-modal"
+        type="button"
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      >
+        Open modal
+      </button>
       <div className="ui-showcase__grid">
         <article className="ui-showcase__panel ui-showcase__panel--wide">
-          <button
-            className="ui-button ui-button--info ui-showcase__open-modal"
-            type="button"
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-          >
-            Open modal
-          </button>
           <h3>Buttons</h3>
           <div className="ui-showcase__row">
             <button

@@ -309,7 +309,8 @@
   gap: var(--ds-space-2);
 }
 .ui-showcase__open-modal {
-  margin-bottom: var(--ds-space-3);
+  display: block;
+  margin-top: var(--ds-space-4);
 }
 .ui-showcase__notice {
   color: var(--ds-color-success);
