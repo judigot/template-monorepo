@@ -1,6 +1,7 @@
 {
-  "extends": "@monorepo/typescript-config/api.json",
+  "extends": "../packages/typescript-config/api.json",
   "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": ["node"]
   },
   "include": ["playwright.config.ts", "tests"]

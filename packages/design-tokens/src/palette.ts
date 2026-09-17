@@ -1,23 +1,6 @@
 export interface IPalette {
-  roles?: Partial<
-    Record<
-      | 'canvas'
-      | 'surface'
-      | 'surface-subtle'
-      | 'text'
-      | 'text-muted'
-      | 'border'
-      | 'dialog'
-      | 'input'
-      | 'on-primary'
-      | 'on-danger'
-      | 'on-success'
-      | 'on-info'
-      | 'focus'
-      | 'overlay',
-      string
-    >
-  >;
+  /** Named role overrides, including application-specific roles. */
+  roles?: Record<string, string>;
   black: string;
   blue: Record<string, string>;
   green: Record<string, string>;
@@ -26,6 +9,61 @@ export interface IPalette {
   teal: Record<string, string>;
   white: string;
 }
+
+export interface IThemeSurfaces {
+  light: string;
+  dark: string;
+  panelLight: string;
+  panelDark: string;
+  dialogLight: string;
+  dialogDark: string;
+}
+
+const surfaces = (
+  light: string,
+  dark: string,
+  panelLight = light,
+  panelDark = dark,
+  dialogLight = panelLight,
+  dialogDark = panelDark,
+): IThemeSurfaces => ({
+  light,
+  dark,
+  panelLight,
+  panelDark,
+  dialogLight,
+  dialogDark,
+});
+
+export const THEME_SURFACES = {
+  default: surfaces('#f8fafc', '#0f172a', '#ffffff', '#1e293b'),
+  glass: surfaces(
+    '#e8eef7',
+    '#111827',
+    'color-mix(in srgb, #ffffff 72%, transparent)',
+    'color-mix(in srgb, #1f2937 76%, transparent)',
+    'color-mix(in srgb, #ffffff 82%, transparent)',
+    'color-mix(in srgb, #1f2937 88%, transparent)',
+  ),
+  light: surfaces('#ffffff', '#0f172a', '#ffffff', '#1e293b'),
+  dark: surfaces('#ffffff', '#0f172a', '#ffffff', '#1e293b'),
+  google: surfaces('#ffffff', '#202124', '#f8fafd', '#303134'),
+  youtube: surfaces('#ffffff', '#0f0f0f', '#f9f9f9', '#272727'),
+  wikipedia: surfaces('#ffffff', '#101418', '#f8f9fa', '#202122'),
+  netflix: surfaces('#ffffff', '#141414', '#f5f5f5', '#181818'),
+  spotify: surfaces('#121212', '#000000', '#181818', '#121212'),
+  facebook: surfaces('#f0f2f5', '#18191a', '#ffffff', '#242526'),
+  instagram: surfaces('#ffffff', '#000000', '#fafafa', '#121212'),
+  x: surfaces('#ffffff', '#000000', '#ffffff', '#16181c'),
+  reddit: surfaces('#ffffff', '#0b1416', '#f6f7f8', '#1a282d'),
+  linkedin: surfaces('#f3f2ef', '#1d2226', '#ffffff', '#38434f'),
+  amazon: surfaces('#ffffff', '#131921', '#f3f3f3', '#232f3e'),
+  microsoft: surfaces('#ffffff', '#1f1f1f', '#f5f5f5', '#2b2b2b'),
+  github: surfaces('#ffffff', '#0d1117', '#f6f8fa', '#161b22'),
+  notion: surfaces('#ffffff', '#191919', '#fbfbfa', '#252525'),
+  chatgpt: surfaces('#ffffff', '#212121', '#f7f7f8', '#2f2f2f'),
+  adobe: surfaces('#ffffff', '#1d1d1d', '#f8f8f8', '#2c2c2c'),
+} as const;
 
 export const PALETTE: IPalette = {
   black: '#111827',

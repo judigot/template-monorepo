@@ -4,69 +4,14 @@ import {
   THEME_APPEARANCES,
 } from './appearance.ts';
 import type { IPalette } from './palette.ts';
-import { PALETTE, THEMES } from './palette.ts';
+import { PALETTE, THEME_SURFACES, THEMES } from './palette.ts';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
 /** Public product surfaces used for site-specific canvas and container treatment. */
-interface IThemeSurfaces {
-  light: string;
-  dark: string;
-  panelLight: string;
-  panelDark: string;
-  dialogLight: string;
-  dialogDark: string;
-}
-
-const surfaces = (
-  light: string,
-  dark: string,
-  panelLight = light,
-  panelDark = dark,
-  dialogLight = panelLight,
-  dialogDark = panelDark,
-): IThemeSurfaces => ({
-  light,
-  dark,
-  panelLight,
-  panelDark,
-  dialogLight,
-  dialogDark,
-});
-
-export const THEME_SURFACES: Record<keyof typeof THEMES, IThemeSurfaces> = {
-  default: surfaces('#f8fafc', '#0f172a', '#ffffff', '#1e293b'),
-  glass: surfaces(
-    '#e8eef7',
-    '#111827',
-    'color-mix(in srgb, #ffffff 72%, transparent)',
-    'color-mix(in srgb, #1f2937 76%, transparent)',
-    'color-mix(in srgb, #ffffff 82%, transparent)',
-    'color-mix(in srgb, #1f2937 88%, transparent)',
-  ),
-  light: surfaces('#ffffff', '#0f172a', '#ffffff', '#1e293b'),
-  dark: surfaces('#ffffff', '#0f172a', '#ffffff', '#1e293b'),
-  google: surfaces('#ffffff', '#202124', '#f8fafd', '#303134'),
-  youtube: surfaces('#ffffff', '#0f0f0f', '#f9f9f9', '#272727'),
-  wikipedia: surfaces('#ffffff', '#101418', '#f8f9fa', '#202122'),
-  netflix: surfaces('#ffffff', '#141414', '#f5f5f5', '#181818'),
-  spotify: surfaces('#121212', '#000000', '#181818', '#121212'),
-  facebook: surfaces('#f0f2f5', '#18191a', '#ffffff', '#242526'),
-  instagram: surfaces('#ffffff', '#000000', '#fafafa', '#121212'),
-  x: surfaces('#ffffff', '#000000', '#ffffff', '#16181c'),
-  reddit: surfaces('#ffffff', '#0b1416', '#f6f7f8', '#1a282d'),
-  linkedin: surfaces('#f3f2ef', '#1d2226', '#ffffff', '#38434f'),
-  amazon: surfaces('#ffffff', '#131921', '#f3f3f3', '#232f3e'),
-  microsoft: surfaces('#ffffff', '#1f1f1f', '#f5f5f5', '#2b2b2b'),
-  github: surfaces('#ffffff', '#0d1117', '#f6f8fa', '#161b22'),
-  notion: surfaces('#ffffff', '#191919', '#fbfbfa', '#252525'),
-  chatgpt: surfaces('#ffffff', '#212121', '#f7f7f8', '#2f2f2f'),
-  adobe: surfaces('#ffffff', '#1d1d1d', '#f8f8f8', '#2c2c2c'),
-};
-
 export { THEME_APPEARANCES } from './appearance.ts';
 export type { IPalette } from './palette.ts';
-export { LIGHT_PALETTE, PALETTE, THEMES } from './palette.ts';
+export { LIGHT_PALETTE, PALETTE, THEME_SURFACES, THEMES } from './palette.ts';
 
 export interface ITokenGroup {
   cssPrefix: string;
@@ -81,29 +26,287 @@ function pick(ramp: Record<string, string>, shade: string): string {
   return value;
 }
 
+type Rgb = readonly [number, number, number];
+
+function parseHex(color: string): Rgb {
+  const match = /^#([\da-f]{6})$/i.exec(color);
+  const hex = match?.[1];
+  if (!hex) {
+    throw new Error(
+      `Expected an opaque six-digit hex color, received ${color}`,
+    );
+  }
+  return [
+    Number.parseInt(hex.slice(0, 2), 16),
+    Number.parseInt(hex.slice(2, 4), 16),
+    Number.parseInt(hex.slice(4, 6), 16),
+  ];
+}
+
+function composite(foreground: Rgb, alpha: number, background: Rgb): Rgb {
+  return [
+    Math.round(foreground[0] * alpha + background[0] * (1 - alpha)),
+    Math.round(foreground[1] * alpha + background[1] * (1 - alpha)),
+    Math.round(foreground[2] * alpha + background[2] * (1 - alpha)),
+  ];
+}
+
+/** Resolves the only translucent surface syntax emitted by the palette. */
+function resolveSurface(color: string, canvas: Rgb): Rgb {
+  if (color.startsWith('#')) return parseHex(color);
+  const match =
+    /^color-mix\(in srgb, (#[\da-f]{6}) (\d{1,3})%, transparent\)$/i.exec(
+      color,
+    );
+  if (!match) {
+    throw new Error(
+      `Unsupported surface color ${color}; use #rrggbb or the supported glass color-mix`,
+    );
+  }
+  const foreground = match[1];
+  const percentage = match[2];
+  if (!foreground || !percentage)
+    throw new Error(`Invalid glass surface ${color}`);
+  const alpha = Number(percentage) / 100;
+  if (alpha < 0 || alpha > 1)
+    throw new Error(`Invalid glass opacity in ${color}`);
+  return composite(parseHex(foreground), alpha, canvas);
+}
+
+function luminance(color: Rgb): number {
+  const linear = (channel: number) => {
+    const normalized = channel / 255;
+    return normalized <= 0.03928
+      ? normalized / 12.92
+      : ((normalized + 0.055) / 1.055) ** 2.4;
+  };
+  return (
+    linear(color[0]) * 0.2126 +
+    linear(color[1]) * 0.7152 +
+    linear(color[2]) * 0.0722
+  );
+}
+
+function contrast(foreground: Rgb, background: Rgb): number {
+  const light = Math.max(luminance(foreground), luminance(background));
+  const dark = Math.min(luminance(foreground), luminance(background));
+  return (light + 0.05) / (dark + 0.05);
+}
+
+function safest(
+  candidates: string[],
+  backgrounds: Rgb[],
+  minimum: number,
+  role: string,
+): string {
+  const scored = candidates.map((color) => ({
+    color,
+    score: Math.min(
+      ...backgrounds.map((background) => contrast(parseHex(color), background)),
+    ),
+  }));
+  // Keep the palette's intended hue when it is already accessible.  The most
+  // contrasting fallback is only for colors that cannot clear the requirement.
+  const passing = scored.find((candidate) => candidate.score >= minimum);
+  if (passing) return passing.color;
+  const best = scored[0];
+  if (!best) throw new Error(`No color candidates were supplied for ${role}`);
+  const mostContrasting = scored
+    .slice(1)
+    .reduce(
+      (winner, candidate) =>
+        candidate.score > winner.score ? candidate : winner,
+      best,
+    );
+  if (mostContrasting.score < minimum) {
+    throw new Error(
+      `${role} cannot meet ${minimum}:1 contrast (best is ${mostContrasting.score.toFixed(2)}:1)`,
+    );
+  }
+  return mostContrasting.color;
+}
+
 export function createColorTokens(palette: IPalette): Record<string, string> {
+  const canvas = palette.roles?.canvas ?? pick(palette.neutral, '50');
+  const surface = palette.roles?.surface ?? palette.white;
+  const primary = pick(palette.blue, '600');
+  const danger = pick(palette.red, '700');
+  const success = pick(palette.green, '700');
+  const info = pick(palette.teal, '600');
+  const primarySubtle = pick(palette.blue, '100');
+  const dangerSubtle = pick(palette.red, '100');
+  const optionHover =
+    palette.roles?.['option-hover'] ?? pick(palette.neutral, '100');
+  const optionSelected = palette.roles?.['option-selected'] ?? primarySubtle;
+  const canvasRgb = parseHex(canvas);
+  const surfaceRgb = resolveSurface(surface, canvasRgb);
+  const dialog = palette.roles?.dialog ?? surface;
+  const input = palette.roles?.input ?? surface;
+  const panel =
+    palette.roles?.['surface-subtle'] ?? pick(palette.neutral, '100');
+  const dialogRgb = resolveSurface(dialog, canvasRgb);
+  const inputRgb = resolveSurface(input, canvasRgb);
+  const panelRgb = resolveSurface(panel, canvasRgb);
+  // Menus must remain opaque: glass containers may be translucent, but their popover is not.
+  const popover = palette.roles?.popover ?? palette.white;
+  const popoverRgb = parseHex(popover);
+  const readingSurfaces = [
+    canvasRgb,
+    surfaceRgb,
+    panelRgb,
+    dialogRgb,
+    inputRgb,
+  ];
+  const neutral700 = pick(palette.neutral, '700');
+  const neutral500 = pick(palette.neutral, '500');
+  const text = safest(
+    [neutral700, palette.black, palette.white],
+    readingSurfaces,
+    7,
+    'text',
+  );
+  const mutedText = safest(
+    [neutral500, neutral700, palette.black, palette.white],
+    readingSurfaces,
+    7,
+    'text-muted',
+  );
+  const strongBorder = safest(
+    [neutral500, neutral700, palette.black, palette.white],
+    readingSurfaces,
+    3,
+    'border-strong',
+  );
+  const focus = safest(
+    [
+      pick(palette.blue, '500'),
+      primary,
+      pick(palette.blue, '700'),
+      palette.black,
+      palette.white,
+    ],
+    readingSurfaces,
+    3,
+    'focus',
+  );
+  const inlineCandidates = [
+    pick(palette.blue, '700'),
+    danger,
+    success,
+    info,
+    neutral700,
+    palette.black,
+    palette.white,
+  ];
   return {
-    canvas: pick(palette.neutral, '50'),
-    surface: palette.white,
-    dialog: palette.white,
-    input: palette.white,
-    'surface-subtle': pick(palette.neutral, '100'),
-    text: pick(palette.neutral, '700'),
-    'text-muted': pick(palette.neutral, '500'),
+    canvas,
+    surface,
+    dialog,
+    input,
+    'surface-subtle': panel,
+    text,
+    'text-muted': mutedText,
     border: pick(palette.neutral, '300'),
-    'border-strong': pick(palette.neutral, '500'),
-    primary: pick(palette.blue, '600'),
+    'border-strong': strongBorder,
+    primary,
     'primary-hover': pick(palette.blue, '700'),
-    'primary-subtle': pick(palette.blue, '100'),
-    danger: pick(palette.red, '700'),
-    'danger-subtle': pick(palette.red, '100'),
-    success: pick(palette.green, '700'),
-    info: pick(palette.teal, '600'),
-    'on-primary': palette.white,
-    'on-danger': palette.white,
-    'on-success': palette.white,
-    'on-info': palette.white,
-    focus: pick(palette.blue, '500'),
+    'primary-subtle': primarySubtle,
+    danger,
+    'danger-subtle': dangerSubtle,
+    success,
+    info,
+    'on-primary': safest(
+      [palette.white, palette.black],
+      [parseHex(primary)],
+      4.5,
+      'on-primary',
+    ),
+    'on-danger': safest(
+      [palette.white, palette.black],
+      [parseHex(danger)],
+      4.5,
+      'on-danger',
+    ),
+    'on-success': safest(
+      [palette.white, palette.black],
+      [parseHex(success)],
+      4.5,
+      'on-success',
+    ),
+    'on-info': safest(
+      [palette.white, palette.black],
+      [parseHex(info)],
+      4.5,
+      'on-info',
+    ),
+    'primary-text': safest(
+      [pick(palette.blue, '700'), ...inlineCandidates],
+      readingSurfaces,
+      7,
+      'primary-text',
+    ),
+    'danger-text': safest(
+      [danger, ...inlineCandidates],
+      readingSurfaces,
+      7,
+      'danger-text',
+    ),
+    'success-text': safest(
+      [success, ...inlineCandidates],
+      readingSurfaces,
+      7,
+      'success-text',
+    ),
+    'info-text': safest(
+      [info, ...inlineCandidates],
+      readingSurfaces,
+      7,
+      'info-text',
+    ),
+    'primary-subtle-text': safest(
+      [pick(palette.blue, '700'), neutral700, palette.black, palette.white],
+      [parseHex(primarySubtle)],
+      7,
+      'primary-subtle-text',
+    ),
+    'danger-subtle-text': safest(
+      [danger, neutral700, palette.black, palette.white],
+      [parseHex(dangerSubtle)],
+      7,
+      'danger-subtle-text',
+    ),
+    popover,
+    'popover-text': safest(
+      [neutral700, palette.black, palette.white],
+      [popoverRgb],
+      7,
+      'popover-text',
+    ),
+    'option-hover': optionHover,
+    'option-hover-text':
+      palette.roles?.['option-hover-text'] ??
+      safest(
+        [neutral700, palette.black, palette.white],
+        [resolveSurface(optionHover, canvasRgb)],
+        7,
+        'option-hover-text',
+      ),
+    'option-selected': optionSelected,
+    'option-selected-text':
+      palette.roles?.['option-selected-text'] ??
+      safest(
+        [pick(palette.blue, '700'), neutral700, palette.black, palette.white],
+        [resolveSurface(optionSelected, canvasRgb)],
+        7,
+        'option-selected-text',
+      ),
+    'on-primary-hover': safest(
+      [palette.white, palette.black],
+      [parseHex(pick(palette.blue, '700'))],
+      4.5,
+      'on-primary-hover',
+    ),
+    focus,
     overlay: 'color-mix(in srgb, var(--ds-color-text) 40%, transparent)',
     ...palette.roles,
   };
@@ -137,9 +340,6 @@ export function createThemeTokenGroups(
       surface: mode === 'dark' ? surfaces.panelDark : surfaces.panelLight,
       dialog: mode === 'dark' ? surfaces.dialogDark : surfaces.dialogLight,
       input: mode === 'dark' ? surfaces.dialogDark : surfaces.dialogLight,
-      ...(mode === 'dark'
-        ? { text: '#f1f5f9', 'text-muted': '#a1a1aa', border: '#2b2e31' }
-        : {}),
     },
   };
   return createTokenGroups(palette, {
