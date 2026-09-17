@@ -40,6 +40,7 @@ or learn from it, then feed proven generic improvements back. See
   resolve consistently.
 - **Node.js** `>= 24` (current LTS, the default Vercel runtime) — only
   needed to run the API under Node; everything else runs through Bun.
+  Production API behavior must remain compatible with both Bun and Node.js.
 
 Bun owns installation, the lockfile, and script execution; no other
 package manager (npm, pnpm, Yarn) is required.
@@ -202,6 +203,8 @@ bun run test:e2e
 
 Two Vercel projects deploy from this repository. Vercel detects Bun
 from `bun.lock` and installs with Bun at the monorepo root; Turborepo
+builds with Bun, while the generated API bundle is verified for both Bun and
+Node.js and runs on Vercel's Node.js runtime.
 scopes the build to the selected app.
 
 ### 1. API project
