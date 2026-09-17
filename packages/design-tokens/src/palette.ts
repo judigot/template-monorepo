@@ -1,4 +1,18 @@
 export interface IPalette {
+  roles?: Partial<
+    Record<
+      | 'surface'
+      | 'dialog'
+      | 'input'
+      | 'on-primary'
+      | 'on-danger'
+      | 'on-success'
+      | 'on-info'
+      | 'focus'
+      | 'overlay',
+      string
+    >
+  >;
   black: string;
   blue: Record<string, string>;
   green: Record<string, string>;
@@ -80,7 +94,32 @@ export const BRAND_PALETTES = {
     ['#fce7f3', '#db2777', '#be185d', '#9d174d'],
     '#9333ea',
   ),
-  x: brandPalette(['#e2e8f0', '#0f172a', '#020617', '#000000'], '#475569'),
+  x: {
+    black: '#000000',
+    white: '#ffffff',
+    blue: { 100: '#16181c', 500: '#1d9bf0', 600: '#e7e9ea', 700: '#d7dbdc' },
+    neutral: {
+      50: '#000000',
+      100: '#16181c',
+      300: '#2b2e31',
+      500: '#a1a1aa',
+      700: '#e7e9ea',
+    },
+    green: { 100: '#002218', 700: '#61d6a3' },
+    red: { 100: '#3d0105', 700: '#f87580' },
+    teal: { 600: '#1d9bf0' },
+    roles: {
+      surface: '#000000',
+      dialog: '#141414',
+      input: '#000000',
+      'on-primary': '#0f1419',
+      'on-success': '#000000',
+      'on-danger': '#000000',
+      'on-info': '#000000',
+      focus: '#1d9bf0',
+      overlay: '#5b708366',
+    },
+  },
   reddit: brandPalette(['#ffedd5', '#ea580c', '#c2410c', '#9a3412'], '#f97316'),
   linkedin: brandPalette(
     ['#dbeafe', '#0284c7', '#0369a1', '#075985'],
@@ -120,37 +159,3 @@ export const THEMES = {
   },
   ...BRAND_PALETTES,
 } as const satisfies Record<string, IPalette>;
-
-export const THEME_STYLES = {
-  default: {
-    font: 'Inter, ui-sans-serif, system-ui, sans-serif',
-    density: '1',
-  },
-  light: { font: 'Inter, ui-sans-serif, system-ui, sans-serif', density: '1' },
-  dark: { font: 'Inter, ui-sans-serif, system-ui, sans-serif', density: '1' },
-  google: { font: 'Arial, Helvetica, sans-serif', density: '1' },
-  youtube: { font: 'Roboto, Arial, sans-serif', density: '0.95' },
-  wikipedia: { font: 'Georgia, serif', density: '1.05' },
-  netflix: { font: 'Helvetica Neue, Arial, sans-serif', density: '0.9' },
-  spotify: { font: 'Circular, Arial, sans-serif', density: '0.95' },
-  facebook: { font: 'Arial, sans-serif', density: '1' },
-  instagram: { font: 'system-ui, sans-serif', density: '1' },
-  x: { font: 'Arial, sans-serif', density: '0.95' },
-  reddit: { font: 'Verdana, sans-serif', density: '1' },
-  linkedin: { font: 'Arial, sans-serif', density: '1' },
-  amazon: { font: 'Arial, sans-serif', density: '0.95' },
-  microsoft: { font: 'Segoe UI, sans-serif', density: '1' },
-  github: {
-    font: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
-    density: '1',
-  },
-  notion: { font: 'ui-sans-serif, system-ui, sans-serif', density: '1.05' },
-  chatgpt: {
-    font: 'Söhne, ui-sans-serif, system-ui, sans-serif',
-    density: '1',
-  },
-  adobe: { font: 'Adobe Clean, Arial, sans-serif', density: '0.95' },
-} as const satisfies Record<
-  keyof typeof THEMES,
-  { font: string; density: string }
->;

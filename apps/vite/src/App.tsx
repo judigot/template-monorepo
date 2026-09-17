@@ -2,8 +2,7 @@ import { getHello } from '@monorepo/api-client';
 import { Showcase } from '@monorepo/components';
 import {
   applyTokenGroups,
-  createTokenGroups,
-  THEME_STYLES,
+  createThemeTokenGroups,
   THEMES,
 } from '@monorepo/design-tokens';
 import { useEffect, useState } from 'react';
@@ -55,17 +54,10 @@ function App() {
 
   useEffect(() => {
     applyTokenGroups(
-      createTokenGroups(THEMES[theme]),
+      createThemeTokenGroups(theme),
       document.documentElement.style,
     );
-    document.documentElement.style.setProperty(
-      '--ds-type-sans',
-      THEME_STYLES[theme].font,
-    );
-    document.documentElement.style.setProperty(
-      '--ds-density',
-      THEME_STYLES[theme].density,
-    );
+    document.documentElement.dataset.designSystem = theme;
   }, [theme]);
 
   return (

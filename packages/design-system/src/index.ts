@@ -5,6 +5,7 @@ export {
   applyTokenGroups,
   COLOR_TOKENS,
   createColorTokens,
+  createThemeTokenGroups,
   createTokenGroups,
   renderTokensCss,
   THEMES,

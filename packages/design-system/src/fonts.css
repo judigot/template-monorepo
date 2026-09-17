@@ -1,0 +1,25 @@
+/* Public font URLs from X's served stylesheet; fetched only when selected. */
+@font-face {
+  font-family: TwitterChirp;
+  src: url("https://abs.twimg.com/fonts/subset/Chirp-Regular.c88864db.latin.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: TwitterChirp;
+  src: url("https://abs.twimg.com/fonts/subset/Chirp-Medium.ca6d679a.latin.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: TwitterChirp;
+  src: url("https://abs.twimg.com/fonts/subset/Chirp-Bold.d8ac01b2.latin.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}

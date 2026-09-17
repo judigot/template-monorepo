@@ -1,8 +1,14 @@
+import {
+  createAppearance,
+  type IAppearanceOverrides,
+  THEME_APPEARANCES,
+} from './appearance.ts';
 import type { IPalette } from './palette.ts';
-import { PALETTE } from './palette.ts';
+import { PALETTE, THEMES } from './palette.ts';
 
+export { THEME_APPEARANCES } from './appearance.ts';
 export type { IPalette } from './palette.ts';
-export { LIGHT_PALETTE, PALETTE, THEME_STYLES, THEMES } from './palette.ts';
+export { LIGHT_PALETTE, PALETTE, THEMES } from './palette.ts';
 
 export interface ITokenGroup {
   cssPrefix: string;
@@ -21,6 +27,8 @@ export function createColorTokens(palette: IPalette): Record<string, string> {
   return {
     canvas: pick(palette.neutral, '50'),
     surface: palette.white,
+    dialog: palette.white,
+    input: palette.white,
     'surface-subtle': pick(palette.neutral, '100'),
     text: pick(palette.neutral, '700'),
     'text-muted': pick(palette.neutral, '500'),
@@ -35,53 +43,42 @@ export function createColorTokens(palette: IPalette): Record<string, string> {
     info: pick(palette.teal, '600'),
     'on-primary': palette.white,
     'on-danger': palette.white,
+    'on-success': palette.white,
+    'on-info': palette.white,
+    focus: pick(palette.blue, '500'),
+    overlay: 'color-mix(in srgb, var(--ds-color-text) 40%, transparent)',
+    ...palette.roles,
   };
 }
 
-export function createTokenGroups(palette: IPalette = PALETTE): ITokenGroup[] {
+export function createTokenGroups(
+  palette: IPalette = PALETTE,
+  appearance: IAppearanceOverrides = {},
+): ITokenGroup[] {
   return [
     { cssPrefix: 'color', tokens: createColorTokens(palette) },
-    {
-      cssPrefix: 'radius',
-      tokens: { sm: '0.5rem', md: '0.75rem', lg: '1rem', pill: '999px' },
-    },
-    {
-      cssPrefix: 'type',
-      tokens: {
-        sans: 'Inter, ui-sans-serif, system-ui, sans-serif',
-        body: '1rem',
-        small: '0.8125rem',
-        heading: '1.125rem',
-      },
-    },
-    {
-      cssPrefix: 'shadow',
-      tokens: {
-        sm: '0 1px 2px rgb(17 24 39 / 8%)',
-        lg: '0 20px 50px rgb(17 24 39 / 20%)',
-      },
-    },
-    {
-      cssPrefix: 'space',
-      tokens: {
-        1: '0.25rem',
-        2: '0.5rem',
-        3: '0.75rem',
-        4: '1rem',
-        5: '1.5rem',
-        6: '2rem',
-      },
-    },
+    ...Object.entries(createAppearance(appearance)).map(
+      ([cssPrefix, tokens]) => ({ cssPrefix, tokens }),
+    ),
   ];
+}
+
+export function createThemeTokenGroups(
+  name: keyof typeof THEMES,
+): ITokenGroup[] {
+  return createTokenGroups(THEMES[name], THEME_APPEARANCES[name]);
 }
 
 export function renderTokensCss(
   groups: ITokenGroup[] = createTokenGroups(PALETTE),
 ): string {
   const declarations = groups.flatMap(({ cssPrefix, tokens }) =>
-    Object.entries(tokens).map(
-      ([name, value]) => `  --ds-${cssPrefix}-${name}: ${value};`,
-    ),
+    Object.entries(tokens).map(([name, value]) => {
+      const declaration = `  --ds-${cssPrefix}-${name}: ${value};`;
+      return value.startsWith('color-mix(')
+        ? declaration
+        : declaration.replace(' color-mix(', '\n    color-mix(');
+    }),
   );
   return `:root {\n${declarations.join('\n')}\n}\n`;
 }

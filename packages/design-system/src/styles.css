@@ -1,5 +1,18 @@
+@import "./fonts.css";
+
 * {
   box-sizing: border-box;
+}
+
+:root {
+  color-scheme: var(--ds-scheme-mode);
+  background: var(--ds-color-canvas);
+  color: var(--ds-color-text);
+  font-family: var(--ds-type-sans);
+}
+
+body {
+  margin: 0;
 }
 
 body:has(.ui-modal[open]) {
