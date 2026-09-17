@@ -67,6 +67,9 @@ describe('TagInput suggestions', () => {
     );
     const input = screen.getByRole('combobox');
     fireEvent.keyDown(input, { key: 'Backspace' });
+    expect(screen.getByText('Grace').closest('.ui-tag')?.className).toContain(
+      'is-selected',
+    );
     expect(
       screen
         .getByText('Grace')
@@ -76,6 +79,30 @@ describe('TagInput suggestions', () => {
     expect(onChange).not.toHaveBeenCalled();
     fireEvent.keyDown(input, { key: 'Backspace' });
     expect(onChange).toHaveBeenCalledWith(['Ada']);
+  });
+
+  it('moves the active chip border with Left and Right arrows', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['Ada', 'Grace', 'Linus']}
+      />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.keyDown(input, { key: 'ArrowLeft' });
+    expect(screen.getByText('Linus').closest('.ui-tag')?.className).toContain(
+      'is-selected',
+    );
+    fireEvent.keyDown(input, { key: 'ArrowLeft' });
+    expect(screen.getByText('Grace').closest('.ui-tag')?.className).toContain(
+      'is-selected',
+    );
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    expect(screen.getByText('Linus').closest('.ui-tag')?.className).toContain(
+      'is-selected',
+    );
   });
 
   it('selects every tag with Ctrl+A and anchors the border on the last tag', () => {

@@ -68,6 +68,22 @@ export function TagInput({
       setSelectedTagIndex(tags.length - 1);
       return;
     }
+    if (
+      value.length === 0 &&
+      tags.length > 0 &&
+      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+    ) {
+      event.preventDefault();
+      setAreTagsSelected(false);
+      setSelectedTagIndex((current) => {
+        if (current === null) {
+          return tags.length - 1;
+        }
+        const delta = event.key === 'ArrowLeft' ? -1 : 1;
+        return Math.max(0, Math.min(tags.length - 1, current + delta));
+      });
+      return;
+    }
     if (availableSuggestions.length > 0 && event.key === 'ArrowDown') {
       event.preventDefault();
       setIsFocused(true);

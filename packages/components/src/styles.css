@@ -486,10 +486,20 @@
   gap: var(--ds-space-1);
   padding: 0.25rem 0.5rem 0.25rem 0.625rem;
 }
+html[data-design-system="x"] .ui-tag {
+  border-color: var(--ds-color-text);
+}
 .ui-tag.is-selected {
-  background: var(--ds-color-option-selected);
+  background: color-mix(
+    in srgb,
+    var(--ds-color-primary) 24%,
+    var(--ds-color-input)
+  );
   border: 2px solid var(--ds-color-primary);
   color: var(--ds-color-option-selected-text);
+}
+html[data-design-system="x"] .ui-tag.is-selected {
+  border-color: var(--ds-color-text);
 }
 .ui-tag.is-bulk-selected {
   background: color-mix(
