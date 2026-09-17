@@ -36,7 +36,8 @@ jobs:
       - name: Deploy API preview
         id: api
         run: |
-          api_url="$(vercel deploy apps/api --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_API_PROJECT_ID")"
+          vercel link apps/api --project "$VERCEL_API_PROJECT_ID" --scope "$VERCEL_ORG_ID" --yes --token "$VERCEL_TOKEN"
+          api_url="$(vercel deploy apps/api --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID")"
           echo "url=$api_url" >> "$GITHUB_OUTPUT"
 
       - name: Check API preview
@@ -48,6 +49,7 @@ jobs:
 
       - name: Deploy frontend preview with API URL
         run: |
+          vercel link apps/vite --project "$VERCEL_FRONTEND_PROJECT_ID" --scope "$VERCEL_ORG_ID" --yes --token "$VERCEL_TOKEN"
           VITE_API_URL="${{ steps.api.outputs.url }}" \
           API_URL="${{ steps.api.outputs.url }}" \
-            vercel deploy apps/vite --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_FRONTEND_PROJECT_ID"
+            vercel deploy apps/vite --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID"
