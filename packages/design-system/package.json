@@ -11,7 +11,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --config ../../.oxlintrc.json .",
-    "test": "bun test",
+    "test": "bun test --pass-with-no-tests",
     "clean": "rm -rf .turbo"
   },
   "devDependencies": {
