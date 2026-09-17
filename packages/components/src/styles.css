@@ -263,6 +263,7 @@
 
 .ui-button--primary:hover {
   background: var(--ds-color-primary-hover);
+  color: var(--ds-color-on-primary-hover);
 }
 
 .ui-button--secondary {
@@ -275,6 +276,18 @@
   color: var(--ds-color-success);
   font-size: 0.875rem;
   margin: 0 auto 0 0;
+}
+.ui-status--primary {
+  color: var(--ds-color-primary-text);
+}
+.ui-status--danger {
+  color: var(--ds-color-danger-text);
+}
+.ui-status--success {
+  color: var(--ds-color-success-text);
+}
+.ui-status--info {
+  color: var(--ds-color-info-text);
 }
 
 .ui-button--success {
@@ -466,7 +479,7 @@
   align-items: center;
   background: var(--ds-color-primary-subtle);
   border-radius: var(--ds-radius-tag);
-  color: var(--ds-color-primary);
+  color: var(--ds-color-primary-subtle-text);
   display: inline-flex;
   font-size: var(--ds-type-small);
   gap: var(--ds-space-1);
@@ -482,13 +495,12 @@
   padding: 0 0.125rem;
 }
 .ui-tag-suggestions {
-  background: var(--ds-color-surface);
+  background: var(--ds-color-popover);
   border: 1px solid var(--ds-color-border);
   border-radius: var(--ds-radius-menu);
   box-shadow: var(--ds-shadow-sm);
   display: grid;
   left: 0;
-  list-style: none;
   margin: 0;
   max-height: 12rem;
   overflow: auto;
@@ -506,14 +518,20 @@
 .ui-tag-suggestions button {
   background: transparent;
   border: 0;
-  color: var(--ds-color-text);
+  color: var(--ds-color-popover-text);
   cursor: pointer;
   padding: var(--ds-space-2) var(--ds-space-3);
   text-align: left;
   width: 100%;
 }
 .ui-tag-suggestions button:hover {
-  background: var(--ds-color-primary-subtle);
+  background: var(--ds-color-option-hover);
+  color: var(--ds-color-option-hover-text);
+}
+.ui-tag-suggestions li[aria-selected="true"] button,
+.ui-tag-suggestions button[data-active="true"] {
+  background: var(--ds-color-option-selected);
+  color: var(--ds-color-option-selected-text);
 }
 
 .ui-modal {
@@ -666,7 +684,12 @@
   padding-inline: var(--ds-space-2);
 }
 .ui-button:hover:not(:disabled) {
-  filter: brightness(0.95);
+  filter: none;
+}
+.ui-form-control::placeholder,
+.ui-tag-input input::placeholder {
+  color: var(--ds-color-text-muted);
+  opacity: 1;
 }
 .ui-button:disabled {
   cursor: not-allowed;
@@ -690,6 +713,19 @@
 .ui-tag button:focus-visible {
   outline: 2px solid var(--ds-color-focus);
   outline-offset: 2px;
+}
+@media (forced-colors: active) {
+  .ui-tag-input.is-focused,
+  .ui-form-control:focus-visible,
+  .ui-theme-switcher select:focus-visible {
+    outline: 2px solid ButtonText;
+    outline-offset: 2px;
+  }
+  .ui-tag-suggestions button:hover,
+  .ui-tag-suggestions li[aria-selected="true"] button {
+    background: Highlight;
+    color: HighlightText;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .ui-switch *,

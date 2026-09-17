@@ -5,7 +5,7 @@
   --ds-color-input: #ffffff;
   --ds-color-surface-subtle: #f1f5f9;
   --ds-color-text: #334155;
-  --ds-color-text-muted: #64748b;
+  --ds-color-text-muted: #334155;
   --ds-color-border: #cbd5e1;
   --ds-color-border-strong: #64748b;
   --ds-color-primary: #1d4ed8;
@@ -19,6 +19,19 @@
   --ds-color-on-danger: #ffffff;
   --ds-color-on-success: #ffffff;
   --ds-color-on-info: #ffffff;
+  --ds-color-primary-text: #1e40af;
+  --ds-color-danger-text: #1e40af;
+  --ds-color-success-text: #1e40af;
+  --ds-color-info-text: #1e40af;
+  --ds-color-primary-subtle-text: #1e40af;
+  --ds-color-danger-subtle-text: #334155;
+  --ds-color-popover: #ffffff;
+  --ds-color-popover-text: #334155;
+  --ds-color-option-hover: #f1f5f9;
+  --ds-color-option-hover-text: #334155;
+  --ds-color-option-selected: #dbeafe;
+  --ds-color-option-selected-text: #1e40af;
+  --ds-color-on-primary-hover: #ffffff;
   --ds-color-focus: #2563eb;
   --ds-color-overlay: color-mix(in srgb, var(--ds-color-text) 40%, transparent);
   --ds-radius-sm: 8px;
