@@ -1,0 +1,7 @@
+{
+  "extends": "@monorepo/typescript-config/api.json",
+  "compilerOptions": {
+    "types": ["node", "bun"]
+  },
+  "include": ["src"]
+}

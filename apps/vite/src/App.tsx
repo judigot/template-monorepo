@@ -1,4 +1,5 @@
 import { getHello } from '@monorepo/api-client';
+import { ProfileForm } from '@monorepo/components';
 import { useEffect, useState } from 'react';
 
 interface IHelloLoading {
@@ -43,8 +44,8 @@ function App() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
-      <div className="bg-white/90 rounded-3xl shadow-2xl px-10 py-16">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-10 bg-gradient-to-br from-blue-500 to-purple-600 px-6 py-12">
+      <div className="rounded-3xl bg-white/90 px-10 py-16 shadow-2xl">
         <p className="mb-6 flex justify-center">
           <span
             data-testid="framework-badge"
@@ -69,6 +70,7 @@ function App() {
           </p>
         )}
       </div>
+      <ProfileForm />
     </div>
   );
 }

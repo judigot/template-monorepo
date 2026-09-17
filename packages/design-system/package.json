@@ -1,0 +1,24 @@
+{
+  "name": "@monorepo/design-system",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Foundation design tokens and global UI styles",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --config ../../.oxlintrc.json .",
+    "test": "bun test --pass-with-no-tests",
+    "clean": "rm -rf .turbo"
+  },
+  "devDependencies": {
+    "@monorepo/typescript-config": "workspace:*",
+    "@types/bun": "^1.4.2",
+    "@types/node": "^24.10.1",
+    "oxlint": "^1.80.0",
+    "typescript": "^7.0.2"
+  }
+}
