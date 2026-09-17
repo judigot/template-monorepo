@@ -1,0 +1,53 @@
+name: Vercel Preview
+
+on:
+  pull_request:
+  workflow_dispatch: {}
+
+concurrency:
+  group: vercel-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-preview:
+    name: Deploy API and frontend previews
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_API_PROJECT_ID: ${{ secrets.VERCEL_API_PROJECT_ID }}
+      VERCEL_FRONTEND_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+
+      - name: Install Vercel CLI
+        run: bun add --global vercel@latest
+
+      - name: Deploy API preview
+        id: api
+        run: |
+          api_url="$(vercel deploy apps/api --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_API_PROJECT_ID")"
+          echo "url=$api_url" >> "$GITHUB_OUTPUT"
+
+      - name: Check API preview
+        env:
+          API_URL: ${{ steps.api.outputs.url }}
+        run: |
+          curl --fail-with-body --retry 5 --retry-delay 2 "$API_URL/api/hello"
+          curl --fail-with-body --retry 5 --retry-delay 2 "$API_URL/api/health"
+
+      - name: Deploy frontend preview with API URL
+        run: |
+          VITE_API_URL="${{ steps.api.outputs.url }}" \
+          API_URL="${{ steps.api.outputs.url }}" \
+            vercel deploy apps/vite --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_FRONTEND_PROJECT_ID"
