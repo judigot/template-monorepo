@@ -30,7 +30,6 @@ export function Showcase(): ReactNode {
       </header>
       <div className="ui-showcase__grid">
         <article className="ui-showcase__panel ui-showcase__panel--wide">
-          <h3>Buttons</h3>
           <button
             className="ui-button ui-button--info ui-showcase__open-modal"
             type="button"
@@ -40,6 +39,7 @@ export function Showcase(): ReactNode {
           >
             Open modal
           </button>
+          <h3>Buttons</h3>
           <div className="ui-showcase__row">
             <button
               className="ui-button ui-button--primary"
