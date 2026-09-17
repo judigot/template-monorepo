@@ -354,8 +354,10 @@
   background: transparent;
   border: 0;
   color: var(--ds-color-text);
+  inset: 0;
   max-height: calc(100dvh - 2rem);
   max-width: min(100% - 2rem, 40rem);
+  margin: auto;
   overflow: visible;
   padding: 0;
   width: 100%;
