@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { FormField } from './FormField.tsx';
 import { Modal } from './Modal.tsx';
 import { TagInput } from './TagInput.tsx';
 
@@ -123,6 +124,38 @@ export function Showcase(): ReactNode {
             suggestions={TAG_SUGGESTIONS}
             tags={tags}
           />
+        </article>
+        <article className="ui-showcase__panel ui-showcase__panel--wide">
+          <h3>Form primitives</h3>
+          <div className="ui-showcase__form-grid">
+            <FormField
+              description="Use a work email for notifications."
+              htmlFor="showcase-email"
+              label="Email"
+            >
+              <input
+                className="ui-form-control"
+                id="showcase-email"
+                placeholder="you@example.com"
+                type="email"
+              />
+            </FormField>
+            <FormField htmlFor="showcase-role" label="Role">
+              <select className="ui-form-control" id="showcase-role">
+                <option>Choose a role</option>
+                <option>Designer</option>
+                <option>Engineer</option>
+              </select>
+            </FormField>
+            <FormField htmlFor="showcase-notes" label="Notes">
+              <textarea
+                className="ui-form-control"
+                id="showcase-notes"
+                placeholder="Add context"
+                rows={3}
+              />
+            </FormField>
+          </div>
         </article>
       </div>
       <Modal

@@ -297,6 +297,16 @@
   flex-wrap: wrap;
   gap: var(--ds-space-2);
 }
+
+.ui-showcase__form-grid {
+  display: grid;
+  gap: var(--ds-space-field);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ui-showcase__form-grid > :last-child {
+  grid-column: 1 / -1;
+}
 .ui-showcase__open-modal {
   display: block;
   margin-top: var(--ds-space-4);
@@ -556,6 +566,9 @@
     padding: var(--ds-space-3);
   }
   .ui-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+  .ui-showcase__form-grid {
     grid-template-columns: 1fr;
   }
   .ui-form-card {
