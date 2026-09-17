@@ -40,6 +40,66 @@ export const LIGHT_PALETTE: IPalette = {
   white: '#ffffff',
 };
 
+const brandPalette = (
+  primary: [string, string, string, string],
+  info: string,
+): IPalette => ({
+  ...PALETTE,
+  blue: {
+    100: primary[0],
+    500: primary[1],
+    600: primary[2],
+    700: primary[3],
+  },
+  teal: { 600: info },
+});
+
+export const BRAND_PALETTES = {
+  google: brandPalette(['#e0f2fe', '#0284c7', '#0369a1', '#075985'], '#16a34a'),
+  youtube: brandPalette(
+    ['#fee2e2', '#dc2626', '#b91c1c', '#991b1b'],
+    '#7f1d1d',
+  ),
+  wikipedia: brandPalette(
+    ['#e2e8f0', '#475569', '#334155', '#1e293b'],
+    '#64748b',
+  ),
+  netflix: brandPalette(
+    ['#fee2e2', '#e11d48', '#be123c', '#9f1239'],
+    '#fb7185',
+  ),
+  spotify: brandPalette(
+    ['#dcfce7', '#16a34a', '#15803d', '#166534'],
+    '#0f766e',
+  ),
+  facebook: brandPalette(
+    ['#dbeafe', '#2563eb', '#1d4ed8', '#1e40af'],
+    '#0891b2',
+  ),
+  instagram: brandPalette(
+    ['#fce7f3', '#db2777', '#be185d', '#9d174d'],
+    '#9333ea',
+  ),
+  x: brandPalette(['#e2e8f0', '#0f172a', '#020617', '#000000'], '#475569'),
+  reddit: brandPalette(['#ffedd5', '#ea580c', '#c2410c', '#9a3412'], '#f97316'),
+  linkedin: brandPalette(
+    ['#dbeafe', '#0284c7', '#0369a1', '#075985'],
+    '#0e7490',
+  ),
+  amazon: brandPalette(['#fef3c7', '#d97706', '#b45309', '#92400e'], '#ea580c'),
+  microsoft: brandPalette(
+    ['#cffafe', '#0891b2', '#0e7490', '#155e75'],
+    '#2563eb',
+  ),
+  github: brandPalette(['#e2e8f0', '#334155', '#1e293b', '#0f172a'], '#475569'),
+  notion: brandPalette(['#f1f5f9', '#475569', '#334155', '#1e293b'], '#0f766e'),
+  chatgpt: brandPalette(
+    ['#ccfbf1', '#0f766e', '#115e59', '#134e4a'],
+    '#14b8a6',
+  ),
+  adobe: brandPalette(['#fee2e2', '#dc2626', '#b91c1c', '#991b1b'], '#f97316'),
+} as const satisfies Record<string, IPalette>;
+
 export const THEMES = {
   default: PALETTE,
   light: LIGHT_PALETTE,
@@ -58,4 +118,5 @@ export const THEMES = {
     teal: { 600: '#5eead4' },
     white: '#0f172a',
   },
+  ...BRAND_PALETTES,
 } as const satisfies Record<string, IPalette>;

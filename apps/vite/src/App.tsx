@@ -93,6 +93,24 @@ function App() {
           <option value="default">Default</option>
           <option value="light">Light</option>
           <option value="dark">Dark</option>
+          <optgroup label="Popular systems">
+            <option value="google">Google</option>
+            <option value="youtube">YouTube</option>
+            <option value="wikipedia">Wikipedia</option>
+            <option value="netflix">Netflix</option>
+            <option value="spotify">Spotify</option>
+            <option value="facebook">Facebook</option>
+            <option value="instagram">Instagram</option>
+            <option value="x">X</option>
+            <option value="reddit">Reddit</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="amazon">Amazon</option>
+            <option value="microsoft">Microsoft</option>
+            <option value="github">GitHub</option>
+            <option value="notion">Notion</option>
+            <option value="chatgpt">ChatGPT</option>
+            <option value="adobe">Adobe</option>
+          </optgroup>
         </select>
       </div>
       <main className="ui-workspace-grid">

@@ -353,6 +353,30 @@
 .ui-switch input:checked + .ui-switch__track::after {
   transform: translateX(1.25rem);
 }
+.ui-switch [data-state] {
+  background: var(--ds-color-border-strong);
+  border: 0;
+  border-radius: 999px;
+  height: 1.5rem;
+  padding: 0.1875rem;
+  position: relative;
+  transition: background 0.2s;
+  width: 2.75rem;
+}
+.ui-switch [data-state="checked"] {
+  background: var(--ds-color-primary);
+}
+.ui-switch [data-state] span {
+  background: var(--ds-color-surface);
+  border-radius: 50%;
+  display: block;
+  height: 1.125rem;
+  transition: transform 0.2s;
+  width: 1.125rem;
+}
+.ui-switch [data-state="checked"] span {
+  transform: translateX(1.25rem);
+}
 .ui-token-swatches {
   display: flex;
   flex-wrap: wrap;
