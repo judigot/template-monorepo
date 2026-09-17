@@ -16,7 +16,7 @@ export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: isCi,
-  retries: isCi ? 2 : 0,
+  retries: isCi ? 1 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     trace: 'on-first-retry',
