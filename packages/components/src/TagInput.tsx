@@ -1,5 +1,10 @@
 /* oxlint-disable jsx-a11y/prefer-tag-over-role -- custom searchable listbox semantics */
-import type { ChangeEvent, KeyboardEvent, ReactNode } from 'react';
+import type {
+  ChangeEvent,
+  ClipboardEvent,
+  KeyboardEvent,
+  ReactNode,
+} from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 export interface ITagInputProps {
@@ -9,6 +14,20 @@ export interface ITagInputProps {
   suggestions?: string[];
   tags: string[];
 }
+
+const serializeTags = (values: string[]): string => values.join(',');
+
+const parseClipboardTags = (value: string): string[] =>
+  value
+    .split(/[\n,]/)
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+
+const copyTags = (values: string[]): void => {
+  if ('clipboard' in navigator) {
+    void navigator.clipboard.writeText(serializeTags(values));
+  }
+};
 
 export function TagInput({
   id,
@@ -75,6 +94,21 @@ export function TagInput({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+    if (
+      areTagsSelected &&
+      (event.ctrlKey || event.metaKey) &&
+      event.key.toLowerCase() === 'x'
+    ) {
+      event.preventDefault();
+      copyTags(tags);
+      onChange([]);
+      setAreTagsSelected(false);
+      setSelectedTagIndex(null);
+      setIsFocused(true);
+      setIsSuggestionsOpen(true);
+      inputRef.current?.focus();
+      return;
+    }
     if (
       (event.ctrlKey || event.metaKey) &&
       event.key.toLowerCase() === 'a' &&
@@ -168,6 +202,15 @@ export function TagInput({
     setAreTagsSelected(false);
   };
 
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>): void => {
+    const pastedTags = parseClipboardTags(event.clipboardData.getData('text'));
+    if (pastedTags.length <= 1) {
+      return;
+    }
+    event.preventDefault();
+    pastedTags.forEach(addTag);
+  };
+
   const focusInputFromTag = (index: number, key: string): void => {
     setSelectedTagIndex(null);
     setAreTagsSelected(false);
@@ -213,7 +256,23 @@ export function TagInput({
             className={`ui-tag${areTagsSelected ? ' is-bulk-selected' : ''}${index === selectedTagIndex ? ' is-selected' : ''}${pulseTagIndex === index ? ' is-pulsing' : ''}`}
             key={tag}
             onKeyDown={(event) => {
-              if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+              if (
+                areTagsSelected &&
+                (event.ctrlKey || event.metaKey) &&
+                event.key.toLowerCase() === 'x'
+              ) {
+                event.preventDefault();
+                copyTags(tags);
+                onChange([]);
+                setAreTagsSelected(false);
+                setSelectedTagIndex(null);
+                setIsFocused(true);
+                setIsSuggestionsOpen(true);
+                inputRef.current?.focus();
+              } else if (
+                event.key === 'ArrowLeft' ||
+                event.key === 'ArrowRight'
+              ) {
                 event.preventDefault();
                 const delta = event.key === 'ArrowLeft' ? -1 : 1;
                 setSelectedTagIndex(
@@ -293,6 +352,13 @@ export function TagInput({
             handleFieldBlur(event.relatedTarget);
           }}
           onChange={handleChange}
+          onPaste={handlePaste}
+          onCopy={(event) => {
+            if (areTagsSelected) {
+              event.clipboardData.setData('text/plain', serializeTags(tags));
+              event.preventDefault();
+            }
+          }}
           onFocus={() => {
             setIsFocused(true);
             setIsSuggestionsOpen(true);
