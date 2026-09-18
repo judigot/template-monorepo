@@ -496,8 +496,12 @@ html[data-design-system="x"] .ui-tag {
   outline-offset: 2px;
 }
 @keyframes ui-tag-pulse {
+  0%,
+  100% {
+    outline-width: 2px;
+  }
   50% {
-    filter: brightness(1.15);
+    outline-width: 4px;
   }
 }
 .ui-tag button {
