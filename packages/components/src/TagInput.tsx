@@ -202,7 +202,7 @@ export function TagInput({
     setAreTagsSelected(false);
   };
 
-  const handlePaste = (event: ClipboardEvent<HTMLInputElement>): void => {
+  const handlePaste = (event: ClipboardEvent<HTMLElement>): void => {
     const pastedTags = parseClipboardTags(event.clipboardData.getData('text'));
     if (pastedTags.length <= 1) {
       return;
@@ -266,6 +266,20 @@ export function TagInput({
             key={tag}
             onKeyDown={(event) => {
               if (
+                (event.ctrlKey || event.metaKey) &&
+                event.key.toLowerCase() === 'a'
+              ) {
+                event.preventDefault();
+                setAreTagsSelected(true);
+                setSelectedTagIndex(tags.length - 1);
+              } else if (
+                areTagsSelected &&
+                (event.ctrlKey || event.metaKey) &&
+                event.key.toLowerCase() === 'c'
+              ) {
+                event.preventDefault();
+                copyTags(tags);
+              } else if (
                 areTagsSelected &&
                 (event.ctrlKey || event.metaKey) &&
                 event.key.toLowerCase() === 'x'
@@ -315,6 +329,13 @@ export function TagInput({
                 focusInputFromTag(index, event.key);
               }
             }}
+            onCopy={(event) => {
+              if (areTagsSelected) {
+                event.clipboardData.setData('text/plain', serializeTags(tags));
+                event.preventDefault();
+              }
+            }}
+            onPaste={handlePaste}
             onClick={() => {
               setAreTagsSelected(false);
               setSelectedTagIndex(index);

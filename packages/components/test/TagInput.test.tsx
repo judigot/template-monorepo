@@ -284,6 +284,26 @@ describe('TagInput suggestions', () => {
     expect(focusedChip.className).not.toContain('is-bulk-selected');
   });
 
+  it('handles Ctrl+A on a focused chip instead of selecting page text', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    const chip = screen.getByRole('option', { name: /Ada/ });
+    fireEvent.mouseDown(chip);
+    fireEvent.keyDown(chip, { key: 'a', ctrlKey: true });
+    expect(screen.getByText('Ada').closest('.ui-tag')?.className).toContain(
+      'is-bulk-selected',
+    );
+    expect(screen.getByText('Grace').closest('.ui-tag')?.className).toContain(
+      'is-bulk-selected',
+    );
+  });
+
   it('returns to the input after deleting a bulk selection from a chip', () => {
     const onChange = mock(() => undefined);
     render(
