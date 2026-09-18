@@ -57,7 +57,17 @@ export function TagInput({
 
   const addTag = (tag: string): void => {
     const normalized = tag.trim();
-    if (normalized.length === 0 || tags.includes(normalized)) {
+    if (normalized.length === 0) {
+      return;
+    }
+    const existingIndex = tags.findIndex(
+      (item) => item.toLowerCase() === normalized.toLowerCase(),
+    );
+    if (existingIndex >= 0) {
+      setPulseTagIndex(existingIndex);
+      window.setTimeout(() => {
+        setPulseTagIndex(null);
+      }, 250);
       return;
     }
     onChange([...tags, normalized]);
@@ -214,6 +224,8 @@ export function TagInput({
             onClick={() => {
               setAreTagsSelected(false);
               setSelectedTagIndex(index);
+              setIsFocused(false);
+              setIsSuggestionsOpen(false);
             }}
             ref={(element) => {
               tagRefs.current[index] = element;

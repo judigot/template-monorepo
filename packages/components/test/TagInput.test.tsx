@@ -123,6 +123,42 @@ describe('TagInput suggestions', () => {
     expect(chip.className).toContain('is-selected');
   });
 
+  it('pulses an existing chip when a duplicate is submitted', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['React']}
+      />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.change(input, { target: { value: 'react' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(screen.getByText('React').closest('.ui-tag')?.className).toContain(
+      'is-pulsing',
+    );
+  });
+
+  it('closes the suggestions when a chip is clicked', async () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        suggestions={['React', 'Relay']}
+        tags={['Ada']}
+      />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.focus(input);
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeNull();
+    });
+    fireEvent.click(screen.getByText('Ada').closest('.ui-tag'));
+    expect(screen.queryByRole('listbox')).toBeNull();
+  });
+
   it('selects every tag with Ctrl+A and anchors the border on the last tag', () => {
     const onChange = mock(() => undefined);
     render(
