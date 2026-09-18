@@ -67,6 +67,12 @@ describe('TagInput suggestions', () => {
       },
     });
     expect(onChange).toHaveBeenCalledWith(['a', 'b', 'c']);
+    fireEvent.paste(input, {
+      clipboardData: {
+        getData: () => 'a, b, c',
+      },
+    });
+    expect(onChange).toHaveBeenLastCalledWith(['a', 'b', 'c']);
   });
 
   it('closes suggestions on Escape while retaining focus', async () => {
