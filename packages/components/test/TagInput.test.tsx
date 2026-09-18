@@ -235,4 +235,27 @@ describe('TagInput suggestions', () => {
       screen.getByText('Grace').closest('.ui-tag')?.className,
     ).not.toContain('is-selected');
   });
+
+  it('clears chip focus and hides suggestions when focus leaves the field', async () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        suggestions={['React']}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.focus(input);
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeNull();
+    });
+    fireEvent.keyDown(input, { key: 'a', ctrlKey: true });
+    const chip = screen.getByRole('option', { name: /Grace/ });
+    fireEvent.blur(chip, { relatedTarget: document.body });
+    expect(screen.queryByRole('listbox')).toBeNull();
+    expect(chip.className).not.toContain('is-selected');
+    expect(chip.className).not.toContain('is-bulk-selected');
+  });
 });

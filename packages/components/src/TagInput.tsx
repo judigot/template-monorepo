@@ -183,8 +183,27 @@ export function TagInput({
     }, 250);
   };
 
+  const handleFieldBlur = (nextFocus: EventTarget | null): void => {
+    if (
+      nextFocus instanceof HTMLElement &&
+      nextFocus.closest('.ui-tag-field') !== null
+    ) {
+      return;
+    }
+    setIsFocused(false);
+    setIsSuggestionsOpen(false);
+    setSelectedTagIndex(null);
+    setAreTagsSelected(false);
+  };
+
   return (
-    <div className="ui-tag-field">
+    /* biome-ignore lint/a11y/noStaticElementInteractions: blur is used to detect focus leaving the composite field */
+    <div
+      className="ui-tag-field"
+      onBlur={(event) => {
+        handleFieldBlur(event.relatedTarget);
+      }}
+    >
       <span className="ui-form-label" id={`${id}-label`}>
         {label}
       </span>
@@ -258,18 +277,7 @@ export function TagInput({
           id={id}
           ref={inputRef}
           onBlur={(event) => {
-            const nextFocus = event.relatedTarget;
-            if (
-              !(
-                nextFocus instanceof HTMLElement &&
-                nextFocus.closest('.ui-tag-field') !== null
-              )
-            ) {
-              setIsFocused(false);
-              setIsSuggestionsOpen(false);
-              setSelectedTagIndex(null);
-              setAreTagsSelected(false);
-            }
+            handleFieldBlur(event.relatedTarget);
           }}
           onChange={handleChange}
           onFocus={() => {
