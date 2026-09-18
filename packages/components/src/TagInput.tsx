@@ -276,6 +276,7 @@ export function TagInput({
             setIsFocused(true);
             setIsSuggestionsOpen(true);
             setSelectedTagIndex(null);
+            setAreTagsSelected(false);
           }}
           onKeyDown={handleKeyDown}
           placeholder={

@@ -212,4 +212,27 @@ describe('TagInput suggestions', () => {
       screen.getByText('Grace').closest('.ui-tag')?.className,
     ).not.toContain('is-selected');
   });
+
+  it('clears bulk selection when the input is focused again', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.keyDown(input, { key: 'a', ctrlKey: true });
+    expect(screen.getByText('Ada').closest('.ui-tag')?.className).toContain(
+      'is-bulk-selected',
+    );
+    fireEvent.focus(input);
+    expect(screen.getByText('Ada').closest('.ui-tag')?.className).not.toContain(
+      'is-bulk-selected',
+    );
+    expect(
+      screen.getByText('Grace').closest('.ui-tag')?.className,
+    ).not.toContain('is-selected');
+  });
 });
