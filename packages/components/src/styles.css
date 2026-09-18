@@ -491,6 +491,7 @@ html[data-design-system="x"] .ui-tag {
   border-color: var(--ds-color-text);
 }
 .ui-tag.is-bulk-selected,
+.ui-tag.is-selected,
 .ui-tag.is-pulsing {
   outline: 2px solid var(--ds-color-focus);
   outline-offset: 2px;
