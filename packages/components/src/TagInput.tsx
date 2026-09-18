@@ -389,9 +389,6 @@ export function TagInput({
             >
               <button
                 type="button"
-                onMouseDown={(event) => {
-                  event.preventDefault();
-                }}
                 onClick={() => {
                   addTag(suggestion);
                   setIsFocused(true);
