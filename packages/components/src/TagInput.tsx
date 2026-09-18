@@ -43,7 +43,7 @@ export function TagInput({
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [selectedTagIndex, setSelectedTagIndex] = useState<number | null>(null);
   const [areTagsSelected, setAreTagsSelected] = useState(false);
-  const [pulseTagIndex, setPulseTagIndex] = useState<number | null>(null);
+  const [pulseTagIndexes, setPulseTagIndexes] = useState<number[]>([]);
   const suggestionsRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const tagRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -81,9 +81,9 @@ export function TagInput({
     }
     const existingIndex = tags.findIndex((item) => item === normalized);
     if (existingIndex >= 0) {
-      setPulseTagIndex(existingIndex);
+      setPulseTagIndexes([existingIndex]);
       window.setTimeout(() => {
-        setPulseTagIndex(null);
+        setPulseTagIndexes([]);
       }, 250);
       return;
     }
@@ -211,6 +211,15 @@ export function TagInput({
     const additions = pastedTags.filter(
       (tag, index) => !tags.includes(tag) && pastedTags.indexOf(tag) === index,
     );
+    const duplicateIndexes = pastedTags
+      .filter((tag) => tags.includes(tag))
+      .map((tag) => tags.indexOf(tag));
+    if (duplicateIndexes.length > 0) {
+      setPulseTagIndexes([...new Set(duplicateIndexes)]);
+      window.setTimeout(() => {
+        setPulseTagIndexes([]);
+      }, 250);
+    }
     if (additions.length === 0) {
       return;
     }
@@ -223,13 +232,13 @@ export function TagInput({
   const focusInputFromTag = (index: number, key: string): void => {
     setSelectedTagIndex(null);
     setAreTagsSelected(false);
-    setPulseTagIndex(index);
+    setPulseTagIndexes([index]);
     inputRef.current?.focus();
     if (key.length === 1) {
       setValue(key);
     }
     window.setTimeout(() => {
-      setPulseTagIndex(null);
+      setPulseTagIndexes([]);
     }, 250);
   };
 
@@ -262,7 +271,7 @@ export function TagInput({
           <span
             aria-selected={index === selectedTagIndex}
             role="option"
-            className={`ui-tag${areTagsSelected ? ' is-bulk-selected' : ''}${index === selectedTagIndex ? ' is-selected' : ''}${pulseTagIndex === index ? ' is-pulsing' : ''}`}
+            className={`ui-tag${areTagsSelected ? ' is-bulk-selected' : ''}${index === selectedTagIndex ? ' is-selected' : ''}${pulseTagIndexes.includes(index) ? ' is-pulsing' : ''}`}
             key={tag}
             onKeyDown={(event) => {
               if (

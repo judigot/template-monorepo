@@ -75,6 +75,26 @@ describe('TagInput suggestions', () => {
     expect(onChange).toHaveBeenLastCalledWith(['a', 'b', 'c']);
   });
 
+  it('pulses existing chips when pasted CSV values are duplicates', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['a', 'b', 'c']}
+      />,
+    );
+    fireEvent.paste(screen.getByRole('combobox'), {
+      clipboardData: { getData: () => 'a, b, c' },
+    });
+    expect(screen.getByText('a').closest('.ui-tag')?.className).toContain(
+      'is-pulsing',
+    );
+    expect(screen.getByText('b').closest('.ui-tag')?.className).toContain(
+      'is-pulsing',
+    );
+  });
+
   it('closes suggestions on Escape while retaining focus', async () => {
     render(
       <TagInput
