@@ -133,11 +133,22 @@ describe('TagInput suggestions', () => {
       />,
     );
     const input = screen.getByRole('combobox');
-    fireEvent.change(input, { target: { value: 'react' } });
+    fireEvent.change(input, { target: { value: 'React' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(screen.getByText('React').closest('.ui-tag')?.className).toContain(
       'is-pulsing',
     );
+  });
+
+  it('treats tag casing as significant', () => {
+    const onChange = mock(() => undefined);
+    render(
+      <TagInput id="tags" label="Tags" onChange={onChange} tags={['react']} />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.change(input, { target: { value: 'React' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onChange).toHaveBeenCalledWith(['react', 'React']);
   });
 
   it('closes the suggestions when a chip is clicked', async () => {

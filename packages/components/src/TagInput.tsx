@@ -60,9 +60,7 @@ export function TagInput({
     if (normalized.length === 0) {
       return;
     }
-    const existingIndex = tags.findIndex(
-      (item) => item.toLowerCase() === normalized.toLowerCase(),
-    );
+    const existingIndex = tags.findIndex((item) => item === normalized);
     if (existingIndex >= 0) {
       setPulseTagIndex(existingIndex);
       window.setTimeout(() => {
