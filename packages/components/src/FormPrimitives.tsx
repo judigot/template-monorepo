@@ -34,26 +34,23 @@ export function PasswordInput(
 ): ReactNode {
   const [visible, setVisible] = useState(false);
   return (
-    <InputGroup
-      suffix={
-        <button
-          aria-label={visible ? 'Hide password' : 'Show password'}
-          className="ui-password-toggle"
-          onClick={() => {
-            setVisible((current) => !current);
-          }}
-          type="button"
-        >
-          {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
-        </button>
-      }
-    >
+    <div className="ui-password-field">
       <input
         {...props}
         className="ui-form-control"
         type={visible ? 'text' : 'password'}
       />
-    </InputGroup>
+      <button
+        aria-label={visible ? 'Hide password' : 'Show password'}
+        className="ui-password-toggle"
+        onClick={() => {
+          setVisible((current) => !current);
+        }}
+        type="button"
+      >
+        {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+      </button>
+    </div>
   );
 }
 export function Combobox({
