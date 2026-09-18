@@ -1,4 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading -- wrappers intentionally forward native input props. */
+
+import { Eye, EyeOff } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useId, useState } from 'react';
 
@@ -42,7 +44,7 @@ export function PasswordInput(
           }}
           type="button"
         >
-          {visible ? 'Hide' : 'Show'}
+          {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
         </button>
       }
     >
