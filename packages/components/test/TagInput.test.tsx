@@ -155,7 +155,8 @@ describe('TagInput suggestions', () => {
     await waitFor(() => {
       expect(screen.queryByRole('listbox')).not.toBeNull();
     });
-    fireEvent.click(screen.getByText('Ada').closest('.ui-tag'));
+    const chip = screen.getByRole('option', { name: /Ada/ });
+    fireEvent.click(chip);
     expect(screen.queryByRole('listbox')).toBeNull();
   });
 
