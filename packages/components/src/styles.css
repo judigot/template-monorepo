@@ -509,6 +509,14 @@ html[data-design-system="x"] .ui-tag.is-selected {
   );
   color: var(--ds-color-option-selected-text);
 }
+.ui-tag.is-pulsing {
+  animation: ui-tag-pulse 250ms ease-out;
+}
+@keyframes ui-tag-pulse {
+  50% {
+    filter: brightness(1.15);
+  }
+}
 .ui-tag button {
   background: transparent;
   border: 0;
@@ -752,6 +760,7 @@ html[data-design-system="x"] .ui-tag.is-selected {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .ui-tag.is-pulsing,
   .ui-switch *,
   .ui-switch *::after {
     transition: none;

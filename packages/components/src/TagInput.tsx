@@ -24,7 +24,10 @@ export function TagInput({
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [selectedTagIndex, setSelectedTagIndex] = useState<number | null>(null);
   const [areTagsSelected, setAreTagsSelected] = useState(false);
+  const [pulseTagIndex, setPulseTagIndex] = useState<number | null>(null);
   const suggestionsRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const tagRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const availableSuggestions = useMemo(() => {
     const query = value.trim().toLowerCase();
     return suggestions.filter(
@@ -44,6 +47,13 @@ export function TagInput({
       rect.bottom > window.innerHeight && rect.top > rect.height;
     setPlacement(shouldFlip ? 'above' : 'below');
   }, [isFocused, availableSuggestions.length]);
+
+  useEffect(() => {
+    if (selectedTagIndex === null) {
+      return;
+    }
+    tagRefs.current[selectedTagIndex]?.focus();
+  }, [selectedTagIndex]);
 
   const addTag = (tag: string): void => {
     const normalized = tag.trim();
@@ -150,6 +160,19 @@ export function TagInput({
     setAreTagsSelected(false);
   };
 
+  const focusInputFromTag = (index: number, key: string): void => {
+    setSelectedTagIndex(null);
+    setAreTagsSelected(false);
+    setPulseTagIndex(index);
+    inputRef.current?.focus();
+    if (key.length === 1) {
+      setValue(key);
+    }
+    window.setTimeout(() => {
+      setPulseTagIndex(null);
+    }, 250);
+  };
+
   return (
     <div className="ui-tag-field">
       <span className="ui-form-label" id={`${id}-label`}>
@@ -159,8 +182,39 @@ export function TagInput({
         {tags.map((tag, index) => (
           <span
             aria-selected={index === selectedTagIndex}
-            className={`ui-tag${areTagsSelected ? ' is-bulk-selected' : ''}${index === selectedTagIndex ? ' is-selected' : ''}`}
+            role="option"
+            className={`ui-tag${areTagsSelected ? ' is-bulk-selected' : ''}${index === selectedTagIndex ? ' is-selected' : ''}${pulseTagIndex === index ? ' is-pulsing' : ''}`}
             key={tag}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                event.preventDefault();
+                const delta = event.key === 'ArrowLeft' ? -1 : 1;
+                setSelectedTagIndex(
+                  Math.max(0, Math.min(tags.length - 1, index + delta)),
+                );
+              } else if (event.key === 'Backspace' || event.key === 'Delete') {
+                event.preventDefault();
+                const nextTags = tags.filter(
+                  (_, tagIndex) => tagIndex !== index,
+                );
+                onChange(nextTags);
+                setSelectedTagIndex(
+                  nextTags.length === 0
+                    ? null
+                    : Math.min(index, nextTags.length - 1),
+                );
+              } else if (
+                event.key.length === 1 &&
+                !event.ctrlKey &&
+                !event.metaKey
+              ) {
+                focusInputFromTag(index, event.key);
+              }
+            }}
+            ref={(element) => {
+              tagRefs.current[index] = element;
+            }}
+            tabIndex={index === selectedTagIndex ? 0 : -1}
           >
             {tag}
             <button
@@ -186,11 +240,20 @@ export function TagInput({
           aria-expanded={isSuggestionsOpen && availableSuggestions.length > 0}
           role="combobox"
           id={id}
-          onBlur={() => {
-            setIsFocused(false);
-            setIsSuggestionsOpen(false);
-            setSelectedTagIndex(null);
-            setAreTagsSelected(false);
+          ref={inputRef}
+          onBlur={(event) => {
+            const nextFocus = event.relatedTarget;
+            if (
+              !(
+                nextFocus instanceof HTMLElement &&
+                nextFocus.closest('.ui-tag-field') !== null
+              )
+            ) {
+              setIsFocused(false);
+              setIsSuggestionsOpen(false);
+              setSelectedTagIndex(null);
+              setAreTagsSelected(false);
+            }
           }}
           onChange={handleChange}
           onFocus={() => {
