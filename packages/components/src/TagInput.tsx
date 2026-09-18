@@ -211,6 +211,10 @@ export function TagInput({
                 focusInputFromTag(index, event.key);
               }
             }}
+            onClick={() => {
+              setAreTagsSelected(false);
+              setSelectedTagIndex(index);
+            }}
             ref={(element) => {
               tagRefs.current[index] = element;
             }}

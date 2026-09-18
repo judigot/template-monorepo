@@ -105,6 +105,24 @@ describe('TagInput suggestions', () => {
     );
   });
 
+  it('focuses a chip when it is clicked', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    const chip = screen.getByText('Ada').closest('.ui-tag');
+    if (chip === null) {
+      throw new Error('Expected Ada chip');
+    }
+    fireEvent.click(chip);
+    expect(document.activeElement).toBe(chip);
+    expect(chip.className).toContain('is-selected');
+  });
+
   it('selects every tag with Ctrl+A and anchors the border on the last tag', () => {
     const onChange = mock(() => undefined);
     render(
