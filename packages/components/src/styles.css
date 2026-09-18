@@ -170,12 +170,13 @@
   align-items: center;
   display: inline-flex;
   justify-content: center;
-  min-height: 100%;
+  height: calc(var(--ds-size-control) - var(--ds-space-2));
   padding: 0 var(--ds-space-2);
   position: absolute;
-  right: 0;
-  top: 0;
-  width: var(--ds-size-control);
+  right: var(--ds-space-1);
+  top: 50%;
+  transform: translateY(-50%);
+  width: calc(var(--ds-size-control) - var(--ds-space-2));
 }
 
 .ui-password-field > .ui-form-control {
