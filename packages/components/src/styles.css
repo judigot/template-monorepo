@@ -490,14 +490,13 @@
 html[data-design-system="x"] .ui-tag {
   border-color: var(--ds-color-text);
 }
+.ui-tag.is-bulk-selected,
 .ui-tag.is-pulsing {
-  animation: ui-tag-pulse 160ms ease-out 2;
   outline: 2px solid var(--ds-color-focus);
   outline-offset: 2px;
 }
-.ui-tag.is-bulk-selected {
-  outline: 1px solid var(--ds-color-focus);
-  outline-offset: 1px;
+.ui-tag.is-pulsing {
+  animation: ui-tag-pulse 160ms ease-out 2;
 }
 @keyframes ui-tag-pulse {
   0%,
