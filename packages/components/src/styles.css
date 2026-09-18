@@ -188,11 +188,6 @@
   width: 1rem;
 }
 
-.ui-password-toggle:hover {
-  background: var(--ds-color-border);
-  color: var(--ds-color-text);
-}
-
 .ui-password-toggle:focus-visible {
   outline: 2px solid var(--ds-color-focus);
   outline-offset: -2px;
