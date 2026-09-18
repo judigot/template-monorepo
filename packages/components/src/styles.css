@@ -156,6 +156,30 @@
   min-width: 0;
 }
 
+.ui-input-group > .ui-form-control + .ui-password-toggle {
+  border-radius: 0 var(--ds-radius-control) var(--ds-radius-control) 0;
+}
+
+.ui-password-toggle {
+  background: var(--ds-color-surface-subtle);
+  border: 1px solid var(--ds-color-border-strong);
+  color: var(--ds-color-text);
+  cursor: pointer;
+  font: inherit;
+  min-height: var(--ds-size-control);
+  padding: 0 var(--ds-space-3);
+}
+
+.ui-password-toggle:hover {
+  background: var(--ds-color-option-hover);
+  color: var(--ds-color-option-hover-text);
+}
+
+.ui-password-toggle:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: -2px;
+}
+
 .ui-input-group__addon {
   align-items: center;
   background: var(--ds-color-surface-subtle);

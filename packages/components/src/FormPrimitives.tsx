@@ -36,7 +36,7 @@ export function PasswordInput(
       suffix={
         <button
           aria-label={visible ? 'Hide password' : 'Show password'}
-          className="ui-button ui-button--secondary"
+          className="ui-password-toggle"
           onClick={() => {
             setVisible((current) => !current);
           }}
