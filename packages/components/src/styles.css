@@ -188,7 +188,7 @@
 }
 
 .ui-password-toggle:hover {
-  background: color-mix(in srgb, var(--ds-color-option-hover) 55%, transparent);
+  background: var(--ds-color-border);
   color: var(--ds-color-text);
 }
 
