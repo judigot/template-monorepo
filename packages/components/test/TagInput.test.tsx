@@ -144,6 +144,20 @@ describe('TagInput suggestions', () => {
     expect(chip.className).toContain('is-selected');
   });
 
+  it('uses native focus when a non-active chip is clicked', () => {
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={() => undefined}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    const chip = screen.getByRole('option', { name: /Ada/ });
+    fireEvent.mouseDown(chip);
+    expect(document.activeElement).toBe(chip);
+  });
+
   it('returns focus to the input after removing a chip', () => {
     const onChange = mock(() => undefined);
     render(

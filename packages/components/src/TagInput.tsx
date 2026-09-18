@@ -312,6 +312,9 @@ export function TagInput({
               setIsFocused(false);
               setIsSuggestionsOpen(false);
             }}
+            onMouseDown={(event) => {
+              event.currentTarget.focus();
+            }}
             ref={(element) => {
               tagRefs.current[index] = element;
             }}
