@@ -481,6 +481,7 @@
   border: 1px solid transparent;
   border-radius: var(--ds-radius-tag);
   color: var(--ds-color-primary-subtle-text);
+  cursor: pointer;
   display: inline-flex;
   font-size: var(--ds-type-small);
   gap: var(--ds-space-1);
