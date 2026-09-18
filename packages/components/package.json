@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@monorepo/design-system": "workspace:*",
-    "@monorepo/design-tokens": "workspace:*"
+    "@monorepo/design-tokens": "workspace:*",
+    "lucide-react": "^1.47.0"
   },
   "peerDependencies": {
     "react": "^19.3.0",

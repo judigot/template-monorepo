@@ -156,6 +156,43 @@
   min-width: 0;
 }
 
+.ui-password-field {
+  position: relative;
+}
+
+.ui-password-toggle {
+  background: transparent;
+  border: 0;
+  border-radius: var(--ds-radius-control);
+  color: var(--ds-color-text-muted);
+  cursor: pointer;
+  font: inherit;
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  height: calc(var(--ds-size-control) - var(--ds-space-2));
+  padding: 0 var(--ds-space-2);
+  position: absolute;
+  right: var(--ds-space-1);
+  top: 50%;
+  transform: translateY(-50%);
+  width: calc(var(--ds-size-control) - var(--ds-space-2));
+}
+
+.ui-password-field > .ui-form-control {
+  padding-inline-end: calc(var(--ds-size-control) + var(--ds-space-2));
+}
+
+.ui-password-toggle svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.ui-password-toggle:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: -2px;
+}
+
 .ui-input-group__addon {
   align-items: center;
   background: var(--ds-color-surface-subtle);
@@ -247,7 +284,7 @@
 }
 
 .ui-button {
-  border: 1px solid transparent;
+  border: 1px solid var(--ds-color-border-strong);
   border-radius: var(--ds-radius-button);
   cursor: pointer;
   font: inherit;
@@ -460,11 +497,6 @@
   min-height: var(--ds-size-control);
   padding: var(--ds-space-2);
 }
-.ui-tag-input.is-focused {
-  border-color: var(--ds-color-primary);
-  box-shadow: 0 0 0 3px
-    color-mix(in srgb, var(--ds-color-primary) 18%, transparent);
-}
 .ui-tag-input input {
   background: transparent;
   border: 0;
@@ -475,15 +507,42 @@
   outline: 0;
   padding: var(--ds-space-1);
 }
+.ui-tag-input:focus-within {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 2px;
+}
 .ui-tag {
   align-items: center;
   background: var(--ds-color-primary-subtle);
+  border: 1px solid transparent;
   border-radius: var(--ds-radius-tag);
   color: var(--ds-color-primary-subtle-text);
+  cursor: pointer;
   display: inline-flex;
   font-size: var(--ds-type-small);
   gap: var(--ds-space-1);
   padding: 0.25rem 0.5rem 0.25rem 0.625rem;
+}
+html[data-design-system="x"] .ui-tag {
+  border-color: var(--ds-color-text);
+}
+.ui-tag.is-bulk-selected,
+.ui-tag.is-selected,
+.ui-tag.is-pulsing {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 2px;
+}
+.ui-tag.is-pulsing {
+  animation: ui-tag-pulse 160ms ease-out 2;
+}
+@keyframes ui-tag-pulse {
+  0%,
+  100% {
+    outline-width: 2px;
+  }
+  50% {
+    outline-width: 4px;
+  }
 }
 .ui-tag button {
   background: transparent;
@@ -710,6 +769,7 @@
 .ui-form-control:focus-visible,
 .ui-theme-switcher select:focus-visible,
 .ui-switch button:focus-visible,
+.ui-tag:focus-visible,
 .ui-tag button:focus-visible {
   outline: 2px solid var(--ds-color-focus);
   outline-offset: 2px;
@@ -728,6 +788,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .ui-tag.is-pulsing,
   .ui-switch *,
   .ui-switch *::after {
     transition: none;
