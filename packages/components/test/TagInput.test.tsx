@@ -57,6 +57,18 @@ describe('TagInput suggestions', () => {
     expect(onChange).toHaveBeenCalledWith(['React']);
   });
 
+  it('adds every CSV token when multiple tags are pasted', () => {
+    const onChange = mock(() => undefined);
+    render(<TagInput id="tags" label="Tags" onChange={onChange} tags={[]} />);
+    const input = screen.getByRole('combobox');
+    fireEvent.paste(input, {
+      clipboardData: {
+        getData: () => 'a,b,c',
+      },
+    });
+    expect(onChange).toHaveBeenCalledWith(['a', 'b', 'c']);
+  });
+
   it('closes suggestions on Escape while retaining focus', async () => {
     render(
       <TagInput

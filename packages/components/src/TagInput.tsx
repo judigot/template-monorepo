@@ -208,7 +208,16 @@ export function TagInput({
       return;
     }
     event.preventDefault();
-    pastedTags.forEach(addTag);
+    const additions = pastedTags.filter(
+      (tag, index) => !tags.includes(tag) && pastedTags.indexOf(tag) === index,
+    );
+    if (additions.length === 0) {
+      return;
+    }
+    onChange([...tags, ...additions]);
+    setValue('');
+    setSelectedTagIndex(null);
+    setAreTagsSelected(false);
   };
 
   const focusInputFromTag = (index: number, key: string): void => {
