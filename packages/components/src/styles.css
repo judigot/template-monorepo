@@ -460,11 +460,6 @@
   min-height: var(--ds-size-control);
   padding: var(--ds-space-2);
 }
-.ui-tag-input.is-focused {
-  border-color: var(--ds-color-primary);
-  box-shadow: 0 0 0 3px
-    color-mix(in srgb, var(--ds-color-primary) 18%, transparent);
-}
 .ui-tag-input input {
   background: transparent;
   border: 0;
