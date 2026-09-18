@@ -490,16 +490,10 @@
 html[data-design-system="x"] .ui-tag {
   border-color: var(--ds-color-text);
 }
-.ui-tag.is-bulk-selected {
-  background: color-mix(
-    in srgb,
-    var(--ds-color-primary) 24%,
-    var(--ds-color-input)
-  );
-  color: var(--ds-color-option-selected-text);
-}
 .ui-tag.is-pulsing {
   animation: ui-tag-pulse 250ms ease-out;
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 2px;
 }
 @keyframes ui-tag-pulse {
   50% {
