@@ -259,8 +259,14 @@ export function TagInput({
             <button
               type="button"
               aria-label={`Remove ${tag}`}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 onChange(tags.filter((item) => item !== tag));
+                setAreTagsSelected(false);
+                setSelectedTagIndex(null);
+                setIsFocused(true);
+                setIsSuggestionsOpen(true);
+                inputRef.current?.focus();
               }}
             >
               ×

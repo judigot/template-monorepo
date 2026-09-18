@@ -123,6 +123,24 @@ describe('TagInput suggestions', () => {
     expect(chip.className).toContain('is-selected');
   });
 
+  it('returns focus to the input after removing a chip', () => {
+    const onChange = mock(() => undefined);
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={onChange}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Grace' }));
+    expect(onChange).toHaveBeenCalledWith(['Ada']);
+    expect(document.activeElement).toBe(screen.getByRole('combobox'));
+    expect(screen.getByText('Ada').closest('.ui-tag')?.className).not.toContain(
+      'is-selected',
+    );
+  });
+
   it('pulses an existing chip when a duplicate is submitted', () => {
     render(
       <TagInput
