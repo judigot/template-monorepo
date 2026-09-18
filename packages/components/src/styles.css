@@ -163,7 +163,8 @@
 .ui-password-toggle {
   background: transparent;
   border: 0;
-  color: var(--ds-color-text);
+  border-radius: var(--ds-radius-control);
+  color: var(--ds-color-text-muted);
   cursor: pointer;
   font: inherit;
   align-items: center;
@@ -187,8 +188,8 @@
 }
 
 .ui-password-toggle:hover {
-  background: var(--ds-color-option-hover);
-  color: var(--ds-color-option-hover-text);
+  background: color-mix(in srgb, var(--ds-color-option-hover) 55%, transparent);
+  color: var(--ds-color-text);
 }
 
 .ui-password-toggle:focus-visible {
