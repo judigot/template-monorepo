@@ -195,6 +195,24 @@ describe('TagInput suggestions', () => {
     expect(onChange).toHaveBeenCalledWith([]);
   });
 
+  it('deletes the complete bulk selection from the focused chip', () => {
+    const onChange = mock(() => undefined);
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={onChange}
+        tags={['Ada', 'Grace']}
+      />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.keyDown(input, { key: 'a', ctrlKey: true });
+    const focusedChip = screen.getByRole('option', { name: /Grace/ });
+    fireEvent.keyDown(focusedChip, { key: 'Backspace' });
+    expect(onChange).toHaveBeenCalledWith([]);
+    expect(focusedChip.className).not.toContain('is-bulk-selected');
+  });
+
   it('closes suggestions when focus leaves the input', async () => {
     render(
       <TagInput

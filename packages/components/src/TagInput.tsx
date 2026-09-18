@@ -221,6 +221,12 @@ export function TagInput({
                 );
               } else if (event.key === 'Backspace' || event.key === 'Delete') {
                 event.preventDefault();
+                if (areTagsSelected) {
+                  onChange([]);
+                  setAreTagsSelected(false);
+                  setSelectedTagIndex(null);
+                  return;
+                }
                 const nextTags = tags.filter(
                   (_, tagIndex) => tagIndex !== index,
                 );
