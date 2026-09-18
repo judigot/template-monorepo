@@ -36,6 +36,27 @@ describe('TagInput suggestions', () => {
     expect(onChange).toHaveBeenCalledWith(['React']);
   });
 
+  it('returns focus to the input after selecting a dropdown item', async () => {
+    const onChange = mock(() => undefined);
+    render(
+      <TagInput
+        id="tags"
+        label="Tags"
+        onChange={onChange}
+        suggestions={['React']}
+        tags={[]}
+      />,
+    );
+    const input = screen.getByRole('combobox');
+    fireEvent.focus(input);
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: 'React' })).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'React' }));
+    expect(document.activeElement).toBe(input);
+    expect(onChange).toHaveBeenCalledWith(['React']);
+  });
+
   it('closes suggestions on Escape while retaining focus', async () => {
     render(
       <TagInput

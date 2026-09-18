@@ -328,6 +328,11 @@ export function TagInput({
                 }}
                 onClick={() => {
                   addTag(suggestion);
+                  setIsFocused(true);
+                  setIsSuggestionsOpen(true);
+                  setSelectedTagIndex(null);
+                  setAreTagsSelected(false);
+                  inputRef.current?.focus();
                 }}
                 data-active={index === activeSuggestion ? 'true' : undefined}
               >
