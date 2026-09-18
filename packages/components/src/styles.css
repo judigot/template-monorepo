@@ -490,18 +490,6 @@
 html[data-design-system="x"] .ui-tag {
   border-color: var(--ds-color-text);
 }
-.ui-tag.is-selected {
-  background: color-mix(
-    in srgb,
-    var(--ds-color-primary) 24%,
-    var(--ds-color-input)
-  );
-  border: 2px solid var(--ds-color-primary);
-  color: var(--ds-color-option-selected-text);
-}
-html[data-design-system="x"] .ui-tag.is-selected {
-  border-color: var(--ds-color-text);
-}
 .ui-tag.is-bulk-selected {
   background: color-mix(
     in srgb,
@@ -743,6 +731,7 @@ html[data-design-system="x"] .ui-tag.is-selected {
 .ui-form-control:focus-visible,
 .ui-theme-switcher select:focus-visible,
 .ui-switch button:focus-visible,
+.ui-tag:focus-visible,
 .ui-tag button:focus-visible {
   outline: 2px solid var(--ds-color-focus);
   outline-offset: 2px;
