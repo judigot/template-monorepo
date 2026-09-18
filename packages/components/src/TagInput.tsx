@@ -225,6 +225,9 @@ export function TagInput({
                   onChange([]);
                   setAreTagsSelected(false);
                   setSelectedTagIndex(null);
+                  setIsFocused(true);
+                  setIsSuggestionsOpen(true);
+                  inputRef.current?.focus();
                   return;
                 }
                 const nextTags = tags.filter(
