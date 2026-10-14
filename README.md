@@ -148,6 +148,10 @@ Each frontend renders a framework badge above the heading (blue/purple
 "VITE" or green/teal "NEXT.JS") in every state, so you can always tell
 which application a deployment is serving.
 
+## Optional public read-only JSON routes
+
+The Next.js app includes a dependency-free helper for public GET/OPTIONS JSON APIs with CORS and safe caching. Use it only for intentionally public data; see [docs/public-read-only-api.md](./docs/public-read-only-api.md). The existing Hono API retains its own CORS and authentication decisions.
+
 ## Environment Variables
 
 | Variable              | Consumed by     | Purpose                                              |
