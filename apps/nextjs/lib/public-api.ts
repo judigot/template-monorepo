@@ -22,7 +22,7 @@ export function publicJson(
   const cacheControl =
     status >= 400
       ? 'no-store'
-      : `public, max-age=${cacheSeconds}, s-maxage=${cacheSeconds}, stale-while-revalidate=300`;
+      : `public, max-age=${String(cacheSeconds)}, s-maxage=${String(cacheSeconds)}, stale-while-revalidate=300`;
 
   return Response.json(data, {
     status,
