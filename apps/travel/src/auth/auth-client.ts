@@ -1,6 +1,7 @@
 import { expoClient } from '@better-auth/expo/client';
 import { createAuthClient } from 'better-auth/react';
 import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
 /*
  * Only the public API origin belongs in an Expo client bundle.
@@ -20,7 +21,10 @@ export const authClient = createAuthClient({
   baseURL: authBaseUrl ?? 'http://localhost:3000',
   plugins: [
     expoClient({
-      scheme: 'roamtravel',
+      scheme:
+        typeof Constants.expoConfig?.scheme === 'string'
+          ? Constants.expoConfig.scheme
+          : 'roamtravel',
       storagePrefix: 'roamtravel',
       storage: SecureStore,
     }),

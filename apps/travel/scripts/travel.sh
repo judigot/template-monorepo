@@ -13,10 +13,12 @@ Roam Travel (run from the repo root or apps/travel)
 
   make setup          Install locked monorepo dependencies
   make doctor         Check Bun, Node.js, and dependency installation
-  make dev            Start Expo Go server for this Android phone (localhost)
-  make tunnel         Start Expo Go server through a public tunnel
+  make dev            Start native development client + Fast Refresh on this phone
+  make tunnel         Start native development client through a public tunnel
+  make dev-go         Optional Expo Go UI-only fallback (no custom native modules)
   make web            Start the browser development server
-  make build          Build an installable Android APK using EAS cloud
+  make build          Build a standalone preview Android APK using EAS cloud
+  Android dev APK     Download the GitHub Actions artifact (see README)
   make build-web      Export a static web build to apps/travel/dist
   make eas-login      Sign in to an Expo account (first build)
   make eas-init       Link this demo to an Expo project (first build)
@@ -45,15 +47,22 @@ HELP
     require_bun
     require_dependencies
     cd "$TRAVEL_APP_DIR"
-    printf 'Open the exp:// URL printed by Expo in the Expo Go Android app.\n'
-    exec bun expo start --localhost "$@"
+    printf 'Open Roam Travel Dev on this phone and connect it to http://127.0.0.1:8081.\n'
+    printf 'Keep Termux running; React edits appear through Fast Refresh without APK rebuilds.\n'
+    exec env EXPO_APP_VARIANT=development bun expo start --dev-client --localhost "$@"
     ;;
   tunnel)
     require_bun
     require_dependencies
     cd "$TRAVEL_APP_DIR"
     printf 'The tunnel URL may be reachable by other devices; do not share it publicly.\n'
-    exec bun expo start --tunnel "$@"
+    exec env EXPO_APP_VARIANT=development bun expo start --dev-client --tunnel "$@"
+    ;;
+  dev-go)
+    require_bun
+    require_dependencies
+    cd "$TRAVEL_APP_DIR"
+    exec bun expo start --go --localhost "$@"
     ;;
   web)
     require_bun

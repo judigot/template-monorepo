@@ -45,8 +45,9 @@ Set this public (non-secret) variable for both web and Android builds:
 
     EXPO_PUBLIC_API_URL=https://YOUR-API-HOST
 
-Keep it as the API origin, **without** /api/auth. The client uses the
-roamtravel:// scheme, already declared in app.json. Better Auth's Expo client
+Keep it as the API origin, **without** /api/auth. The release client uses `roamtravel://`; the development client uses
+`roamtravel-dev://`, selected by `EXPO_APP_VARIANT=development` in
+`app.config.ts`. The Better Auth server trusts both exact schemes. Better Auth's Expo client
 uses expo-secure-store for native session cookies.
 
 Build a new APK after adding expo-secure-store, expo-network and

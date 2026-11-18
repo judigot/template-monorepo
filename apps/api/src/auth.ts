@@ -22,7 +22,11 @@ export const auth =
           max: 5,
         }),
         plugins: [expo()],
-        trustedOrigins: ['roamtravel://', ...resolveAllowedOrigins()],
+        trustedOrigins: [
+          'roamtravel://',
+          'roamtravel-dev://',
+          ...resolveAllowedOrigins(),
+        ],
         socialProviders: {
           google: {
             clientId: config.GOOGLE_CLIENT_ID,

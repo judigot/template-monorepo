@@ -1,0 +1,76 @@
+name: Android Development Client
+
+on:
+  pull_request:
+    paths:
+      - apps/travel/package.json
+      - apps/travel/app.json
+      - apps/travel/app.config.ts
+      - apps/travel/eas.json
+      - bun.lock
+      - .github/workflows/android-dev-client.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-dev-client:
+    name: Gradle debug APK (native Expo dev client)
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      EXPO_APP_VARIANT: development
+      CI: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate native Android project
+        working-directory: apps/travel
+        run: bun expo prebuild --platform android --no-install --clean
+
+      - name: Verify isolated development identity
+        working-directory: apps/travel
+        run: |
+          test "$(bun expo config --json | node -e 'let a="";process.stdin.on("data",x=>a+=x);process.stdin.on("end",()=>process.stdout.write(JSON.parse(a).android.package))')" = "com.judigot.roamtravel.dev"
+
+      - name: Compile Android debug APK
+        working-directory: apps/travel/android
+        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Verify installable APK exists
+        run: test -s apps/travel/android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload native development APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: roam-travel-dev-client
+          path: apps/travel/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

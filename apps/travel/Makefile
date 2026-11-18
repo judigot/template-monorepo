@@ -3,7 +3,7 @@ TRAVEL_APP_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 TRAVEL_CLI := $(TRAVEL_APP_DIR)/scripts/travel.sh
 
 .DEFAULT_GOAL := help
-.PHONY: help doctor setup install dev start tunnel web build apk build-android build-web eas-login eas-init test check
+.PHONY: help doctor setup install dev start dev-go tunnel web build apk build-android build-web eas-login eas-init test check
 
 help:
 	@bash "$(TRAVEL_CLI)" help
@@ -16,6 +16,9 @@ setup install:
 
 dev start:
 	@bash "$(TRAVEL_CLI)" dev
+
+dev-go:
+	@bash "$(TRAVEL_CLI)" dev-go
 
 tunnel:
 	@bash "$(TRAVEL_CLI)" tunnel

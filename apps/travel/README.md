@@ -26,87 +26,96 @@ for API, PostgreSQL, Google Cloud, web and native instructions.
 The browser uses Metro/React Native Web. Android and iOS render the same
 React Native UI natively.
 
-## Termux Ubuntu quick start
+## Native Android development: build once, iterate instantly
 
-Run these commands **inside your Ubuntu (PRoot) shell**, from the cloned
-repository root. Ubuntu needs `make`, Node.js **24+** with npm/npx, and Bun **1.4.4 or newer** (latest stable recommended).
-CI and cloud builds pin Bun 1.4.4 for reproducibility, while local development
-accepts newer stable versions. Install these prerequisites in Ubuntu first;
-Termux's Android-side binaries may not work inside PRoot.
+The production app is **native React Native**; no WebView or embedded website.
+The development client is a separate application, **Roam Travel Dev**,
+package \`com.judigot.roamtravel.dev\`. It can coexist with your existing
+signed preview/release app \`com.judigot.roamtravel\` without signature
+conflicts or overwriting its data.
 
-```sh
+### 1. Obtain the development APK from GitHub Actions
+
+On a PR that changes the native app configuration or dependencies, the
+[Android Development Client](../../.github/workflows/android-dev-client.yml)
+workflow compiles a **debug APK directly with Expo prebuild and Gradle** on a
+GitHub-hosted Linux runner. No Expo account, EAS Build queue, or Android
+toolchain on your phone is required.
+
+Open the GitHub Actions run for PR #31, download the
+\`roam-travel-dev-client\` artifact ZIP, extract \`app-debug.apk\` using
+Android's Files app, then install the APK. It contains the developer launcher
+and **must connect to Metro** to run your latest JavaScript. The artifact
+is a development build, not a distributable production APK.
+
+The workflow runs automatically when the PR changes \`apps/travel/package.json\`,
+\`apps/travel/app.json\`, \`apps/travel/app.config.ts\`, \`bun.lock\`,
+or the workflow itself. UI-only edits do not trigger a native rebuild.
+
+After merging to the default branch, the same workflow supports manual
+\`workflow_dispatch\` builds when a native change requires another APK.
+
+### 2. Run Metro from Termux Ubuntu on your Android phone
+
+In Termux Ubuntu (PRoot), from the repository root:
+
+```bash
 make setup
 make dev
 ```
 
-`make setup` installs dependencies using the existing `bun.lock` without
-updating it. `make dev` starts Metro in **localhost** mode for Expo Go on
-this same Android phone. Install a compatible **Expo Go for SDK 58** and
-open the `exp://` address printed by Expo. Keep Termux/Ubuntu running while
-using Expo Go. You do not need a QR-code scanner on the same phone.
+Open **Roam Travel Dev**, then connect to the address
+\`http://127.0.0.1:8081\` from the development launcher. The shell starts
+Expo with \`EXPO_APP_VARIANT=development\` and the \`--dev-client\` flag.
+Keep Termux and the development server running.
 
-If Expo Go cannot connect to localhost, try `make tunnel`. A tunnel requires
-network access and may prompt you to install its tunnel dependency. The URL
-is publicly reachable, so treat it as a development-only address. Metro,
-watching and Bun inside Android/PRoot are **experimental and have not been
-verified on a physical phone**.
+Most React Native component, JavaScript/TypeScript, Tamagui styling, and
+navigation changes appear through **Fast Refresh** without generating or
+installing another APK. From another terminal, edit files as usual.
+If the localhost connection is blocked, use \`make tunnel\` and connect
+using the link printed by Expo (internet required). Expo Go remains
+available through \`make dev-go\`, but it does not replace the custom
+native development build.
 
-### Convenient Make commands
+Metro from Ubuntu PRoot running on the same physical Android device remains
+**experimental and unverified**. If bundler connection or file watchers fail,
+a standard Linux/macOS development host with Metro and an Android phone on the
+same network is the supported fallback.
 
-Run these commands from either the monorepo root or `apps/travel`:
+### 3. When a new APK is actually required
 
-| Command | Purpose |
-| --- | --- |
-| `make help` | Print all available commands |
-| `make doctor` | Check installed tool versions and dependencies |
-| `make setup` | Install locked dependencies |
-| `make dev` or `make start` | Start native Expo Go development server on the phone |
-| `make tunnel` | Start Expo Go development server using a tunnel |
-| `make web` | Start the browser development server |
-| `make build` or `make apk` | Request an installable Android APK from EAS cloud |
-| `make build-web` | Export static web files to `apps/travel/dist` |
-| `make eas-login` | Authenticate with Expo for the first APK build |
-| `make eas-init` | Manually link the app to an Expo project |
-| `make test` | Run travel app unit tests |
-| `make check` | Run travel typecheck, unit tests and web export |
+Rebuild and install a new dev APK after upgrading the Expo SDK or React Native,
+adding/updating native libraries, changing Android permissions or app IDs,
+or changing native config plugins. UI, business logic, or server-only changes
+normally require no native rebuild.
 
-### Build an Android APK
+To compile locally on a standard Linux/macOS workstation with an Android
+SDK and JDK 17, use Expo's supported native workflow:
 
-```sh
-make build
+```bash
+cd apps/travel
+EXPO_APP_VARIANT=development bun expo prebuild --platform android --clean
+EXPO_APP_VARIANT=development bun expo run:android --device
 ```
 
-Unlike `make dev`, `make build` uses **Expo Application Services (EAS) cloud
-builds**. It does **not** run the Android SDK/Gradle in your Termux Ubuntu
-container. EAS CLI runs through Expo's supported `npx eas-cli@latest` command
-instead of `bunx`, avoiding the isolated Bun CLI cache that failed to load
-in Termux. Bun remains the project's package manager and `bun.lock` is unchanged. The first build needs an Expo account and an interactive login
-(`make eas-login` if needed). When the app is not linked to an EAS project,
-`make build` invokes `eas init` once, which may update `apps/travel/app.json`
-with `extra.eas.projectId`. Review that locally generated change before
-committing it. EAS may also ask to create Android signing credentials.
+This is not recommended inside Android Termux PRoot.
 
-After EAS finishes, follow the APK download/install link printed in the CLI
-on your Android device. The preview APK is a standalone app and does not
-need Expo Go or a running Metro server. Cloud build availability and
-billing are subject to your Expo account and plan. Native APK builds are
-**not yet verified** for this demo.
+### Web, preview releases, and EAS fallback
 
-`make build-web` is separate because exporting a web bundle does not create
-an Android APK. The generated `dist` directory is ignored by Git.
+\`make web\` starts the same React Native Web screens in a browser.
+\`make build-web\` creates a static web export.
 
-## Development on another machine
+\`make build\` is intentionally retained as the standalone **EAS preview APK**
+workflow for now, not for ordinary development. The existing EAS profile does
+not use the development client. \`make eas-login\` and \`make eas-init\`
+remain optional. A separate \`development\` EAS profile exists as a fallback
+but GitHub Actions is the preferred build transport.
 
-From the monorepo root, with Bun 1.4.4 or newer and Node.js 24+:
-
-```sh
-make setup
-make dev
-```
-
-`make dev` uses localhost by default for same-device Termux. When hosting
-Metro on a different machine, use `make tunnel` so Expo Go can connect from
-your phone. Direct browser access: `make web`.
+The developer client and Metro/Fast Refresh apply only to development.
+Shipping changes to **installed release users** without a new APK requires
+a separately configured and tested \`expo-updates\` OTA delivery service.
+OTA is not installed or operational yet, and native dependency changes still
+require an updated binary.
 
 ## Verification
 
