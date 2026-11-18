@@ -72,7 +72,9 @@ export default function DiscoverScreen() {
               borderRadius={100}
               borderWidth={1}
               borderColor={region === value ? COLORS.accent : COLORS.line}
-              onPress={() => setRegion(value)}
+              onPress={() => {
+                setRegion(value);
+              }}
               accessibilityState={{ selected: region === value }}
             >
               {label}

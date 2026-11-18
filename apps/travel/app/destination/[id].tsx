@@ -21,7 +21,9 @@ export default function DestinationScreen() {
           title="We could not find that place"
           message="The destination may have moved."
           actionLabel="Return to Explore"
-          onAction={() => router.replace('/')}
+          onAction={() => {
+            router.replace('/');
+          }}
         />
       </Page>
     );
@@ -36,7 +38,9 @@ export default function DestinationScreen() {
         size="$3"
         backgroundColor={COLORS.accentSoft}
         color={COLORS.accent}
-        onPress={() => router.back()}
+        onPress={() => {
+          router.back();
+        }}
       >
         Back to places
       </Button>
@@ -133,7 +137,9 @@ export default function DestinationScreen() {
         size="$5"
         backgroundColor={saved ? COLORS.accentSoft : COLORS.accent}
         color={saved ? COLORS.accent : COLORS.surface}
-        onPress={() => toggleSaved(destination.id)}
+        onPress={() => {
+          toggleSaved(destination.id);
+        }}
       >
         {saved ? 'Remove from saved places' : 'Save this destination'}
       </Button>

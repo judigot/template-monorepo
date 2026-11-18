@@ -39,7 +39,9 @@ export default function SavedScreen() {
           title="Your list is just getting started"
           message="Tap the heart on any destination to keep it here."
           actionLabel="Find places"
-          onAction={() => router.replace('/')}
+          onAction={() => {
+            router.replace('/');
+          }}
         />
       ) : (
         <YStack gap="$3">
@@ -61,7 +63,9 @@ export default function SavedScreen() {
           <Button
             backgroundColor={COLORS.accentSoft}
             color={COLORS.accent}
-            onPress={() => router.replace('/')}
+            onPress={() => {
+              router.replace('/');
+            }}
           >
             Discover more places
           </Button>

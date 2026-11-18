@@ -49,7 +49,9 @@ export function DestinationCard({
           backgroundColor="#ffffff"
           color={saved ? '#be185d' : COLORS.ink}
           accessibilityLabel={(saved ? 'Remove ' : 'Save ') + destination.name}
-          onPress={() => onToggleSaved(destination.id)}
+          onPress={() => {
+            onToggleSaved(destination.id);
+          }}
         >
           {saved ? '♥' : '♡'}
         </Button>
@@ -75,12 +77,12 @@ export function DestinationCard({
             backgroundColor={COLORS.accentSoft}
             color={COLORS.accent}
             fontWeight="700"
-            onPress={() =>
+            onPress={() => {
               router.push({
                 pathname: '/destination/[id]',
                 params: { id: destination.id },
-              })
-            }
+              });
+            }}
           >
             Explore this place
           </Button>
