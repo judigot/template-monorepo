@@ -6,7 +6,9 @@ import * as SecureStore from 'expo-secure-store';
  * Only the public API origin belongs in an Expo client bundle.
  * The Google client secret and Better Auth secret stay in the Hono API.
  */
-const origin = process.env.EXPO_PUBLIC_API_URL?.trim();
+const configuredOrigin: unknown = process.env.EXPO_PUBLIC_API_URL;
+const origin =
+  typeof configuredOrigin === 'string' ? configuredOrigin.trim() : undefined;
 
 export const authBaseUrl =
   origin !== undefined &&

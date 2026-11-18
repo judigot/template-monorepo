@@ -33,7 +33,7 @@ const KEYS = [
 export function parseAuthEnvironment(
   source: NodeJS.ProcessEnv = process.env,
 ): IAuthEnvironment | null {
-  if (KEYS.every((key) => !source[key]?.trim())) {
+  if (KEYS.every((key) => (source[key] ?? '').trim() === '')) {
     return null;
   }
 

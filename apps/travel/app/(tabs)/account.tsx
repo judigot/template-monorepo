@@ -25,7 +25,9 @@ function AuthenticatedAccount() {
       }
     });
 
-    return () => subscription.remove();
+    return () => {
+      subscription.remove();
+    };
   }, [refresh]);
 
   const signIn = async () => {
@@ -117,7 +119,7 @@ function AuthenticatedAccount() {
             </Button>
           </YStack>
         )}
-        {error ? (
+        {error !== null ? (
           <Text accessibilityRole="alert" color="#b42318">
             {error}
           </Text>
