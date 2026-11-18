@@ -29,7 +29,7 @@ export default function DiscoverScreen() {
 
   return (
     <Page>
-      <YStack backgroundColor="#163e35" borderRadius={26} padding="$5" gap="$3">
+      <YStack backgroundColor="#163e35" rounded={26} padding="5" gap="3">
         <Text color="#b6decf" fontSize={12} fontWeight="700" letterSpacing={2}>
           ROAM / TRAVEL JOURNAL
         </Text>
@@ -37,58 +37,52 @@ export default function DiscoverScreen() {
           color="#ffffff"
           fontSize={compact ? 32 : 42}
           fontWeight="800"
-          lineHeight={compact ? 40 : 50}
+          style={{ lineHeight: compact ? 40 : 50 }}
         >
           Your next great story starts somewhere.
         </Text>
-        <Text color="#d4e9dc" fontSize={15} lineHeight={23}>
+        <Text color="#d4e9dc" fontSize={15} lineHeight="23px">
           Find a place worth exploring, then keep your favorites together.
         </Text>
       </YStack>
 
-      <YStack gap="$3">
-        <Text fontSize={20} color={COLORS.ink} fontWeight="800">
+      <YStack gap="3">
+        <Text fontSize={20} fontWeight="800" style={{ color: COLORS.ink }}>
           Find your kind of escape
         </Text>
         <Input
-          size="$4"
+          size="md"
           value={query}
           onChangeText={setQuery}
           placeholder="Search destinations or experiences"
           accessibilityLabel="Search destinations"
           backgroundColor="#ffffff"
-          borderColor={COLORS.line}
-          borderRadius={14}
-        />
-        <XStack gap="$2" flexWrap="wrap">
+          rounded={14}
+        / style={{ borderColor: COLORS.line }}>
+        <XStack gap="2" flexWrap="wrap">
           {REGIONS.map(({ label, value }) => (
             <Button
               key={value}
-              size="$3"
-              backgroundColor={
-                region === value ? COLORS.accent : COLORS.surface
-              }
-              color={region === value ? COLORS.surface : COLORS.ink}
-              borderRadius={100}
+              size="sm"
+              rounded={100}
               borderWidth={1}
-              borderColor={region === value ? COLORS.accent : COLORS.line}
               onPress={() => {
                 setRegion(value);
               }}
               accessibilityState={{ selected: region === value }}
-            >
+             style={{ backgroundColor: region === value ? COLORS.accent : COLORS.surface, color: region === value ? COLORS.surface : COLORS.ink, borderColor: region === value ? COLORS.accent : COLORS.line }}>
               {label}
             </Button>
           ))}
         </XStack>
       </YStack>
 
-      <YStack gap="$3">
-        <XStack alignItems="center" justifyContent="space-between">
-          <Text fontSize={21} color={COLORS.ink} fontWeight="800">
+      <YStack gap="3">
+        <XStack items="center" justify="space-between">
+          <Text fontSize={21} fontWeight="800" style={{ color: COLORS.ink }}>
             Discover places
           </Text>
-          <Text fontSize={13} color={COLORS.muted}>
+          <Text fontSize={13} style={{ color: COLORS.muted }}>
             {destinations.length}{' '}
             {destinations.length === 1 ? 'place' : 'places'}
           </Text>
@@ -104,7 +98,7 @@ export default function DiscoverScreen() {
             }}
           />
         ) : (
-          <XStack flexWrap="wrap" justifyContent="space-between">
+          <XStack flexWrap="wrap" justify="space-between">
             {destinations.map((destination) => (
               <DestinationCard
                 key={destination.id}

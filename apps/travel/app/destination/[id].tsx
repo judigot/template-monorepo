@@ -35,20 +35,17 @@ export default function DestinationScreen() {
     <Page>
       <Button
         alignSelf="flex-start"
-        size="$3"
-        backgroundColor={COLORS.accentSoft}
-        color={COLORS.accent}
+        size="sm"
         onPress={() => {
           router.back();
         }}
-      >
+       style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}>
         Back to places
       </Button>
       <YStack
-        borderRadius={24}
+        rounded={24}
         overflow="hidden"
-        backgroundColor={COLORS.imageFallback}
-      >
+       style={{ backgroundColor: COLORS.imageFallback }}>
         <Image
           source={{ uri: destination.imageUrl }}
           resizeMode="cover"
@@ -56,94 +53,86 @@ export default function DestinationScreen() {
           style={{ width: '100%', height: width < 720 ? 230 : 355 }}
         />
       </YStack>
-      <YStack gap="$3">
+      <YStack gap="3">
         <Text
           fontSize={13}
           fontWeight="800"
-          color={COLORS.accent}
           letterSpacing={1}
-        >
+         style={{ color: COLORS.accent }}>
           {destination.country.toUpperCase()}
         </Text>
         <Text
           fontSize={width < 720 ? 34 : 46}
           fontWeight="800"
-          color={COLORS.ink}
-        >
+         style={{ color: COLORS.ink }}>
           {destination.name}
         </Text>
-        <Text fontSize={17} color={COLORS.muted} lineHeight={26}>
+        <Text fontSize={17} lineHeight="26px" style={{ color: COLORS.muted }}>
           {destination.description}
         </Text>
-        <XStack flexWrap="wrap" gap="$3" paddingTop="$2">
+        <XStack flexWrap="wrap" gap="3" paddingTop="2">
           <YStack
-            backgroundColor={COLORS.surface}
-            padding="$4"
-            borderRadius={16}
+            padding="4"
+            rounded={16}
             flex={1}
-          >
-            <Text fontSize={12} color={COLORS.muted}>
+           style={{ backgroundColor: COLORS.surface }}>
+            <Text fontSize={12} style={{ color: COLORS.muted }}>
               Best for
             </Text>
-            <Text fontWeight="700" fontSize={15} color={COLORS.ink}>
+            <Text fontWeight="700" fontSize={15} style={{ color: COLORS.ink }}>
               {destination.bestFor}
             </Text>
           </YStack>
           <YStack
-            backgroundColor={COLORS.surface}
-            padding="$4"
-            borderRadius={16}
+            padding="4"
+            rounded={16}
             flex={1}
-          >
-            <Text fontSize={12} color={COLORS.muted}>
+           style={{ backgroundColor: COLORS.surface }}>
+            <Text fontSize={12} style={{ color: COLORS.muted }}>
               Suggested stay
             </Text>
-            <Text fontWeight="700" fontSize={15} color={COLORS.ink}>
+            <Text fontWeight="700" fontSize={15} style={{ color: COLORS.ink }}>
               {destination.duration}
             </Text>
           </YStack>
         </XStack>
       </YStack>
       <YStack
-        gap="$3"
-        padding="$5"
-        borderRadius={22}
-        backgroundColor={COLORS.surface}
-      >
-        <Text fontSize={21} fontWeight="800" color={COLORS.ink}>
+        gap="3"
+        padding="5"
+        rounded={22}
+       style={{ backgroundColor: COLORS.surface }}>
+        <Text fontSize={21} fontWeight="800" style={{ color: COLORS.ink }}>
           Ideas for your trip
         </Text>
         {destination.highlights.map((highlight, index) => (
-          <XStack key={highlight} alignItems="flex-start" gap="$3">
+          <XStack key={highlight} items="flex-start" gap="3">
             <YStack
-              width={28}
-              height={28}
-              borderRadius={14}
-              backgroundColor={COLORS.accentSoft}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Text fontWeight="800" color={COLORS.accent}>
+              w={28}
+              h={28}
+              rounded={14}
+              items="center"
+              justify="center"
+             style={{ backgroundColor: COLORS.accentSoft }}>
+              <Text fontWeight="800" style={{ color: COLORS.accent }}>
                 {index + 1}
               </Text>
             </YStack>
-            <Text color={COLORS.ink} fontSize={15} lineHeight={25} flex={1}>
+            <Text fontSize={15} lineHeight="25px" flex={1} style={{ color: COLORS.ink }}>
               {highlight}
             </Text>
           </XStack>
         ))}
       </YStack>
       <Button
-        size="$5"
-        backgroundColor={saved ? COLORS.accentSoft : COLORS.accent}
-        color={saved ? COLORS.accent : COLORS.surface}
+        size="lg"
         onPress={() => {
           toggleSaved(destination.id);
         }}
-      >
+       style={{ backgroundColor: saved ? COLORS.accentSoft : COLORS.accent, color: saved ? COLORS.accent : COLORS.surface }}>
         {saved ? 'Remove from saved places' : 'Save this destination'}
       </Button>
-      <Text color={COLORS.muted} fontSize={12} textAlign="center">
+      <Text fontSize={12} textAlign="center" style={{ color: COLORS.muted }}>
         Demo content only. No live bookings or prices are shown.
       </Text>
     </Page>

@@ -11,17 +11,16 @@ export function Page({ children }: { children: ReactNode }) {
     >
       <ScrollView
         flex={1}
-        backgroundColor={COLORS.canvas}
         keyboardShouldPersistTaps="handled"
-      >
+       style={{ backgroundColor: COLORS.canvas }}>
         <YStack
           alignSelf="center"
-          width="100%"
+          w="100%"
           maxWidth={1120}
-          paddingHorizontal="$4"
-          paddingTop="$5"
-          paddingBottom="$8"
-          gap="$5"
+          paddingHorizontal="4"
+          paddingTop="5"
+          paddingBottom="8"
+          gap="5"
         >
           {children}
         </YStack>

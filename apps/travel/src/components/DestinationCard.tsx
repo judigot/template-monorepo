@@ -21,19 +21,16 @@ export function DestinationCard({
 
   return (
     <YStack
-      width={compact ? '100%' : '48%'}
-      backgroundColor={COLORS.surface}
-      borderRadius={22}
+      w={compact ? '100%' : '48%'}
+      rounded={22}
       overflow="hidden"
-      borderColor={COLORS.line}
       borderWidth={1}
-      marginBottom="$3"
-    >
+      marginBottom="3"
+     style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}>
       <YStack
-        height={205}
+        h={205}
         position="relative"
-        backgroundColor={COLORS.imageFallback}
-      >
+       style={{ backgroundColor: COLORS.imageFallback }}>
         <Image
           source={{ uri: destination.imageUrl }}
           accessibilityLabel={destination.name + ' landscape'}
@@ -42,40 +39,37 @@ export function DestinationCard({
         />
         <Button
           position="absolute"
-          top="$3"
-          right="$3"
-          size="$3"
+          top="3"
+          right="3"
+          size="sm"
           circular
           backgroundColor="#ffffff"
-          color={saved ? '#be185d' : COLORS.ink}
           accessibilityLabel={(saved ? 'Remove ' : 'Save ') + destination.name}
           onPress={() => {
             onToggleSaved(destination.id);
           }}
-        >
+         style={{ color: saved ? '#be185d' : COLORS.ink }}>
           {saved ? '♥' : '♡'}
         </Button>
       </YStack>
-      <YStack padding="$4" gap="$2" flex={1}>
-        <XStack alignItems="center" justifyContent="space-between" gap="$2">
-          <Text fontSize={13} color={COLORS.accent} fontWeight="700">
+      <YStack padding="4" gap="2" flex={1}>
+        <XStack items="center" justify="space-between" gap="2">
+          <Text fontSize={13} fontWeight="700" style={{ color: COLORS.accent }}>
             {destination.country.toUpperCase()}
           </Text>
-          <Text fontSize={12} color={COLORS.muted}>
+          <Text fontSize={12} style={{ color: COLORS.muted }}>
             {destination.duration}
           </Text>
         </XStack>
-        <Text fontSize={24} color={COLORS.ink} fontWeight="800">
+        <Text fontSize={24} fontWeight="800" style={{ color: COLORS.ink }}>
           {destination.name}
         </Text>
-        <Text fontSize={14} color={COLORS.muted} lineHeight={21}>
+        <Text fontSize={14} lineHeight="21px" style={{ color: COLORS.muted }}>
           {destination.tagline}
         </Text>
-        <XStack paddingTop="$2" marginTop="auto">
+        <XStack paddingTop="2" marginTop="auto">
           <Button
-            width="100%"
-            backgroundColor={COLORS.accentSoft}
-            color={COLORS.accent}
+            w="100%"
             fontWeight="700"
             onPress={() => {
               router.push({
@@ -83,7 +77,7 @@ export function DestinationCard({
                 params: { id: destination.id },
               });
             }}
-          >
+           style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}>
             Explore this place
           </Button>
         </XStack>

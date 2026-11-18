@@ -18,19 +18,18 @@ export default function SavedScreen() {
 
   return (
     <Page>
-      <YStack gap="$2" paddingVertical="$3">
+      <YStack gap="2" paddingVertical="3">
         <Text
           fontSize={12}
           fontWeight="800"
           letterSpacing={2}
-          color={COLORS.accent}
-        >
+         style={{ color: COLORS.accent }}>
           YOUR COLLECTION
         </Text>
-        <Text fontSize={34} fontWeight="800" color={COLORS.ink}>
+        <Text fontSize={34} fontWeight="800" style={{ color: COLORS.ink }}>
           Saved places
         </Text>
-        <Text fontSize={15} color={COLORS.muted}>
+        <Text fontSize={15} style={{ color: COLORS.muted }}>
           A little inspiration for the journeys ahead.
         </Text>
       </YStack>
@@ -44,12 +43,12 @@ export default function SavedScreen() {
           }}
         />
       ) : (
-        <YStack gap="$3">
-          <Text fontSize={15} color={COLORS.muted}>
+        <YStack gap="3">
+          <Text fontSize={15} style={{ color: COLORS.muted }}>
             {savedDestinations.length} saved{' '}
             {savedDestinations.length === 1 ? 'destination' : 'destinations'}
           </Text>
-          <XStack flexWrap="wrap" justifyContent="space-between">
+          <XStack flexWrap="wrap" justify="space-between">
             {savedDestinations.map((destination) => (
               <DestinationCard
                 key={destination.id}
@@ -61,12 +60,10 @@ export default function SavedScreen() {
             ))}
           </XStack>
           <Button
-            backgroundColor={COLORS.accentSoft}
-            color={COLORS.accent}
             onPress={() => {
               router.replace('/');
             }}
-          >
+           style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}>
             Discover more places
           </Button>
         </YStack>

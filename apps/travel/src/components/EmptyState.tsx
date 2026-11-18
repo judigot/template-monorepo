@@ -16,31 +16,27 @@ export function EmptyState({
 }: IEmptyStateProps) {
   return (
     <YStack
-      backgroundColor={COLORS.surface}
-      borderColor={COLORS.line}
       borderWidth={1}
-      borderRadius={22}
-      padding="$6"
-      alignItems="center"
-      gap="$3"
-    >
+      rounded={22}
+      padding="6"
+      items="center"
+      gap="3"
+     style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}>
       <Text
         fontSize={20}
-        color={COLORS.ink}
         fontWeight="800"
         textAlign="center"
-      >
+       style={{ color: COLORS.ink }}>
         {title}
       </Text>
-      <Text fontSize={14} color={COLORS.muted} textAlign="center">
+      <Text fontSize={14} textAlign="center" style={{ color: COLORS.muted }}>
         {message}
       </Text>
       {actionLabel !== undefined && onAction !== undefined ? (
         <Button
-          backgroundColor={COLORS.accent}
           color="#ffffff"
           onPress={onAction}
-        >
+         style={{ backgroundColor: COLORS.accent }}>
           {actionLabel}
         </Button>
       ) : null}
