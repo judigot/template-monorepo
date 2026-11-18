@@ -23,7 +23,8 @@ export default function SavedScreen() {
           fontSize={12}
           fontWeight="800"
           letterSpacing={2}
-         style={{ color: COLORS.accent }}>
+          style={{ color: COLORS.accent }}
+        >
           YOUR COLLECTION
         </Text>
         <Text fontSize={34} fontWeight="800" style={{ color: COLORS.ink }}>
@@ -63,7 +64,8 @@ export default function SavedScreen() {
             onPress={() => {
               router.replace('/');
             }}
-           style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}>
+            style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
+          >
             Discover more places
           </Button>
         </YStack>

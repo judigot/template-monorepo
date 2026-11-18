@@ -71,7 +71,13 @@ export default function DiscoverScreen() {
                 setRegion(value);
               }}
               accessibilityState={{ selected: region === value }}
-             style={{ backgroundColor: region === value ? COLORS.accent : COLORS.surface, color: region === value ? COLORS.surface : COLORS.ink, borderColor: region === value ? COLORS.accent : COLORS.line }}>
+              style={{
+                backgroundColor:
+                  region === value ? COLORS.accent : COLORS.surface,
+                color: region === value ? COLORS.surface : COLORS.ink,
+                borderColor: region === value ? COLORS.accent : COLORS.line,
+              }}
+            >
               {label}
             </Button>
           ))}

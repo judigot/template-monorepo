@@ -39,13 +39,15 @@ export default function DestinationScreen() {
         onPress={() => {
           router.back();
         }}
-       style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}>
+        style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
+      >
         Back to places
       </Button>
       <YStack
         rounded={24}
         overflow="hidden"
-       style={{ backgroundColor: COLORS.imageFallback }}>
+        style={{ backgroundColor: COLORS.imageFallback }}
+      >
         <Image
           source={{ uri: destination.imageUrl }}
           resizeMode="cover"
@@ -58,13 +60,15 @@ export default function DestinationScreen() {
           fontSize={13}
           fontWeight="800"
           letterSpacing={1}
-         style={{ color: COLORS.accent }}>
+          style={{ color: COLORS.accent }}
+        >
           {destination.country.toUpperCase()}
         </Text>
         <Text
           fontSize={width < 720 ? 34 : 46}
           fontWeight="800"
-         style={{ color: COLORS.ink }}>
+          style={{ color: COLORS.ink }}
+        >
           {destination.name}
         </Text>
         <Text fontSize={17} lineHeight="26px" style={{ color: COLORS.muted }}>
@@ -75,7 +79,8 @@ export default function DestinationScreen() {
             padding="4"
             rounded={16}
             flex={1}
-           style={{ backgroundColor: COLORS.surface }}>
+            style={{ backgroundColor: COLORS.surface }}
+          >
             <Text fontSize={12} style={{ color: COLORS.muted }}>
               Best for
             </Text>
@@ -87,7 +92,8 @@ export default function DestinationScreen() {
             padding="4"
             rounded={16}
             flex={1}
-           style={{ backgroundColor: COLORS.surface }}>
+            style={{ backgroundColor: COLORS.surface }}
+          >
             <Text fontSize={12} style={{ color: COLORS.muted }}>
               Suggested stay
             </Text>
@@ -101,7 +107,8 @@ export default function DestinationScreen() {
         gap="3"
         padding="5"
         rounded={22}
-       style={{ backgroundColor: COLORS.surface }}>
+        style={{ backgroundColor: COLORS.surface }}
+      >
         <Text fontSize={21} fontWeight="800" style={{ color: COLORS.ink }}>
           Ideas for your trip
         </Text>
@@ -113,12 +120,18 @@ export default function DestinationScreen() {
               rounded={14}
               items="center"
               justify="center"
-             style={{ backgroundColor: COLORS.accentSoft }}>
+              style={{ backgroundColor: COLORS.accentSoft }}
+            >
               <Text fontWeight="800" style={{ color: COLORS.accent }}>
                 {index + 1}
               </Text>
             </YStack>
-            <Text fontSize={15} lineHeight="25px" flex={1} style={{ color: COLORS.ink }}>
+            <Text
+              fontSize={15}
+              lineHeight="25px"
+              flex={1}
+              style={{ color: COLORS.ink }}
+            >
               {highlight}
             </Text>
           </XStack>
@@ -129,7 +142,11 @@ export default function DestinationScreen() {
         onPress={() => {
           toggleSaved(destination.id);
         }}
-       style={{ backgroundColor: saved ? COLORS.accentSoft : COLORS.accent, color: saved ? COLORS.accent : COLORS.surface }}>
+        style={{
+          backgroundColor: saved ? COLORS.accentSoft : COLORS.accent,
+          color: saved ? COLORS.accent : COLORS.surface,
+        }}
+      >
         {saved ? 'Remove from saved places' : 'Save this destination'}
       </Button>
       <Text fontSize={12} textAlign="center" style={{ color: COLORS.muted }}>

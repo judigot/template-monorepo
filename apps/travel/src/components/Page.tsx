@@ -12,7 +12,8 @@ export function Page({ children }: { children: ReactNode }) {
       <ScrollView
         flex={1}
         keyboardShouldPersistTaps="handled"
-       style={{ backgroundColor: COLORS.canvas }}>
+        style={{ backgroundColor: COLORS.canvas }}
+      >
         <YStack
           alignSelf="center"
           w="100%"

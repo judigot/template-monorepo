@@ -26,11 +26,13 @@ export function DestinationCard({
       overflow="hidden"
       borderWidth={1}
       marginBottom="3"
-     style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}>
+      style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+    >
       <YStack
         h={205}
         position="relative"
-       style={{ backgroundColor: COLORS.imageFallback }}>
+        style={{ backgroundColor: COLORS.imageFallback }}
+      >
         <Image
           source={{ uri: destination.imageUrl }}
           accessibilityLabel={destination.name + ' landscape'}
@@ -48,7 +50,8 @@ export function DestinationCard({
           onPress={() => {
             onToggleSaved(destination.id);
           }}
-         style={{ color: saved ? '#be185d' : COLORS.ink }}>
+          style={{ color: saved ? '#be185d' : COLORS.ink }}
+        >
           {saved ? '♥' : '♡'}
         </Button>
       </YStack>
@@ -77,7 +80,8 @@ export function DestinationCard({
                 params: { id: destination.id },
               });
             }}
-           style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}>
+            style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
+          >
             Explore this place
           </Button>
         </XStack>

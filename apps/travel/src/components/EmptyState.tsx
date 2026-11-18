@@ -21,12 +21,14 @@ export function EmptyState({
       padding="6"
       items="center"
       gap="3"
-     style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}>
+      style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+    >
       <Text
         fontSize={20}
         fontWeight="800"
         textAlign="center"
-       style={{ color: COLORS.ink }}>
+        style={{ color: COLORS.ink }}
+      >
         {title}
       </Text>
       <Text fontSize={14} textAlign="center" style={{ color: COLORS.muted }}>
@@ -36,7 +38,8 @@ export function EmptyState({
         <Button
           color="#ffffff"
           onPress={onAction}
-         style={{ backgroundColor: COLORS.accent }}>
+          style={{ backgroundColor: COLORS.accent }}
+        >
           {actionLabel}
         </Button>
       ) : null}
