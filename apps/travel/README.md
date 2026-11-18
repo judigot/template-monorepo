@@ -30,8 +30,8 @@ React Native UI natively.
 
 The production app is **native React Native**; no WebView or embedded website.
 The development client is a separate application, **Roam Travel Dev**,
-package \`com.judigot.roamtravel.dev\`. It can coexist with your existing
-signed preview/release app \`com.judigot.roamtravel\` without signature
+package `com.judigot.roamtravel.dev`. It can coexist with your existing
+signed preview/release app `com.judigot.roamtravel` without signature
 conflicts or overwriting its data.
 
 ### 1. Obtain the development APK from GitHub Actions
@@ -43,17 +43,17 @@ GitHub-hosted Linux runner. No Expo account, EAS Build queue, or Android
 toolchain on your phone is required.
 
 Open the GitHub Actions run for PR #31, download the
-\`roam-travel-dev-client\` artifact ZIP, extract \`app-debug.apk\` using
+`roam-travel-dev-client` artifact ZIP, extract `app-debug.apk` using
 Android's Files app, then install the APK. It contains the developer launcher
 and **must connect to Metro** to run your latest JavaScript. The artifact
 is a development build, not a distributable production APK.
 
-The workflow runs automatically when the PR changes \`apps/travel/package.json\`,
-\`apps/travel/app.json\`, \`apps/travel/app.config.ts\`, \`bun.lock\`,
+The workflow runs automatically when the PR changes `apps/travel/package.json`,
+`apps/travel/app.json`, `apps/travel/app.config.ts`, `bun.lock`,
 or the workflow itself. UI-only edits do not trigger a native rebuild.
 
 After merging to the default branch, the same workflow supports manual
-\`workflow_dispatch\` builds when a native change requires another APK.
+`workflow_dispatch` builds when a native change requires another APK.
 
 ### 2. Run Metro from Termux Ubuntu on your Android phone
 
@@ -65,16 +65,16 @@ make dev
 ```
 
 Open **Roam Travel Dev**, then connect to the address
-\`http://127.0.0.1:8081\` from the development launcher. The shell starts
-Expo with \`EXPO_APP_VARIANT=development\` and the \`--dev-client\` flag.
+`http://127.0.0.1:8081` from the development launcher. The shell starts
+Expo with `EXPO_APP_VARIANT=development` and the `--dev-client` flag.
 Keep Termux and the development server running.
 
 Most React Native component, JavaScript/TypeScript, Tamagui styling, and
 navigation changes appear through **Fast Refresh** without generating or
 installing another APK. From another terminal, edit files as usual.
-If the localhost connection is blocked, use \`make tunnel\` and connect
+If the localhost connection is blocked, use `make tunnel` and connect
 using the link printed by Expo (internet required). Expo Go remains
-available through \`make dev-go\`, but it does not replace the custom
+available through `make dev-go`, but it does not replace the custom
 native development build.
 
 Metro from Ubuntu PRoot running on the same physical Android device remains
@@ -102,18 +102,18 @@ This is not recommended inside Android Termux PRoot.
 
 ### Web, preview releases, and EAS fallback
 
-\`make web\` starts the same React Native Web screens in a browser.
-\`make build-web\` creates a static web export.
+`make web` starts the same React Native Web screens in a browser.
+`make build-web` creates a static web export.
 
-\`make build\` is intentionally retained as the standalone **EAS preview APK**
+`make build` is intentionally retained as the standalone **EAS preview APK**
 workflow for now, not for ordinary development. The existing EAS profile does
-not use the development client. \`make eas-login\` and \`make eas-init\`
-remain optional. A separate \`development\` EAS profile exists as a fallback
+not use the development client. `make eas-login` and `make eas-init`
+remain optional. A separate `development` EAS profile exists as a fallback
 but GitHub Actions is the preferred build transport.
 
 The developer client and Metro/Fast Refresh apply only to development.
 Shipping changes to **installed release users** without a new APK requires
-a separately configured and tested \`expo-updates\` OTA delivery service.
+a separately configured and tested `expo-updates` OTA delivery service.
 OTA is not installed or operational yet, and native dependency changes still
 require an updated binary.
 
