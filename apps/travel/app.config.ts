@@ -3,7 +3,7 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 const DEV_VARIANT = 'development';
 
 export function resolveAppConfig(
-  config: ExpoConfig,
+  config: Partial<ExpoConfig>,
   variant: string | undefined,
 ): ExpoConfig {
   const isDevelopment = variant === DEV_VARIANT;
@@ -11,6 +11,7 @@ export function resolveAppConfig(
   return {
     ...config,
     name: isDevelopment ? 'Roam Travel Dev' : 'Roam Travel',
+    slug: config.slug ?? 'travel-demo',
     scheme: isDevelopment ? 'roamtravel-dev' : 'roamtravel',
     ios: {
       ...config.ios,
