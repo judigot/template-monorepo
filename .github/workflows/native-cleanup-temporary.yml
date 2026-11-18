@@ -1,0 +1,24 @@
+name: Cleanup Stale Android Builds (temporary)
+
+on:
+  push:
+    branches:
+      - app/travel-app
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  cleanup:
+    if: github.event.head_commit.message == 'chore(ci): cancel superseded Android builds'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel redundant native build runs, preserve newest run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for run_id in 44354842789 44355738132 44355984815 44356103532 44356366659; do
+            echo "Cancel superseded Android build $run_id"
+            gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/cancel" || true
+          done
