@@ -58,7 +58,8 @@ export default function DiscoverScreen() {
           accessibilityLabel="Search destinations"
           backgroundColor="#ffffff"
           rounded={14}
-        / style={{ borderColor: COLORS.line }}>
+          style={{ borderColor: COLORS.line }}
+        />
         <XStack gap="2" flexWrap="wrap">
           {REGIONS.map(({ label, value }) => (
             <Button
