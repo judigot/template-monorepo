@@ -1,7 +1,9 @@
 name: Android Development Client
 
 on:
-  pull_request:
+  push:
+    branches-ignore:
+      - main
     paths:
       - apps/travel/package.json
       - apps/travel/app.json
@@ -10,6 +12,10 @@ on:
       - bun.lock
       - .github/workflows/android-dev-client.yml
   workflow_dispatch:
+
+concurrency:
+  group: android-dev-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

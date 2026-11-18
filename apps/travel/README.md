@@ -36,7 +36,8 @@ conflicts or overwriting its data.
 
 ### 1. Obtain the development APK from GitHub Actions
 
-On a PR that changes the native app configuration or dependencies, the
+When you push a change to native app configuration or dependencies on a feature
+branch, the
 [Android Development Client](../../.github/workflows/android-dev-client.yml)
 workflow compiles a **debug APK directly with Expo prebuild and Gradle** on a
 GitHub-hosted Linux runner. No Expo account, EAS Build queue, or Android
@@ -48,9 +49,10 @@ Android's Files app, then install the APK. It contains the developer launcher
 and **must connect to Metro** to run your latest JavaScript. The artifact
 is a development build, not a distributable production APK.
 
-The workflow runs automatically when the PR changes `apps/travel/package.json`,
+The workflow runs automatically only on pushes that change `apps/travel/package.json`,
 `apps/travel/app.json`, `apps/travel/app.config.ts`, `bun.lock`,
 or the workflow itself. UI-only edits do not trigger a native rebuild.
+Concurrent builds for the same feature branch cancel older in-progress runs.
 
 After merging to the default branch, the same workflow supports manual
 `workflow_dispatch` builds when a native change requires another APK.
