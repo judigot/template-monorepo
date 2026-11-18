@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Roam Travel",
+    "slug": "travel-demo",
+    "scheme": "roamtravel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "com.judigot.roamtravel",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.judigot.roamtravel"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "name": "Roam Travel"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    }
+  }
+}

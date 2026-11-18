@@ -35,7 +35,9 @@
     "clean": "turbo run clean",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "bun run build && changeset publish"
+    "release": "bun run build && changeset publish",
+    "dev:travel": "bun --cwd apps/travel expo start",
+    "web:travel": "bun --cwd apps/travel expo start --web"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.11",
