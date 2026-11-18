@@ -30,6 +30,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Smoke test travel CLI
+        run: |
+          bash -n apps/travel/scripts/common.sh apps/travel/scripts/travel.sh
+          make help
+          make -n build
+          make -n build-web
+          make -C apps/travel -n dev
+
       - name: Check formatting
         run: bun run format:check
 
