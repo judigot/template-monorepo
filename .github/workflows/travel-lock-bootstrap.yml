@@ -1,0 +1,23 @@
+name: Travel lockfile bootstrap
+
+on:
+  push:
+    branches:
+      - app/travel-app
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - name: Regenerate the Bun workspace lockfile
+        run: bun install --lockfile-only
+      - name: Show generated lockfile for branch maintenance
+        run: |
+          node -e 'const fs = require("node:fs"); const data = fs.readFileSync("bun.lock").toString("base64"); console.log("BUNLOCK_BEGIN"); for (let index = 0; index < data.length; index += 2000) { console.log("BUNLOCK_CHUNK=" + data.slice(index, index + 2000)); } console.log("BUNLOCK_END");'
