@@ -28,5 +28,10 @@ export function resolveAppConfig(
   };
 }
 
-export default ({ config }: ConfigContext): ExpoConfig =>
-  resolveAppConfig(config, process.env.EXPO_APP_VARIANT);
+export default ({ config }: ConfigContext): ExpoConfig => {
+  const variant: unknown = process.env.EXPO_APP_VARIANT;
+  return resolveAppConfig(
+    config,
+    typeof variant === 'string' ? variant : undefined,
+  );
+};
