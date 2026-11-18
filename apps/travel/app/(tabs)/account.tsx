@@ -74,28 +74,30 @@ function AuthenticatedAccount() {
           fontSize={12}
           fontWeight="800"
           letterSpacing={2}
-          color={COLORS.accent}
+          style={{ color: COLORS.accent }}
         >
           YOUR ROAM ACCOUNT
         </Text>
-        <Text fontSize={34} fontWeight="800" color={COLORS.ink}>
+        <Text fontSize={34} fontWeight="800" style={{ color: COLORS.ink }}>
           {session?.user ? 'Welcome back' : 'Travel starts here'}
         </Text>
         {isPending ? (
-          <Text color={COLORS.muted}>Checking your session...</Text>
+          <Text style={{ color: COLORS.muted }}>Checking your session...</Text>
         ) : session?.user ? (
           <YStack gap="3">
-            <Text fontSize={20} fontWeight="700" color={COLORS.ink}>
+            <Text fontSize={20} fontWeight="700" style={{ color: COLORS.ink }}>
               {session.user.name}
             </Text>
-            <Text color={COLORS.muted}>{session.user.email}</Text>
+            <Text style={{ color: COLORS.muted }}>{session.user.email}</Text>
             <Button
               disabled={busy}
               onPress={() => {
                 void signOut();
               }}
-              backgroundColor={COLORS.accentSoft}
-              color={COLORS.accent}
+              style={{
+                backgroundColor: COLORS.accentSoft,
+                color: COLORS.accent,
+              }}
               accessibilityLabel="Sign out"
             >
               {busy ? 'Signing out...' : 'Sign out'}
@@ -103,7 +105,7 @@ function AuthenticatedAccount() {
           </YStack>
         ) : (
           <YStack gap="3">
-            <Text color={COLORS.muted}>
+            <Text style={{ color: COLORS.muted }}>
               Sign in securely with Google to access your account.
             </Text>
             <Button
@@ -111,8 +113,7 @@ function AuthenticatedAccount() {
               onPress={() => {
                 void signIn();
               }}
-              backgroundColor={COLORS.accent}
-              color={COLORS.surface}
+              style={{ backgroundColor: COLORS.accent, color: COLORS.surface }}
               accessibilityLabel="Continue with Google"
             >
               {busy ? 'Connecting to Google...' : 'Continue with Google'}
@@ -120,7 +121,7 @@ function AuthenticatedAccount() {
           </YStack>
         )}
         {error !== null ? (
-          <Text accessibilityRole="alert" color="#b42318">
+          <Text accessibilityRole="alert" style={{ color: '#b42318' }}>
             {error}
           </Text>
         ) : null}
@@ -138,14 +139,14 @@ export default function AccountScreen() {
             fontSize={12}
             fontWeight="800"
             letterSpacing={2}
-            color={COLORS.accent}
+            style={{ color: COLORS.accent }}
           >
             YOUR ROAM ACCOUNT
           </Text>
-          <Text fontSize={34} fontWeight="800" color={COLORS.ink}>
+          <Text fontSize={34} fontWeight="800" style={{ color: COLORS.ink }}>
             Account
           </Text>
-          <Text color={COLORS.muted}>
+          <Text style={{ color: COLORS.muted }}>
             Google sign-in will be available after the API URL and Google OAuth
             credentials have been configured. You can still explore destinations
             and save places locally.
