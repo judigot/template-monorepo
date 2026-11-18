@@ -50,7 +50,14 @@ jobs:
           EAS_TEST_LOG="$test_dir/args" PATH="$test_dir:$PATH" make eas-login
           grep -Fx -- '--yes eas-cli@latest login' "$test_dir/args"
           EAS_TEST_LOG="$test_dir/args" PATH="$test_dir:$PATH" make build
-          grep -Fx -- '--yes eas-cli@latest init' "$test_dir/args"
+          if grep -Eq '"projectId"[[:space:]]*:' apps/travel/app.json; then
+            if grep -Fx -- '--yes eas-cli@latest init' "$test_dir/args"; then
+              echo 'Unexpected EAS initialization for an already linked project.'
+              exit 1
+            fi
+          else
+            grep -Fx -- '--yes eas-cli@latest init' "$test_dir/args"
+          fi
           grep -Fx -- '--yes eas-cli@latest build --platform android --profile preview' "$test_dir/args"
 
       - name: Check formatting
