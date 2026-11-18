@@ -17,15 +17,15 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Cache Bun downloads
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-bun1.4.2-${{ hashFiles('bun.lock', 'turbo.json') }}
+          key: bun-cache-${{ runner.os }}-bun1.4.4-${{ hashFiles('bun.lock', 'turbo.json') }}
           restore-keys: |
-            bun-cache-${{ runner.os }}-bun1.4.2-
+            bun-cache-${{ runner.os }}-bun1.4.4-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -33,6 +33,7 @@ jobs:
       - name: Smoke test travel CLI
         run: |
           bash -n apps/travel/scripts/common.sh apps/travel/scripts/travel.sh
+          bash -c 'source apps/travel/scripts/common.sh; require_bun'
           make help
           make -n build
           make -n build-web
@@ -63,7 +64,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -86,7 +87,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -124,7 +125,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Install dependencies
         run: bun install --frozen-lockfile

@@ -22,8 +22,9 @@ React Native UI natively.
 ## Termux Ubuntu quick start
 
 Run these commands **inside your Ubuntu (PRoot) shell**, from the cloned
-repository root. Ubuntu needs `make`, Node.js **24+**, and Bun **1.4.2**
-(the monorepo's pinned version). Install these prerequisites in Ubuntu first;
+repository root. Ubuntu needs `make`, Node.js **24+**, and Bun **1.4.4 or newer** (latest stable recommended).
+CI and cloud builds pin Bun 1.4.4 for reproducibility, while local development
+accepts newer stable versions. Install these prerequisites in Ubuntu first;
 Termux's Android-side binaries may not work inside PRoot.
 
 ```sh
@@ -87,7 +88,7 @@ an Android APK. The generated `dist` directory is ignored by Git.
 
 ## Development on another machine
 
-From the monorepo root, with Bun 1.4.2 and Node.js 24+:
+From the monorepo root, with Bun 1.4.4 or newer and Node.js 24+:
 
 ```sh
 make setup
