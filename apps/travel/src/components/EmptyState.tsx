@@ -8,7 +8,12 @@ export interface IEmptyStateProps {
   onAction?: () => void;
 }
 
-export function EmptyState({ title, message, actionLabel, onAction }: IEmptyStateProps) {
+export function EmptyState({
+  title,
+  message,
+  actionLabel,
+  onAction,
+}: IEmptyStateProps) {
   return (
     <YStack
       backgroundColor={COLORS.surface}
@@ -19,14 +24,23 @@ export function EmptyState({ title, message, actionLabel, onAction }: IEmptyStat
       alignItems="center"
       gap="$3"
     >
-      <Text fontSize={20} color={COLORS.ink} fontWeight="800" textAlign="center">
+      <Text
+        fontSize={20}
+        color={COLORS.ink}
+        fontWeight="800"
+        textAlign="center"
+      >
         {title}
       </Text>
       <Text fontSize={14} color={COLORS.muted} textAlign="center">
         {message}
       </Text>
       {actionLabel !== undefined && onAction !== undefined ? (
-        <Button backgroundColor={COLORS.accent} color="#ffffff" onPress={onAction}>
+        <Button
+          backgroundColor={COLORS.accent}
+          color="#ffffff"
+          onPress={onAction}
+        >
           {actionLabel}
         </Button>
       ) : null}

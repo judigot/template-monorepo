@@ -40,7 +40,11 @@ export default function DestinationScreen() {
       >
         Back to places
       </Button>
-      <YStack borderRadius={24} overflow="hidden" backgroundColor={COLORS.imageFallback}>
+      <YStack
+        borderRadius={24}
+        overflow="hidden"
+        backgroundColor={COLORS.imageFallback}
+      >
         <Image
           source={{ uri: destination.imageUrl }}
           resizeMode="cover"
@@ -49,28 +53,62 @@ export default function DestinationScreen() {
         />
       </YStack>
       <YStack gap="$3">
-        <Text fontSize={13} fontWeight="800" color={COLORS.accent} letterSpacing={1}>
+        <Text
+          fontSize={13}
+          fontWeight="800"
+          color={COLORS.accent}
+          letterSpacing={1}
+        >
           {destination.country.toUpperCase()}
         </Text>
-        <Text fontSize={width < 720 ? 34 : 46} fontWeight="800" color={COLORS.ink}>
+        <Text
+          fontSize={width < 720 ? 34 : 46}
+          fontWeight="800"
+          color={COLORS.ink}
+        >
           {destination.name}
         </Text>
         <Text fontSize={17} color={COLORS.muted} lineHeight={26}>
           {destination.description}
         </Text>
         <XStack flexWrap="wrap" gap="$3" paddingTop="$2">
-          <YStack backgroundColor={COLORS.surface} padding="$4" borderRadius={16} flex={1}>
-            <Text fontSize={12} color={COLORS.muted}>Best for</Text>
-            <Text fontWeight="700" fontSize={15} color={COLORS.ink}>{destination.bestFor}</Text>
+          <YStack
+            backgroundColor={COLORS.surface}
+            padding="$4"
+            borderRadius={16}
+            flex={1}
+          >
+            <Text fontSize={12} color={COLORS.muted}>
+              Best for
+            </Text>
+            <Text fontWeight="700" fontSize={15} color={COLORS.ink}>
+              {destination.bestFor}
+            </Text>
           </YStack>
-          <YStack backgroundColor={COLORS.surface} padding="$4" borderRadius={16} flex={1}>
-            <Text fontSize={12} color={COLORS.muted}>Suggested stay</Text>
-            <Text fontWeight="700" fontSize={15} color={COLORS.ink}>{destination.duration}</Text>
+          <YStack
+            backgroundColor={COLORS.surface}
+            padding="$4"
+            borderRadius={16}
+            flex={1}
+          >
+            <Text fontSize={12} color={COLORS.muted}>
+              Suggested stay
+            </Text>
+            <Text fontWeight="700" fontSize={15} color={COLORS.ink}>
+              {destination.duration}
+            </Text>
           </YStack>
         </XStack>
       </YStack>
-      <YStack gap="$3" padding="$5" borderRadius={22} backgroundColor={COLORS.surface}>
-        <Text fontSize={21} fontWeight="800" color={COLORS.ink}>Ideas for your trip</Text>
+      <YStack
+        gap="$3"
+        padding="$5"
+        borderRadius={22}
+        backgroundColor={COLORS.surface}
+      >
+        <Text fontSize={21} fontWeight="800" color={COLORS.ink}>
+          Ideas for your trip
+        </Text>
         {destination.highlights.map((highlight, index) => (
           <XStack key={highlight} alignItems="flex-start" gap="$3">
             <YStack
@@ -81,7 +119,9 @@ export default function DestinationScreen() {
               alignItems="center"
               justifyContent="center"
             >
-              <Text fontWeight="800" color={COLORS.accent}>{index + 1}</Text>
+              <Text fontWeight="800" color={COLORS.accent}>
+                {index + 1}
+              </Text>
             </YStack>
             <Text color={COLORS.ink} fontSize={15} lineHeight={25} flex={1}>
               {highlight}

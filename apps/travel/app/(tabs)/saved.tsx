@@ -12,15 +12,24 @@ export default function SavedScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const { savedIds, isSaved, toggleSaved } = useTravel();
-  const savedDestinations = DESTINATIONS.filter(({ id }) => savedIds.includes(id));
+  const savedDestinations = DESTINATIONS.filter(({ id }) =>
+    savedIds.includes(id),
+  );
 
   return (
     <Page>
       <YStack gap="$2" paddingVertical="$3">
-        <Text fontSize={12} fontWeight="800" letterSpacing={2} color={COLORS.accent}>
+        <Text
+          fontSize={12}
+          fontWeight="800"
+          letterSpacing={2}
+          color={COLORS.accent}
+        >
           YOUR COLLECTION
         </Text>
-        <Text fontSize={34} fontWeight="800" color={COLORS.ink}>Saved places</Text>
+        <Text fontSize={34} fontWeight="800" color={COLORS.ink}>
+          Saved places
+        </Text>
         <Text fontSize={15} color={COLORS.muted}>
           A little inspiration for the journeys ahead.
         </Text>
@@ -35,7 +44,8 @@ export default function SavedScreen() {
       ) : (
         <YStack gap="$3">
           <Text fontSize={15} color={COLORS.muted}>
-            {savedDestinations.length} saved {savedDestinations.length === 1 ? 'destination' : 'destinations'}
+            {savedDestinations.length} saved{' '}
+            {savedDestinations.length === 1 ? 'destination' : 'destinations'}
           </Text>
           <XStack flexWrap="wrap" justifyContent="space-between">
             {savedDestinations.map((destination) => (

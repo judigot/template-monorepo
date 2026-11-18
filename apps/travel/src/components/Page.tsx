@@ -5,8 +5,15 @@ import { COLORS } from '../theme';
 
 export function Page({ children }: { children: ReactNode }) {
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: COLORS.canvas }}>
-      <ScrollView flex={1} backgroundColor={COLORS.canvas} keyboardShouldPersistTaps="handled">
+    <SafeAreaView
+      edges={['top']}
+      style={{ flex: 1, backgroundColor: COLORS.canvas }}
+    >
+      <ScrollView
+        flex={1}
+        backgroundColor={COLORS.canvas}
+        keyboardShouldPersistTaps="handled"
+      >
         <YStack
           alignSelf="center"
           width="100%"

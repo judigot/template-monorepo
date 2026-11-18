@@ -9,7 +9,10 @@ export default function TabLayout() {
         tabBarActiveTintColor: COLORS.accent,
         tabBarInactiveTintColor: COLORS.muted,
         tabBarLabelStyle: { fontSize: 14, fontWeight: '700' },
-        tabBarStyle: { backgroundColor: COLORS.surface, borderTopColor: COLORS.line },
+        tabBarStyle: {
+          backgroundColor: COLORS.surface,
+          borderTopColor: COLORS.line,
+        },
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Explore' }} />

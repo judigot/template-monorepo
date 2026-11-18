@@ -29,7 +29,11 @@ export function DestinationCard({
       borderWidth={1}
       marginBottom="$3"
     >
-      <YStack height={205} position="relative" backgroundColor={COLORS.imageFallback}>
+      <YStack
+        height={205}
+        position="relative"
+        backgroundColor={COLORS.imageFallback}
+      >
         <Image
           source={{ uri: destination.imageUrl }}
           accessibilityLabel={destination.name + ' landscape'}
@@ -55,9 +59,13 @@ export function DestinationCard({
           <Text fontSize={13} color={COLORS.accent} fontWeight="700">
             {destination.country.toUpperCase()}
           </Text>
-          <Text fontSize={12} color={COLORS.muted}>{destination.duration}</Text>
+          <Text fontSize={12} color={COLORS.muted}>
+            {destination.duration}
+          </Text>
         </XStack>
-        <Text fontSize={24} color={COLORS.ink} fontWeight="800">{destination.name}</Text>
+        <Text fontSize={24} color={COLORS.ink} fontWeight="800">
+          {destination.name}
+        </Text>
         <Text fontSize={14} color={COLORS.muted} lineHeight={21}>
           {destination.tagline}
         </Text>
@@ -67,7 +75,12 @@ export function DestinationCard({
             backgroundColor={COLORS.accentSoft}
             color={COLORS.accent}
             fontWeight="700"
-            onPress={() => router.push({ pathname: '/destination/[id]', params: { id: destination.id } })}
+            onPress={() =>
+              router.push({
+                pathname: '/destination/[id]',
+                params: { id: destination.id },
+              })
+            }
           >
             Explore this place
           </Button>

@@ -18,9 +18,7 @@
       "output": "static",
       "name": "Roam Travel"
     },
-    "plugins": [
-      "expo-router"
-    ],
+    "plugins": ["expo-router"],
     "experiments": {
       "tsconfigPaths": true
     }
