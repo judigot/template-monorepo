@@ -21,6 +21,17 @@
     "plugins": ["expo-router"],
     "experiments": {
       "tsconfigPaths": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "f41f891e-ba86-42bc-972b-34ae1f7dcb2c"
+      }
+    },
+    "owner": "judigot"
   }
 }
