@@ -1,7 +1,7 @@
 import { expoClient } from '@better-auth/expo/client';
 import { createAuthClient } from 'better-auth/react';
-import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
+import * as SecureStore from 'expo-secure-store';
 
 /*
  * Only the public API origin belongs in an Expo client bundle.
