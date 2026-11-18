@@ -30,6 +30,11 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Setup Node.js for EAS CLI smoke test
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
       - name: Smoke test travel CLI
         run: |
           bash -n apps/travel/scripts/common.sh apps/travel/scripts/travel.sh
@@ -38,6 +43,15 @@ jobs:
           make -n build
           make -n build-web
           make -C apps/travel -n dev
+          test_dir="$(mktemp -d)"
+          trap 'rm -rf "$test_dir"' EXIT
+          printf '#!/bin/sh\nprintf "%%s\\n" "$*" >> "$EAS_TEST_LOG"\n' > "$test_dir/npx"
+          chmod +x "$test_dir/npx"
+          EAS_TEST_LOG="$test_dir/args" PATH="$test_dir:$PATH" make eas-login
+          grep -Fx -- '--yes eas-cli@latest login' "$test_dir/args"
+          EAS_TEST_LOG="$test_dir/args" PATH="$test_dir:$PATH" make build
+          grep -Fx -- '--yes eas-cli@latest init' "$test_dir/args"
+          grep -Fx -- '--yes eas-cli@latest build --platform android --profile preview' "$test_dir/args"
 
       - name: Check formatting
         run: bun run format:check

@@ -71,7 +71,7 @@ HELP
       run_eas init
     fi
     printf 'Requesting an installable Android APK from EAS Build (cloud).\n'
-    exec bunx eas-cli@latest build --platform android --profile preview "$@"
+    run_eas build --platform android --profile preview "$@"
     ;;
   build-web)
     require_bun

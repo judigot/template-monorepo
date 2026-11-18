@@ -22,7 +22,7 @@ React Native UI natively.
 ## Termux Ubuntu quick start
 
 Run these commands **inside your Ubuntu (PRoot) shell**, from the cloned
-repository root. Ubuntu needs `make`, Node.js **24+**, and Bun **1.4.4 or newer** (latest stable recommended).
+repository root. Ubuntu needs `make`, Node.js **24+** with npm/npx, and Bun **1.4.4 or newer** (latest stable recommended).
 CI and cloud builds pin Bun 1.4.4 for reproducibility, while local development
 accepts newer stable versions. Install these prerequisites in Ubuntu first;
 Termux's Android-side binaries may not work inside PRoot.
@@ -71,7 +71,9 @@ make build
 
 Unlike `make dev`, `make build` uses **Expo Application Services (EAS) cloud
 builds**. It does **not** run the Android SDK/Gradle in your Termux Ubuntu
-container. The first build needs an Expo account and an interactive login
+container. EAS CLI runs through Expo's supported `npx eas-cli@latest` command
+instead of `bunx`, avoiding the isolated Bun CLI cache that failed to load
+in Termux. Bun remains the project's package manager and `bun.lock` is unchanged. The first build needs an Expo account and an interactive login
 (`make eas-login` if needed). When the app is not linked to an EAS project,
 `make build` invokes `eas init` once, which may update `apps/travel/app.json`
 with `extra.eas.projectId`. Review that locally generated change before

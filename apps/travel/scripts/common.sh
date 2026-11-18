@@ -41,8 +41,8 @@ require_dependencies() {
 
 run_eas() {
   require_node
-  require_bun
-  require_dependencies
+  command -v npx >/dev/null 2>&1 || fail 'npx is missing. Install Node.js with npm in Ubuntu to use EAS CLI.'
+
   cd "$TRAVEL_APP_DIR"
-  bunx eas-cli@latest "$@"
+  npx --yes eas-cli@latest "$@"
 }
