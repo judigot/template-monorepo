@@ -25,8 +25,7 @@ export function DestinationCard({
       rounded={22}
       overflow="hidden"
       borderWidth={1}
-      marginBottom="3"
-      style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+      style={{ marginBottom: 12, backgroundColor: COLORS.surface, borderColor: COLORS.line }}
     >
       <YStack
         h={205}
@@ -41,8 +40,6 @@ export function DestinationCard({
         />
         <Button
           position="absolute"
-          top="3"
-          right="3"
           size="sm"
           circular
           backgroundColor="#ffffff"
@@ -50,12 +47,12 @@ export function DestinationCard({
           onPress={() => {
             onToggleSaved(destination.id);
           }}
-          style={{ color: saved ? '#be185d' : COLORS.ink }}
+          style={{ top: 12, right: 12, color: saved ? '#be185d' : COLORS.ink }}
         >
           {saved ? '♥' : '♡'}
         </Button>
       </YStack>
-      <YStack padding="4" gap="2" flex={1}>
+      <YStack gap="2" flex={1} style={{ padding: 16 }}>
         <XStack items="center" justify="space-between" gap="2">
           <Text fontSize={13} fontWeight="700" style={{ color: COLORS.accent }}>
             {destination.country.toUpperCase()}
@@ -70,7 +67,7 @@ export function DestinationCard({
         <Text fontSize={14} lineHeight="21px" style={{ color: COLORS.muted }}>
           {destination.tagline}
         </Text>
-        <XStack paddingTop="2" marginTop="auto">
+        <XStack style={{ paddingTop: 8, marginTop: 'auto' }}>
           <Button
             w="100%"
             fontWeight="700"

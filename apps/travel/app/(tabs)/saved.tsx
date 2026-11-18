@@ -18,7 +18,7 @@ export default function SavedScreen() {
 
   return (
     <Page>
-      <YStack gap="2" paddingVertical="3">
+      <YStack gap="2" style={{ paddingVertical: 12 }}>
         <Text
           fontSize={12}
           fontWeight="800"

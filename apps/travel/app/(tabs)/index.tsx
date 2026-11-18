@@ -29,7 +29,7 @@ export default function DiscoverScreen() {
 
   return (
     <Page>
-      <YStack backgroundColor="#163e35" rounded={26} padding="5" gap="3">
+      <YStack backgroundColor="#163e35" rounded={26} gap="3" style={{ padding: 20 }}>
         <Text color="#b6decf" fontSize={12} fontWeight="700" letterSpacing={2}>
           ROAM / TRAVEL JOURNAL
         </Text>

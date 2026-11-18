@@ -18,20 +18,18 @@ export function EmptyState({
     <YStack
       borderWidth={1}
       rounded={22}
-      padding="6"
       items="center"
       gap="3"
-      style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+      style={{ padding: 24, backgroundColor: COLORS.surface, borderColor: COLORS.line }}
     >
       <Text
         fontSize={20}
         fontWeight="800"
-        textAlign="center"
-        style={{ color: COLORS.ink }}
+        style={{ textAlign: 'center', color: COLORS.ink }}
       >
         {title}
       </Text>
-      <Text fontSize={14} textAlign="center" style={{ color: COLORS.muted }}>
+      <Text fontSize={14} style={{ textAlign: 'center', color: COLORS.muted }}>
         {message}
       </Text>
       {actionLabel !== undefined && onAction !== undefined ? (

@@ -34,12 +34,11 @@ export default function DestinationScreen() {
   return (
     <Page>
       <Button
-        alignSelf="flex-start"
         size="sm"
         onPress={() => {
           router.back();
         }}
-        style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
+        style={{ alignSelf: 'flex-start', backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
       >
         Back to places
       </Button>
@@ -74,12 +73,11 @@ export default function DestinationScreen() {
         <Text fontSize={17} lineHeight="26px" style={{ color: COLORS.muted }}>
           {destination.description}
         </Text>
-        <XStack flexWrap="wrap" gap="3" paddingTop="2">
+        <XStack flexWrap="wrap" gap="3" style={{ paddingTop: 8 }}>
           <YStack
-            padding="4"
             rounded={16}
             flex={1}
-            style={{ backgroundColor: COLORS.surface }}
+            style={{ padding: 16, backgroundColor: COLORS.surface }}
           >
             <Text fontSize={12} style={{ color: COLORS.muted }}>
               Best for
@@ -89,10 +87,9 @@ export default function DestinationScreen() {
             </Text>
           </YStack>
           <YStack
-            padding="4"
             rounded={16}
             flex={1}
-            style={{ backgroundColor: COLORS.surface }}
+            style={{ padding: 16, backgroundColor: COLORS.surface }}
           >
             <Text fontSize={12} style={{ color: COLORS.muted }}>
               Suggested stay
@@ -105,9 +102,8 @@ export default function DestinationScreen() {
       </YStack>
       <YStack
         gap="3"
-        padding="5"
         rounded={22}
-        style={{ backgroundColor: COLORS.surface }}
+        style={{ padding: 20, backgroundColor: COLORS.surface }}
       >
         <Text fontSize={21} fontWeight="800" style={{ color: COLORS.ink }}>
           Ideas for your trip
@@ -149,7 +145,7 @@ export default function DestinationScreen() {
       >
         {saved ? 'Remove from saved places' : 'Save this destination'}
       </Button>
-      <Text fontSize={12} textAlign="center" style={{ color: COLORS.muted }}>
+      <Text fontSize={12} style={{ textAlign: 'center', color: COLORS.muted }}>
         Demo content only. No live bookings or prices are shown.
       </Text>
     </Page>
