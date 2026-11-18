@@ -2,9 +2,11 @@ import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
-import { auth } from './auth.ts';
 import { resolveAllowedOrigins } from './app-origins.ts';
+import { auth } from './auth.ts';
+
 export { resolveAllowedOrigins } from './app-origins.ts';
+
 import { healthRouter } from './routes/health.ts';
 import { helloRouter } from './routes/hello.ts';
 

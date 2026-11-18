@@ -1,14 +1,20 @@
 import { z } from 'zod';
 
 const AuthEnvironmentSchema = z.object({
-  DATABASE_URL: z.url().refine(
-    (value) => value.startsWith('postgres://') || value.startsWith('postgresql://'),
-    'DATABASE_URL must use the postgres or postgresql protocol',
-  ),
-  BETTER_AUTH_URL: z.url().refine(
-    (value) => value.startsWith('https://') || value.startsWith('http://localhost:'),
-    'BETTER_AUTH_URL must use HTTPS outside localhost',
-  ),
+  DATABASE_URL: z
+    .url()
+    .refine(
+      (value) =>
+        value.startsWith('postgres://') || value.startsWith('postgresql://'),
+      'DATABASE_URL must use the postgres or postgresql protocol',
+    ),
+  BETTER_AUTH_URL: z
+    .url()
+    .refine(
+      (value) =>
+        value.startsWith('https://') || value.startsWith('http://localhost:'),
+      'BETTER_AUTH_URL must use HTTPS outside localhost',
+    ),
   BETTER_AUTH_SECRET: z.string().min(32),
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),

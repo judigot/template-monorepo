@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import { Button, Text, YStack } from 'tamagui';
-import { Page } from '../../src/components/Page';
 import { authBaseUrl, authClient } from '../../src/auth/auth-client';
+import { Page } from '../../src/components/Page';
 import { COLORS } from '../../src/theme';
 
 function AuthenticatedAccount() {
@@ -68,7 +68,12 @@ function AuthenticatedAccount() {
   return (
     <Page>
       <YStack gap="4" style={{ paddingVertical: 16 }}>
-        <Text fontSize={12} fontWeight="800" letterSpacing={2} color={COLORS.accent}>
+        <Text
+          fontSize={12}
+          fontWeight="800"
+          letterSpacing={2}
+          color={COLORS.accent}
+        >
           YOUR ROAM ACCOUNT
         </Text>
         <Text fontSize={34} fontWeight="800" color={COLORS.ink}>
@@ -84,7 +89,9 @@ function AuthenticatedAccount() {
             <Text color={COLORS.muted}>{session.user.email}</Text>
             <Button
               disabled={busy}
-              onPress={() => { void signOut(); }}
+              onPress={() => {
+                void signOut();
+              }}
               backgroundColor={COLORS.accentSoft}
               color={COLORS.accent}
               accessibilityLabel="Sign out"
@@ -99,7 +106,9 @@ function AuthenticatedAccount() {
             </Text>
             <Button
               disabled={busy}
-              onPress={() => { void signIn(); }}
+              onPress={() => {
+                void signIn();
+              }}
               backgroundColor={COLORS.accent}
               color={COLORS.surface}
               accessibilityLabel="Continue with Google"
@@ -123,7 +132,12 @@ export default function AccountScreen() {
     return (
       <Page>
         <YStack gap="3" style={{ paddingVertical: 16 }}>
-          <Text fontSize={12} fontWeight="800" letterSpacing={2} color={COLORS.accent}>
+          <Text
+          fontSize={12}
+          fontWeight="800"
+          letterSpacing={2}
+          color={COLORS.accent}
+        >
             YOUR ROAM ACCOUNT
           </Text>
           <Text fontSize={34} fontWeight="800" color={COLORS.ink}>

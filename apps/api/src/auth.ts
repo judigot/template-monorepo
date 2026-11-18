@@ -1,8 +1,8 @@
 import { expo } from '@better-auth/expo';
 import { betterAuth } from 'better-auth';
 import { Pool } from 'pg';
-import { parseAuthEnvironment } from './auth-env.ts';
 import { resolveAllowedOrigins } from './app-origins.ts';
+import { parseAuthEnvironment } from './auth-env.ts';
 
 const config = parseAuthEnvironment();
 
@@ -22,10 +22,7 @@ export const auth =
           max: 5,
         }),
         plugins: [expo()],
-        trustedOrigins: [
-          'roamtravel://',
-          ...resolveAllowedOrigins(),
-        ],
+        trustedOrigins: ['roamtravel://', ...resolveAllowedOrigins()],
         socialProviders: {
           google: {
             clientId: config.GOOGLE_CLIENT_ID,
