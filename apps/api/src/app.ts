@@ -12,16 +12,6 @@ import { helloRouter } from './routes/hello.ts';
 
 const MAX_REQUEST_BODY_BYTES = 1024 * 1024;
 
-export function resolveAllowedOrigins(): string[] {
-  const configured = parseCorsOrigins();
-
-  if (configured === undefined || configured.length === 0) {
-    return DEVELOPMENT_ORIGINS;
-  }
-
-  return configured;
-}
-
 /**
  * Creates the runtime-neutral Hono application.
  *

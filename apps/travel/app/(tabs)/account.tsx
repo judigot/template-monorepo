@@ -133,11 +133,11 @@ export default function AccountScreen() {
       <Page>
         <YStack gap="3" style={{ paddingVertical: 16 }}>
           <Text
-          fontSize={12}
-          fontWeight="800"
-          letterSpacing={2}
-          color={COLORS.accent}
-        >
+            fontSize={12}
+            fontWeight="800"
+            letterSpacing={2}
+            color={COLORS.accent}
+          >
             YOUR ROAM ACCOUNT
           </Text>
           <Text fontSize={34} fontWeight="800" color={COLORS.ink}>
