@@ -35,12 +35,13 @@ export function createApp(): Hono {
 
   // This application uses basePath('/api'), so Better Auth mounts at /auth/*.
   // Authentication is unavailable rather than insecure when secrets are absent.
-  if (auth === null) {
+  const authHandler = auth?.handler;
+  if (authHandler === undefined) {
     app.all('/auth/*', (c) =>
       c.json({ error: 'Authentication is not configured' }, 503),
     );
   } else {
-    app.all('/auth/*', (c) => auth.handler(c.req.raw));
+    app.all('/auth/*', (c) => authHandler(c.req.raw));
   }
 
   app.route('/hello', helloRouter);
