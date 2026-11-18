@@ -8,6 +8,13 @@ This is a demonstration feature branch in `judigot/template-monorepo`.
 Existing Vite and Next.js applications remain untouched. Destination content
 is illustrative; there is no backend, account, booking, or payment integration.
 
+## Google sign-in
+
+The Account tab uses Better Auth + Google OAuth when configured. It is
+deliberately unavailable in unconfigured demo environments and does not
+interrupt destination discovery. See [AUTH_SETUP.md](./AUTH_SETUP.md)
+for API, PostgreSQL, Google Cloud, web and native instructions.
+
 ## Architecture
 
 - `app/`: Expo Router screens, shared by all platforms.

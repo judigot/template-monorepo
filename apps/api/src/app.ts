@@ -2,20 +2,11 @@ import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
-import { parseCorsOrigins } from './env.ts';
+import { auth } from './auth.ts';
+import { resolveAllowedOrigins } from './app-origins.ts';
+export { resolveAllowedOrigins } from './app-origins.ts';
 import { healthRouter } from './routes/health.ts';
 import { helloRouter } from './routes/hello.ts';
-
-/*
- * Origins allowed when CORS_ORIGINS is not configured. These cover the
- * local Vite (3001) and Next.js (3002) dev servers.
- */
-const DEVELOPMENT_ORIGINS = [
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'http://127.0.0.1:3001',
-  'http://127.0.0.1:3002',
-];
 
 const MAX_REQUEST_BODY_BYTES = 1024 * 1024;
 
@@ -45,9 +36,20 @@ export function createApp(): Hono {
     cors({
       origin: resolveAllowedOrigins(),
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      credentials: true,
     }),
   );
   app.use('*', bodyLimit({ maxSize: MAX_REQUEST_BODY_BYTES }));
+
+  // This application uses basePath('/api'), so Better Auth mounts at /auth/*.
+  // Authentication is unavailable rather than insecure when secrets are absent.
+  if (auth === null) {
+    app.all('/auth/*', (c) =>
+      c.json({ error: 'Authentication is not configured' }, 503),
+    );
+  } else {
+    app.all('/auth/*', (c) => auth.handler(c.req.raw));
+  }
 
   app.route('/hello', helloRouter);
   app.route('/health', healthRouter);
