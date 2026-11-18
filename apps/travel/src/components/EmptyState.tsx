@@ -20,7 +20,11 @@ export function EmptyState({
       rounded={22}
       items="center"
       gap="3"
-      style={{ padding: 24, backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+      style={{
+        padding: 24,
+        backgroundColor: COLORS.surface,
+        borderColor: COLORS.line,
+      }}
     >
       <Text
         fontSize={20}

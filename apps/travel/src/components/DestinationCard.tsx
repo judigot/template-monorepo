@@ -25,7 +25,11 @@ export function DestinationCard({
       rounded={22}
       overflow="hidden"
       borderWidth={1}
-      style={{ marginBottom: 12, backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+      style={{
+        marginBottom: 12,
+        backgroundColor: COLORS.surface,
+        borderColor: COLORS.line,
+      }}
     >
       <YStack
         h={205}

@@ -16,9 +16,14 @@ export function Page({ children }: { children: ReactNode }) {
       >
         <YStack
           w="100%"
-          maxWidth={1120}
           gap="5"
-          style={{ alignSelf: 'center', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 32 }}
+          style={{
+            alignSelf: 'center',
+            maxWidth: 1120,
+            paddingHorizontal: 16,
+            paddingTop: 20,
+            paddingBottom: 32,
+          }}
         >
           {children}
         </YStack>

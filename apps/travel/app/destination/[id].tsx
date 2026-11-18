@@ -38,7 +38,11 @@ export default function DestinationScreen() {
         onPress={() => {
           router.back();
         }}
-        style={{ alignSelf: 'flex-start', backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
+        style={{
+          alignSelf: 'flex-start',
+          backgroundColor: COLORS.accentSoft,
+          color: COLORS.accent,
+        }}
       >
         Back to places
       </Button>
