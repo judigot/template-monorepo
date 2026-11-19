@@ -44,7 +44,7 @@ GitHub-hosted Linux runner. No Expo account, EAS Build queue, or Android
 toolchain on your phone is required.
 
 Open the GitHub Actions run for PR #31, download the
-`roam-travel-dev-client` artifact ZIP, extract `app-debug.apk` using
+`wanderapp-dev-client` artifact ZIP, extract `app-debug.apk` using
 Android's Files app, then install the APK. It contains the developer launcher
 and **must connect to Metro** to run your latest JavaScript. The artifact
 is a development build, not a distributable production APK.
