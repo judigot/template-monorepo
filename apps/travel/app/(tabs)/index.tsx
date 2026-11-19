@@ -5,6 +5,7 @@ import { Button, Input, Text, XStack, YStack } from 'tamagui';
 import { EmptyState } from '../../src/components/EmptyState';
 import { Page } from '../../src/components/Page';
 import { DESTINATIONS, filterDestinations } from '../../src/data/destinations';
+import { FeaturedPlace } from '../../src/map/FeaturedPlace';
 import { useTravel } from '../../src/state/travel-context';
 import { useTravelColors } from '../../src/theme';
 
@@ -29,6 +30,8 @@ export default function DiscoverScreen() {
           style={{ backgroundColor: colors.surface, borderColor: colors.line }}
         />
       </YStack>
+
+      <FeaturedPlace />
 
       {destinations.length === 0 ? (
         <EmptyState

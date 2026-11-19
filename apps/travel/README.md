@@ -49,6 +49,12 @@ for API, PostgreSQL, Google Cloud, web and native instructions.
 The browser uses Metro/React Native Web. Android and iOS render the same
 React Native UI natively.
 
+The Explore map uses MapLibre Native on phones and MapLibre GL JS on the web,
+with the same OpenFreeMap style and place profile on both. Use the
+[catalog migrations](../api/migrations/README.md) to set up the public place
+API. The bundled Tatang’s profile also lets the demo open while the API is
+unavailable. Adding the native map module requires a new APK.
+
 ## Native Android development: build once, iterate instantly
 
 The production app is **native React Native**; no WebView or embedded website.

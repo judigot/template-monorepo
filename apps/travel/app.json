@@ -24,7 +24,7 @@
       "output": "static",
       "name": "Wanderapp"
     },
-    "plugins": ["expo-router"],
+    "plugins": ["expo-router", "@maplibre/maplibre-react-native"],
     "experiments": {
       "tsconfigPaths": true
     },
