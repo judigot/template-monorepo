@@ -7,9 +7,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "jsx": "react-jsx",
-    "types": ["bun"],
+    "types": [
+      "bun"
+    ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -18,8 +22,6 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "test/**/*.ts",
-    "tamagui.config.ts",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "tamagui.config.ts"
   ]
 }
