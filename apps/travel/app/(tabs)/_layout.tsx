@@ -8,7 +8,14 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: COLORS.accent,
         tabBarInactiveTintColor: COLORS.muted,
-        tabBarLabelStyle: { fontSize: 14, fontWeight: '700' },
+        tabBarIconStyle: { display: 'none' },
+        tabBarLabelPosition: 'beside-icon',
+        tabBarLabelStyle: {
+          fontSize: 14,
+          fontWeight: '700',
+          marginStart: 0,
+          marginEnd: 0,
+        },
         tabBarStyle: {
           backgroundColor: COLORS.surface,
           borderTopColor: COLORS.line,

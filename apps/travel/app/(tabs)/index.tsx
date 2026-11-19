@@ -1,128 +1,128 @@
-import { useMemo, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { Link } from 'expo-router';
+import { useState } from 'react';
+import { Image, Pressable } from 'react-native';
 import { Button, Input, Text, XStack, YStack } from 'tamagui';
-import { DestinationCard } from '../../src/components/DestinationCard';
 import { EmptyState } from '../../src/components/EmptyState';
 import { Page } from '../../src/components/Page';
-import type { Region } from '../../src/data/destinations';
 import { DESTINATIONS, filterDestinations } from '../../src/data/destinations';
 import { useTravel } from '../../src/state/travel-context';
 import { COLORS } from '../../src/theme';
 
-const REGIONS: readonly { label: string; value: Region }[] = [
-  { label: 'Anywhere', value: 'all' },
-  { label: 'Asia', value: 'asia' },
-  { label: 'Europe', value: 'europe' },
-];
-
 export default function DiscoverScreen() {
-  const { width } = useWindowDimensions();
   const [query, setQuery] = useState('');
-  const [region, setRegion] = useState<Region>('all');
   const { isSaved, toggleSaved } = useTravel();
-  const compact = width < 720;
-
-  const destinations = useMemo(
-    () => filterDestinations(DESTINATIONS, query, region),
-    [query, region],
-  );
+  const destinations = filterDestinations(DESTINATIONS, query, 'all');
 
   return (
     <Page>
-      <YStack
-        backgroundColor="#163e35"
-        rounded={26}
-        gap="3"
-        style={{ padding: 20 }}
-      >
-        <Text color="#b6decf" fontSize={12} fontWeight="700" letterSpacing={2}>
-          ROAM / TRAVEL JOURNAL
-        </Text>
-        <Text
-          color="#ffffff"
-          fontSize={compact ? 32 : 42}
-          fontWeight="800"
-          style={{ lineHeight: compact ? 40 : 50 }}
-        >
-          Your next great story starts somewhere.
-        </Text>
-        <Text color="#d4e9dc" fontSize={15} lineHeight="23px">
-          Find a place worth exploring, then keep your favorites together.
-        </Text>
-      </YStack>
-
-      <YStack gap="3">
-        <Text fontSize={20} fontWeight="800" style={{ color: COLORS.ink }}>
-          Find your kind of escape
+      <YStack gap="2">
+        <Text fontSize={24} fontWeight="800" style={{ color: COLORS.ink }}>
+          Your next adventure
         </Text>
         <Input
           size="md"
           value={query}
           onChangeText={setQuery}
-          placeholder="Search destinations or experiences"
+          placeholder="Search destinations"
           accessibilityLabel="Search destinations"
-          backgroundColor="#ffffff"
-          rounded={14}
-          style={{ borderColor: COLORS.line }}
+          style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
         />
-        <XStack gap="2" flexWrap="wrap">
-          {REGIONS.map(({ label, value }) => (
-            <Button
-              key={value}
-              size="sm"
-              rounded={100}
-              borderWidth={1}
-              onPress={() => {
-                setRegion(value);
-              }}
-              accessibilityState={{ selected: region === value }}
-              style={{
-                backgroundColor:
-                  region === value ? COLORS.accent : COLORS.surface,
-                color: region === value ? COLORS.surface : COLORS.ink,
-                borderColor: region === value ? COLORS.accent : COLORS.line,
-              }}
-            >
-              {label}
-            </Button>
-          ))}
-        </XStack>
       </YStack>
 
-      <YStack gap="3">
-        <XStack items="center" justify="space-between">
-          <Text fontSize={21} fontWeight="800" style={{ color: COLORS.ink }}>
-            Discover places
-          </Text>
-          <Text fontSize={13} style={{ color: COLORS.muted }}>
-            {destinations.length}{' '}
-            {destinations.length === 1 ? 'place' : 'places'}
-          </Text>
-        </XStack>
-        {destinations.length === 0 ? (
-          <EmptyState
-            title="No matching destinations"
-            message="Try another place, activity, or region."
-            actionLabel="Clear filters"
-            onAction={() => {
-              setQuery('');
-              setRegion('all');
-            }}
-          />
-        ) : (
-          <XStack flexWrap="wrap" justify="space-between">
-            {destinations.map((destination) => (
-              <DestinationCard
+      {destinations.length === 0 ? (
+        <EmptyState
+          title="No matching destinations"
+          message="Try a different search."
+          actionLabel="Clear search"
+          onAction={() => {
+            setQuery('');
+          }}
+        />
+      ) : (
+        <YStack
+          rounded={14}
+          borderWidth={1}
+          overflow="hidden"
+          style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+        >
+          {destinations.map((destination, index) => {
+            const saved = isSaved(destination.id);
+
+            return (
+              <XStack
                 key={destination.id}
-                destination={destination}
-                compact={compact}
-                saved={isSaved(destination.id)}
-                onToggleSaved={toggleSaved}
-              />
-            ))}
-          </XStack>
-        )}
-      </YStack>
+                items="center"
+                style={{
+                  borderTopWidth: index === 0 ? 0 : 1,
+                  borderColor: COLORS.line,
+                  paddingRight: 8,
+                }}
+              >
+                <Link
+                  href={{
+                    pathname: '/destination/[id]',
+                    params: { id: destination.id },
+                  }}
+                  asChild
+                >
+                  <Pressable
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 10,
+                      minHeight: 56,
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                    }}
+                  >
+                    <Image
+                      source={{ uri: destination.imageUrl }}
+                      resizeMode="cover"
+                      style={{
+                        width: 48,
+                        height: 44,
+                        borderRadius: 8,
+                        backgroundColor: COLORS.imageFallback,
+                      }}
+                    />
+                    <YStack flex={1}>
+                      <Text
+                        fontSize={16}
+                        fontWeight="700"
+                        style={{ color: COLORS.ink }}
+                      >
+                        {destination.name}
+                      </Text>
+                      <Text fontSize={13} style={{ color: COLORS.muted }}>
+                        {destination.country}
+                      </Text>
+                    </YStack>
+                  </Pressable>
+                </Link>
+                <Button
+                  w={44}
+                  h={44}
+                  circular
+                  accessibilityLabel={
+                    (saved ? 'Remove ' : 'Save ') + destination.name
+                  }
+                  accessibilityState={{ selected: saved }}
+                  onPress={() => {
+                    toggleSaved(destination.id);
+                  }}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: saved ? '#be185d' : COLORS.ink,
+                  }}
+                >
+                  {saved ? '♥' : '♡'}
+                </Button>
+              </XStack>
+            );
+          })}
+        </YStack>
+      )}
     </Page>
   );
 }
