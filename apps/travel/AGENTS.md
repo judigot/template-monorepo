@@ -13,8 +13,9 @@ changing authentication or testing it on a new environment.
   on a remote development machine. Use `make web` for browser checks.
 - Use **Wanderapp** for standalone Android demos. It bundles the app and
   receives compatible over-the-air changes from EAS on the `preview` channel.
-  Build and update with the EAS `preview` environment. Check the Android
-  runtime fingerprint against the build testers have before publishing.
+  Build and update with the EAS `preview` environment. The push CI job
+  publishes compatible updates when `EXPO_TOKEN` is configured. Check that
+  job before publishing the same revision manually.
 - Build a new APK after native dependency, Expo SDK, or native configuration
   changes. Preserve the existing package IDs, callback schemes, and signing
   keys when making a branding-only change.

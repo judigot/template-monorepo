@@ -27,11 +27,9 @@ database. Deploying an EAS Update affects Android only when publishing with
 `--platform android`. Deploy the web export separately.
 
 You can close or delete a Codespace after pushing your changes. Published EAS
-updates remain available. A Git push runs the repository's GitHub Actions
-checks and can trigger an Android dev APK build when native files change.
-Publishing an OTA release currently requires the EAS Update command below
-from an authenticated checkout. Automatic publishing would require a
-separate workflow with Expo credentials and a runtime compatibility check.
+updates remain available. Pushes to `app/travel-app` run GitHub Actions CI and
+can automatically publish an Android over-the-air update. Native changes can
+also trigger the separate Android dev APK workflow.
 
 ## Google sign-in
 
@@ -187,10 +185,19 @@ but GitHub Actions is the preferred build transport.
 **Preview** environment before building or publishing. Use the public API
 origin without `/api/auth`.
 
-Install an APK built with this configuration once. For a release, start from
-the intended source revision and run the project checks. Compare the Android
-fingerprint with the runtime version reported on the EAS build that testers
-have installed. From `apps/travel`:
+Install an APK built with this configuration once. To enable automatic
+publishing, add an Expo access token with access to the linked project as the
+`EXPO_TOKEN` repository Actions secret. The [CI workflow](../../.github/workflows/ci.yml)
+publishes to Android Preview after all CI jobs pass on a push to
+`app/travel-app`. It compares the update fingerprint with the finished
+standalone Preview APK. When testers move to a new native build, set the
+`WANDERAPP_PREVIEW_BUILD_ID` repository Actions variable to that EAS build ID.
+The workflow skips publishing when the runtime differs or when a newer push
+has superseded the run.
+
+For a manual release, start from the intended source revision and run the
+project checks. Compare the Android fingerprint with the runtime version
+reported on the EAS build that testers have installed. From `apps/travel`:
 
 ```sh
 npx --yes eas-cli@latest fingerprint:generate --environment preview --platform android
