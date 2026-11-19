@@ -1,7 +1,7 @@
 import { Link } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Modal } from 'react-native';
-import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import { Button, H2, ScrollView, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../auth/auth-client';
 import { useTravelColors } from '../theme';
 import { PlaceMap } from './PlaceMap';
@@ -59,7 +59,7 @@ export function FeaturedPlace() {
       )}
       <Button
         onPress={openProfile}
-        accessibilityLabel={`View profile for ${place.name}`}
+        aria-label={`View profile for ${place.name}`}
         style={{
           backgroundColor: colors.surface,
           color: colors.ink,
@@ -95,14 +95,13 @@ export function FeaturedPlace() {
             <ScrollView>
               <YStack gap="3">
                 <Text style={{ color: colors.muted }}>{place.locality}</Text>
-                <Text
-                  accessibilityRole="header"
+                <H2
                   fontSize={25}
                   fontWeight="800"
                   style={{ color: colors.ink }}
                 >
                   {place.name}
-                </Text>
+                </H2>
                 <Text style={{ color: colors.muted }}>{place.address}</Text>
                 <Text style={{ color: colors.ink }}>{place.description}</Text>
                 <XStack flexWrap="wrap" gap="2">

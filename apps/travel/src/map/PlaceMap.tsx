@@ -19,11 +19,15 @@ export function PlaceMap({ place, onOpen, onError }: IPlaceMapProps) {
     const center: [number, number] = [longitude, latitude];
 
     void import('maplibre-gl')
-      .then(({ Map, Marker, NavigationControl }) => {
+      .then(({ getVersion, Map, Marker, NavigationControl, setWorkerUrl }) => {
         if (disposed) {
           return;
         }
 
+        // Metro bundles the renderer, while MapLibre loads its worker separately.
+        setWorkerUrl(
+          `https://cdn.jsdelivr.net/npm/maplibre-gl@${getVersion()}/dist/maplibre-gl-worker.mjs`,
+        );
         map = new Map({
           container: node,
           style: MAP_STYLE,
