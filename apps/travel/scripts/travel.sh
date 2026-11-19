@@ -9,7 +9,7 @@ shift || true
 case "$command_name" in
   help)
     cat <<'HELP'
-Roam Travel (run from the repo root or apps/travel)
+Wanderapp (run from the repo root or apps/travel)
 
   make setup          Install locked monorepo dependencies
   make doctor         Check Bun, Node.js, and dependency installation
@@ -47,7 +47,7 @@ HELP
     require_bun
     require_dependencies
     cd "$TRAVEL_APP_DIR"
-    printf 'Open Roam Travel Dev on this phone and connect it to http://127.0.0.1:8081.\n'
+    printf 'Open Wanderapp Dev on this phone and connect it to http://127.0.0.1:8081.\n'
     printf 'Keep Termux running; React edits appear through Fast Refresh without APK rebuilds.\n'
     exec env EXPO_APP_VARIANT=development bun expo start --dev-client --localhost "$@"
     ;;

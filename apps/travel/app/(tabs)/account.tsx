@@ -4,9 +4,10 @@ import { Button, Text, YStack } from 'tamagui';
 import { getAccountCallbackURL } from '../../src/auth/account-callback';
 import { authBaseUrl, authClient } from '../../src/auth/auth-client';
 import { Page } from '../../src/components/Page';
-import { COLORS } from '../../src/theme';
+import { useTravelColors } from '../../src/theme';
 
 function AuthenticatedAccount() {
+  const colors = useTravelColors();
   const { data: session, isPending, refetch } = authClient.useSession();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,8 +76,8 @@ function AuthenticatedAccount() {
       <YStack
         gap="4"
         style={{
-          backgroundColor: COLORS.surface,
-          borderColor: COLORS.line,
+          backgroundColor: colors.surface,
+          borderColor: colors.line,
           borderRadius: 20,
           borderWidth: 1,
           maxWidth: 480,
@@ -85,28 +86,28 @@ function AuthenticatedAccount() {
         }}
       >
         {isPending ? (
-          <Text style={{ color: COLORS.muted }}>Checking your session...</Text>
+          <Text style={{ color: colors.muted }}>Checking your session...</Text>
         ) : session?.user ? (
           <YStack gap="3">
             <Text
               accessibilityRole="header"
               fontSize={34}
               fontWeight="800"
-              style={{ color: COLORS.ink }}
+              style={{ color: colors.ink }}
             >
               {session.user.name
                 ? `Welcome, ${session.user.name}!`
-                : 'Welcome to Roam!'}
+                : 'Welcome to Wanderapp!'}
             </Text>
-            <Text style={{ color: COLORS.muted }}>{session.user.email}</Text>
+            <Text style={{ color: colors.muted }}>{session.user.email}</Text>
             <Button
               disabled={busy}
               onPress={() => {
                 void signOut();
               }}
               style={{
-                backgroundColor: COLORS.accentSoft,
-                color: COLORS.accent,
+                backgroundColor: colors.accentSoft,
+                color: colors.accent,
               }}
             >
               {busy ? 'Logging out…' : 'Log out'}
@@ -118,11 +119,11 @@ function AuthenticatedAccount() {
               accessibilityRole="header"
               fontSize={34}
               fontWeight="800"
-              style={{ color: COLORS.ink }}
+              style={{ color: colors.ink }}
             >
               Travel starts here
             </Text>
-            <Text style={{ color: COLORS.muted }}>
+            <Text style={{ color: colors.muted }}>
               Sign in securely with Google to access your account.
             </Text>
             <Button
@@ -130,7 +131,7 @@ function AuthenticatedAccount() {
               onPress={() => {
                 void signIn();
               }}
-              style={{ backgroundColor: COLORS.accent, color: COLORS.surface }}
+              style={{ backgroundColor: colors.accent, color: colors.onAccent }}
               accessibilityLabel="Continue with Google"
             >
               {busy ? 'Connecting to Google...' : 'Continue with Google'}
@@ -138,7 +139,7 @@ function AuthenticatedAccount() {
           </YStack>
         )}
         {error !== null ? (
-          <Text accessibilityRole="alert" style={{ color: '#b42318' }}>
+          <Text accessibilityRole="alert" style={{ color: colors.error }}>
             {error}
           </Text>
         ) : null}
@@ -148,6 +149,7 @@ function AuthenticatedAccount() {
 }
 
 export default function AccountScreen() {
+  const colors = useTravelColors();
   if (authBaseUrl === null) {
     return (
       <Page>
@@ -156,14 +158,14 @@ export default function AccountScreen() {
             fontSize={12}
             fontWeight="800"
             letterSpacing={2}
-            style={{ color: COLORS.accent }}
+            style={{ color: colors.accent }}
           >
-            YOUR ROAM ACCOUNT
+            YOUR WANDERAPP ACCOUNT
           </Text>
-          <Text fontSize={34} fontWeight="800" style={{ color: COLORS.ink }}>
+          <Text fontSize={34} fontWeight="800" style={{ color: colors.ink }}>
             Account
           </Text>
-          <Text style={{ color: COLORS.muted }}>
+          <Text style={{ color: colors.muted }}>
             Google sign-in will be available after the API URL and Google OAuth
             credentials have been configured. You can still explore destinations
             and save places locally.

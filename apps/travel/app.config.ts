@@ -10,7 +10,7 @@ export function resolveAppConfig(
 
   return {
     ...config,
-    name: isDevelopment ? 'Roam Travel Dev' : 'Roam Travel',
+    name: isDevelopment ? 'Wanderapp Dev' : 'Wanderapp',
     slug: config.slug ?? 'travel-demo',
     scheme: isDevelopment ? 'roamtravel-dev' : 'roamtravel',
     ios: {

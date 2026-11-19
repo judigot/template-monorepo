@@ -1,5 +1,5 @@
 import { Button, Text, YStack } from 'tamagui';
-import { COLORS } from '../theme';
+import { useTravelColors } from '../theme';
 
 export interface IEmptyStateProps {
   title: string;
@@ -14,6 +14,7 @@ export function EmptyState({
   actionLabel,
   onAction,
 }: IEmptyStateProps) {
+  const colors = useTravelColors();
   return (
     <YStack
       borderWidth={1}
@@ -22,25 +23,24 @@ export function EmptyState({
       gap="3"
       style={{
         padding: 24,
-        backgroundColor: COLORS.surface,
-        borderColor: COLORS.line,
+        backgroundColor: colors.surface,
+        borderColor: colors.line,
       }}
     >
       <Text
         fontSize={20}
         fontWeight="800"
-        style={{ textAlign: 'center', color: COLORS.ink }}
+        style={{ textAlign: 'center', color: colors.ink }}
       >
         {title}
       </Text>
-      <Text fontSize={14} style={{ textAlign: 'center', color: COLORS.muted }}>
+      <Text fontSize={14} style={{ textAlign: 'center', color: colors.muted }}>
         {message}
       </Text>
       {actionLabel !== undefined && onAction !== undefined ? (
         <Button
-          color="#ffffff"
           onPress={onAction}
-          style={{ backgroundColor: COLORS.accent }}
+          style={{ backgroundColor: colors.accent, color: colors.onAccent }}
         >
           {actionLabel}
         </Button>

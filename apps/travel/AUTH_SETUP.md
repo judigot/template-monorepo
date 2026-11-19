@@ -1,6 +1,6 @@
 # Google sign-in setup
 
-Roam Travel uses Better Auth 1.7.25, the official Expo plugin, the existing
+Wanderapp uses Better Auth 1.7.25, the official Expo plugin, the existing
 Hono API, and PostgreSQL. No Firebase Auth or EAS authentication service is needed.
 
 ## 1. Create Google OAuth credentials

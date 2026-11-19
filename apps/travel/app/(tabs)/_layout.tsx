@@ -1,13 +1,14 @@
 import { Tabs } from 'expo-router';
-import { COLORS } from '../../src/theme';
+import { useTravelColors } from '../../src/theme';
 
 export default function TabLayout() {
+  const colors = useTravelColors();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.accent,
-        tabBarInactiveTintColor: COLORS.muted,
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.muted,
         tabBarIconStyle: { display: 'none' },
         tabBarLabelPosition: 'beside-icon',
         tabBarLabelStyle: {
@@ -17,8 +18,8 @@ export default function TabLayout() {
           marginEnd: 0,
         },
         tabBarStyle: {
-          backgroundColor: COLORS.surface,
-          borderTopColor: COLORS.line,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.line,
         },
       }}
     >

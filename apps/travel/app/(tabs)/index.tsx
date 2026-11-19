@@ -6,9 +6,10 @@ import { EmptyState } from '../../src/components/EmptyState';
 import { Page } from '../../src/components/Page';
 import { DESTINATIONS, filterDestinations } from '../../src/data/destinations';
 import { useTravel } from '../../src/state/travel-context';
-import { COLORS } from '../../src/theme';
+import { useTravelColors } from '../../src/theme';
 
 export default function DiscoverScreen() {
+  const colors = useTravelColors();
   const [query, setQuery] = useState('');
   const { isSaved, toggleSaved } = useTravel();
   const destinations = filterDestinations(DESTINATIONS, query, 'all');
@@ -16,7 +17,7 @@ export default function DiscoverScreen() {
   return (
     <Page>
       <YStack gap="2">
-        <Text fontSize={24} fontWeight="800" style={{ color: COLORS.ink }}>
+        <Text fontSize={24} fontWeight="800" style={{ color: colors.ink }}>
           Your next adventure
         </Text>
         <Input
@@ -25,7 +26,7 @@ export default function DiscoverScreen() {
           onChangeText={setQuery}
           placeholder="Search destinations"
           accessibilityLabel="Search destinations"
-          style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+          style={{ backgroundColor: colors.surface, borderColor: colors.line }}
         />
       </YStack>
 
@@ -43,7 +44,7 @@ export default function DiscoverScreen() {
           rounded={14}
           borderWidth={1}
           overflow="hidden"
-          style={{ backgroundColor: COLORS.surface, borderColor: COLORS.line }}
+          style={{ backgroundColor: colors.surface, borderColor: colors.line }}
         >
           {destinations.map((destination, index) => {
             const saved = isSaved(destination.id);
@@ -54,7 +55,7 @@ export default function DiscoverScreen() {
                 items="center"
                 style={{
                   borderTopWidth: index === 0 ? 0 : 1,
-                  borderColor: COLORS.line,
+                  borderColor: colors.line,
                   paddingRight: 8,
                 }}
               >
@@ -83,18 +84,18 @@ export default function DiscoverScreen() {
                         width: 48,
                         height: 44,
                         borderRadius: 8,
-                        backgroundColor: COLORS.imageFallback,
+                        backgroundColor: colors.imageFallback,
                       }}
                     />
                     <YStack flex={1}>
                       <Text
                         fontSize={16}
                         fontWeight="700"
-                        style={{ color: COLORS.ink }}
+                        style={{ color: colors.ink }}
                       >
                         {destination.name}
                       </Text>
-                      <Text fontSize={13} style={{ color: COLORS.muted }}>
+                      <Text fontSize={13} style={{ color: colors.muted }}>
                         {destination.country}
                       </Text>
                     </YStack>
@@ -113,7 +114,7 @@ export default function DiscoverScreen() {
                   }}
                   style={{
                     backgroundColor: 'transparent',
-                    color: saved ? '#be185d' : COLORS.ink,
+                    color: saved ? colors.saved : colors.ink,
                   }}
                 >
                   {saved ? '♥' : '♡'}

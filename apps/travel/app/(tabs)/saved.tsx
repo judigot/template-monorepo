@@ -6,9 +6,10 @@ import { EmptyState } from '../../src/components/EmptyState';
 import { Page } from '../../src/components/Page';
 import { DESTINATIONS } from '../../src/data/destinations';
 import { useTravel } from '../../src/state/travel-context';
-import { COLORS } from '../../src/theme';
+import { useTravelColors } from '../../src/theme';
 
 export default function SavedScreen() {
+  const colors = useTravelColors();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const { savedIds, isSaved, toggleSaved } = useTravel();
@@ -23,14 +24,14 @@ export default function SavedScreen() {
           fontSize={12}
           fontWeight="800"
           letterSpacing={2}
-          style={{ color: COLORS.accent }}
+          style={{ color: colors.accent }}
         >
           YOUR COLLECTION
         </Text>
-        <Text fontSize={34} fontWeight="800" style={{ color: COLORS.ink }}>
+        <Text fontSize={34} fontWeight="800" style={{ color: colors.ink }}>
           Saved places
         </Text>
-        <Text fontSize={15} style={{ color: COLORS.muted }}>
+        <Text fontSize={15} style={{ color: colors.muted }}>
           A little inspiration for the journeys ahead.
         </Text>
       </YStack>
@@ -45,7 +46,7 @@ export default function SavedScreen() {
         />
       ) : (
         <YStack gap="3">
-          <Text fontSize={15} style={{ color: COLORS.muted }}>
+          <Text fontSize={15} style={{ color: colors.muted }}>
             {savedDestinations.length} saved{' '}
             {savedDestinations.length === 1 ? 'destination' : 'destinations'}
           </Text>
@@ -64,7 +65,7 @@ export default function SavedScreen() {
             onPress={() => {
               router.replace('/');
             }}
-            style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
+            style={{ backgroundColor: colors.accentSoft, color: colors.accent }}
           >
             Discover more places
           </Button>

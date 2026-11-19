@@ -1,4 +1,4 @@
-# Roam Travel
+# Wanderapp
 
 One Expo Router application for **web, Android, and iOS**. The same screens
 and Tamagui components run on every platform, with responsive two-column
@@ -29,7 +29,7 @@ React Native UI natively.
 ## Native Android development: build once, iterate instantly
 
 The production app is **native React Native**; no WebView or embedded website.
-The development client is a separate application, **Roam Travel Dev**,
+The development client is a separate application, **Wanderapp Dev**,
 package `com.judigot.roamtravel.dev`. It can coexist with your existing
 signed preview/release app `com.judigot.roamtravel` without signature
 conflicts or overwriting its data.
@@ -66,7 +66,7 @@ make setup
 make dev
 ```
 
-Open **Roam Travel Dev**, then connect to the address
+Open **Wanderapp Dev**, then connect to the address
 `http://127.0.0.1:8081` from the development launcher. The shell starts
 Expo with `EXPO_APP_VARIANT=development` and the `--dev-client` flag.
 Keep Termux and the development server running.

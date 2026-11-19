@@ -3,7 +3,7 @@ import type { ExpoConfig } from 'expo/config';
 import { resolveAppConfig } from '../app.config';
 
 const baseConfig: ExpoConfig = {
-  name: 'Roam Travel',
+  name: 'Wanderapp',
   slug: 'travel-demo',
   scheme: 'roamtravel',
   android: { package: 'com.judigot.roamtravel' },
@@ -14,7 +14,7 @@ const baseConfig: ExpoConfig = {
 describe('native development variant', () => {
   it('installs alongside the release app with its own identity', () => {
     const config = resolveAppConfig(baseConfig, 'development');
-    expect(config.name).toBe('Roam Travel Dev');
+    expect(config.name).toBe('Wanderapp Dev');
     expect(config.scheme).toBe('roamtravel-dev');
     expect(config.android?.package).toBe('com.judigot.roamtravel.dev');
     expect(config.ios?.bundleIdentifier).toBe('com.judigot.roamtravel.dev');
@@ -24,7 +24,7 @@ describe('native development variant', () => {
 
   it('preserves release IDs and scheme when not developing', () => {
     const config = resolveAppConfig(baseConfig, undefined);
-    expect(config.name).toBe('Roam Travel');
+    expect(config.name).toBe('Wanderapp');
     expect(config.scheme).toBe('roamtravel');
     expect(config.android?.package).toBe('com.judigot.roamtravel');
     expect(config.ios?.bundleIdentifier).toBe('com.judigot.roamtravel');

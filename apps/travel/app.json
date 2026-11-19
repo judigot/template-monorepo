@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Roam Travel",
+    "name": "Wanderapp",
     "slug": "travel-demo",
     "scheme": "roamtravel",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.judigot.roamtravel",
       "supportsTablet": true
@@ -16,7 +16,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "name": "Roam Travel"
+      "name": "Wanderapp"
     },
     "plugins": ["expo-router"],
     "experiments": {

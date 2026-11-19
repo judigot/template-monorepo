@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { Image } from 'react-native';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import type { IDestination } from '../data/destinations';
-import { COLORS } from '../theme';
+import { useTravelColors } from '../theme';
 
 export interface IDestinationCardProps {
   destination: IDestination;
@@ -17,6 +17,7 @@ export function DestinationCard({
   saved,
   onToggleSaved,
 }: IDestinationCardProps) {
+  const colors = useTravelColors();
   const router = useRouter();
 
   return (
@@ -27,14 +28,14 @@ export function DestinationCard({
       borderWidth={1}
       style={{
         marginBottom: 12,
-        backgroundColor: COLORS.surface,
-        borderColor: COLORS.line,
+        backgroundColor: colors.surface,
+        borderColor: colors.line,
       }}
     >
       <YStack
         h={205}
         position="relative"
-        style={{ backgroundColor: COLORS.imageFallback }}
+        style={{ backgroundColor: colors.imageFallback }}
       >
         <Image
           source={{ uri: destination.imageUrl }}
@@ -46,29 +47,33 @@ export function DestinationCard({
           position="absolute"
           size="sm"
           circular
-          backgroundColor="#ffffff"
           accessibilityLabel={(saved ? 'Remove ' : 'Save ') + destination.name}
           onPress={() => {
             onToggleSaved(destination.id);
           }}
-          style={{ top: 12, right: 12, color: saved ? '#be185d' : COLORS.ink }}
+          style={{
+            top: 12,
+            right: 12,
+            backgroundColor: colors.surface,
+            color: saved ? colors.saved : colors.ink,
+          }}
         >
           {saved ? '♥' : '♡'}
         </Button>
       </YStack>
       <YStack gap="2" flex={1} style={{ padding: 16 }}>
         <XStack items="center" justify="space-between" gap="2">
-          <Text fontSize={13} fontWeight="700" style={{ color: COLORS.accent }}>
+          <Text fontSize={13} fontWeight="700" style={{ color: colors.accent }}>
             {destination.country.toUpperCase()}
           </Text>
-          <Text fontSize={12} style={{ color: COLORS.muted }}>
+          <Text fontSize={12} style={{ color: colors.muted }}>
             {destination.duration}
           </Text>
         </XStack>
-        <Text fontSize={24} fontWeight="800" style={{ color: COLORS.ink }}>
+        <Text fontSize={24} fontWeight="800" style={{ color: colors.ink }}>
           {destination.name}
         </Text>
-        <Text fontSize={14} lineHeight="21px" style={{ color: COLORS.muted }}>
+        <Text fontSize={14} lineHeight="21px" style={{ color: colors.muted }}>
           {destination.tagline}
         </Text>
         <XStack style={{ paddingTop: 8, marginTop: 'auto' }}>
@@ -81,7 +86,7 @@ export function DestinationCard({
                 params: { id: destination.id },
               });
             }}
-            style={{ backgroundColor: COLORS.accentSoft, color: COLORS.accent }}
+            style={{ backgroundColor: colors.accentSoft, color: colors.accent }}
           >
             Explore this place
           </Button>

@@ -1,18 +1,19 @@
 import type { ReactNode } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, YStack } from 'tamagui';
-import { COLORS } from '../theme';
+import { useTravelColors } from '../theme';
 
 export function Page({ children }: { children: ReactNode }) {
+  const colors = useTravelColors();
   return (
     <SafeAreaView
       edges={['top']}
-      style={{ flex: 1, backgroundColor: COLORS.canvas }}
+      style={{ flex: 1, backgroundColor: colors.canvas }}
     >
       <ScrollView
         flex={1}
         keyboardShouldPersistTaps="handled"
-        style={{ backgroundColor: COLORS.canvas }}
+        style={{ backgroundColor: colors.canvas }}
       >
         <YStack
           w="100%"
