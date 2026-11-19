@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import { Button, Text, YStack } from 'tamagui';
+import { getAccountCallbackURL } from '../../src/auth/account-callback';
 import { authBaseUrl, authClient } from '../../src/auth/auth-client';
 import { Page } from '../../src/components/Page';
 import { COLORS } from '../../src/theme';
@@ -36,7 +37,9 @@ function AuthenticatedAccount() {
     try {
       const result = await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/account',
+        callbackURL: getAccountCallbackURL(
+          Platform.OS === 'web' ? window.location.origin : undefined,
+        ),
       });
       if (result.error) {
         setError(result.error.message ?? 'Google sign-in did not complete.');
@@ -69,24 +72,31 @@ function AuthenticatedAccount() {
 
   return (
     <Page>
-      <YStack gap="4" style={{ paddingVertical: 16 }}>
-        <Text
-          fontSize={12}
-          fontWeight="800"
-          letterSpacing={2}
-          style={{ color: COLORS.accent }}
-        >
-          YOUR ROAM ACCOUNT
-        </Text>
-        <Text fontSize={34} fontWeight="800" style={{ color: COLORS.ink }}>
-          {session?.user ? 'Welcome back' : 'Travel starts here'}
-        </Text>
+      <YStack
+        gap="4"
+        style={{
+          backgroundColor: COLORS.surface,
+          borderColor: COLORS.line,
+          borderRadius: 20,
+          borderWidth: 1,
+          maxWidth: 480,
+          padding: 24,
+          width: '100%',
+        }}
+      >
         {isPending ? (
           <Text style={{ color: COLORS.muted }}>Checking your session...</Text>
         ) : session?.user ? (
           <YStack gap="3">
-            <Text fontSize={20} fontWeight="700" style={{ color: COLORS.ink }}>
-              {session.user.name}
+            <Text
+              accessibilityRole="header"
+              fontSize={34}
+              fontWeight="800"
+              style={{ color: COLORS.ink }}
+            >
+              {session.user.name
+                ? `Welcome, ${session.user.name}!`
+                : 'Welcome to Roam!'}
             </Text>
             <Text style={{ color: COLORS.muted }}>{session.user.email}</Text>
             <Button
@@ -98,13 +108,20 @@ function AuthenticatedAccount() {
                 backgroundColor: COLORS.accentSoft,
                 color: COLORS.accent,
               }}
-              accessibilityLabel="Sign out"
             >
-              {busy ? 'Signing out...' : 'Sign out'}
+              {busy ? 'Logging out…' : 'Log out'}
             </Button>
           </YStack>
         ) : (
           <YStack gap="3">
+            <Text
+              accessibilityRole="header"
+              fontSize={34}
+              fontWeight="800"
+              style={{ color: COLORS.ink }}
+            >
+              Travel starts here
+            </Text>
             <Text style={{ color: COLORS.muted }}>
               Sign in securely with Google to access your account.
             </Text>
