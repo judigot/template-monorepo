@@ -4,9 +4,34 @@ One Expo Router application for **web, Android, and iOS**. The same screens
 and Tamagui components run on every platform, with responsive two-column
 web cards and one-column phone cards.
 
-This is a demonstration feature branch in `judigot/template-monorepo`.
-Existing Vite and Next.js applications remain untouched. Destination content
-is illustrative; there is no backend, account, booking, or payment integration.
+Wanderapp lives on `app/travel-app` in `judigot/template-monorepo`. The Hono API
+handles Google sign-in. Destination content is illustrative, and saved places
+are held in the app's local state.
+
+## Development and release workflow
+
+| Goal | Use | What needs to run |
+| --- | --- | --- |
+| See edits live on Android | **Wanderapp Dev** with `make dev` on the phone or `make tunnel` from a remote computer | Metro serves the app code and Fast Refresh while you work. |
+| Check the same screens in a browser | `make web` | Expo's web development server. |
+| Demo on Android without a development server | **Wanderapp**, the standalone EAS Preview APK | The APK opens from the home screen. Google sign-in uses the hosted API. |
+| Deliver a compatible feature or fix to an installed preview APK | EAS Update on the `preview` channel | Expo hosts and serves the published bundle and assets. The phone needs internet access to download them. |
+| Deliver native changes | Build a fresh APK and install it | EAS Build for standalone previews or GitHub Actions for the Android dev client. |
+
+The Expo tunnel is for development. It forwards the phone's requests to Metro
+wherever you started it. Closing Metro stops Fast Refresh. Once an EAS Update
+is published, the standalone app fetches it from Expo without a tunnel, a local
+server, or an open port. The installed app can open with its bundled or cached
+version offline. Google sign-in requires the separate Vercel API and its Neon
+database. Deploying an EAS Update affects Android only when publishing with
+`--platform android`. Deploy the web export separately.
+
+You can close or delete a Codespace after pushing your changes. Published EAS
+updates remain available. A Git push runs the repository's GitHub Actions
+checks and can trigger an Android dev APK build when native files change.
+Publishing an OTA release currently requires the EAS Update command below
+from an authenticated checkout. Automatic publishing would require a
+separate workflow with Expo credentials and a runtime compatibility check.
 
 ## Google sign-in
 
@@ -43,15 +68,15 @@ workflow compiles a **debug APK directly with Expo prebuild and Gradle** on a
 GitHub-hosted Linux runner. No Expo account, EAS Build queue, or Android
 toolchain on your phone is required.
 
-Open the GitHub Actions run for PR #31, download the
+Open the successful Android Development Client run for your branch, download the
 `wanderapp-dev-client` artifact ZIP, extract `app-debug.apk` using
 Android's Files app, then install the APK. It contains the developer launcher
 and **must connect to Metro** to run your latest JavaScript. The artifact
 is a development build, not a distributable production APK.
 
-The workflow runs automatically only on pushes that change `apps/travel/package.json`,
-`apps/travel/app.json`, `apps/travel/app.config.ts`, `bun.lock`,
-or the workflow itself. UI-only edits do not trigger a native rebuild.
+On feature branches the workflow runs on pushes that change `apps/travel/package.json`,
+`apps/travel/app.json`, `apps/travel/app.config.ts`, `apps/travel/eas.json`,
+`bun.lock`, or the workflow itself. UI-only edits do not trigger a native rebuild.
 Concurrent builds for the same feature branch cancel older in-progress runs.
 
 After merging to the default branch, the same workflow supports manual
@@ -78,6 +103,15 @@ If the localhost connection is blocked, use `make tunnel` and connect
 using the link printed by Expo (internet required). Expo Go remains
 available through `make dev-go`, but it does not replace the custom
 native development build.
+
+From a remote desktop or workspace, run `make tunnel` and scan the QR code
+with the phone camera or paste the printed HTTPS URL into **Wanderapp Dev**.
+If Expo's signed tunnel requires a login, sign in or use Expo's ngrok option
+from `apps/travel`:
+
+```sh
+EXPO_APP_VARIANT=development bun expo start --dev-client --tunnel ngrok
+```
 
 Metro from Ubuntu PRoot running on the same physical Android device remains
 **experimental and unverified**. If bundler connection or file watchers fail,
@@ -148,22 +182,27 @@ but GitHub Actions is the preferred build transport.
 ### Over-the-air updates for standalone previews
 
 `make build` creates a standalone Android APK subscribed to the EAS
-`preview` channel. Set `EXPO_PUBLIC_API_URL` in the linked EAS project's
+`preview` channel on the linked Expo project `@judigot/travel-demo`. Set
+`EXPO_PUBLIC_API_URL` in that project's
 **Preview** environment before building or publishing. Use the public API
 origin without `/api/auth`.
 
-Install an APK built with this configuration once. To publish a compatible
-JavaScript or asset update, run this from `apps/travel`:
+Install an APK built with this configuration once. For a release, start from
+the intended source revision and run the project checks. Compare the Android
+fingerprint with the runtime version reported on the EAS build that testers
+have installed. From `apps/travel`:
 
 ```sh
+npx --yes eas-cli@latest fingerprint:generate --environment preview --platform android
 npx --yes eas-cli@latest update --channel preview --environment preview --platform android --message "Describe the change"
 ```
 
-On the phone, open the standalone Wanderapp while online, then close and
-reopen it to load the downloaded update. The fingerprint runtime policy
-matches updates to compatible native builds. Changes to native dependencies
-or native configuration require a fresh APK. Wanderapp Dev uses Metro and
-Fast Refresh for day-to-day development.
+Publish the update when the fingerprint matches. If it differs, build an APK
+for the new runtime. Record the source commit, runtime, and EAS update link.
+To verify delivery, open the standalone **Wanderapp** while online, give it
+time to download the update, then fully close and reopen it. Confirm the
+changed screen on the phone. For a temporary preview test, publish the
+restored code after the test so devices that downloaded it also get the cleanup.
 
 ## Verification
 
