@@ -9,7 +9,9 @@ const metroConfig: unknown = createRequire(import.meta.url)(
 describe('Metro filesystem watch scope', () => {
   it('watches shared source without crawling the Bun dependency store', () => {
     expect(metroConfig).toMatchObject({
-      watchFolders: [resolve(import.meta.dir, '../../../packages/design-tokens')],
+      watchFolders: [
+        resolve(import.meta.dir, '../../../packages/design-tokens'),
+      ],
     });
   });
 });

@@ -11,8 +11,6 @@ const config = getDefaultConfig(__dirname);
  * Keep app sources (projectRoot) and the one live shared source workspace
  * watched, without hiding dependencies from Metro's resolver via blockList.
  */
-config.watchFolders = [
-  path.resolve(__dirname, '../../packages/design-tokens'),
-];
+config.watchFolders = [path.resolve(__dirname, '../../packages/design-tokens')];
 
 module.exports = config;
