@@ -6,6 +6,12 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f41f891e-ba86-42bc-972b-34ae1f7dcb2c"
+    },
     "ios": {
       "bundleIdentifier": "com.judigot.roamtravel",
       "supportsTablet": true

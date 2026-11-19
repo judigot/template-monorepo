@@ -2,6 +2,8 @@
   "build": {
     "preview": {
       "distribution": "internal",
+      "channel": "preview",
+      "environment": "preview",
       "bun": "1.4.4",
       "android": {
         "buildType": "apk"

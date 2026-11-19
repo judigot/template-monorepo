@@ -145,11 +145,25 @@ not use the development client. `make eas-login` and `make eas-init`
 remain optional. A separate `development` EAS profile exists as a fallback
 but GitHub Actions is the preferred build transport.
 
-The developer client and Metro/Fast Refresh apply only to development.
-Shipping changes to **installed release users** without a new APK requires
-a separately configured and tested `expo-updates` OTA delivery service.
-OTA is not installed or operational yet, and native dependency changes still
-require an updated binary.
+### Over-the-air updates for standalone previews
+
+`make build` creates a standalone Android APK subscribed to the EAS
+`preview` channel. Set `EXPO_PUBLIC_API_URL` in the linked EAS project's
+**Preview** environment before building or publishing. Use the public API
+origin without `/api/auth`.
+
+Install an APK built with this configuration once. To publish a compatible
+JavaScript or asset update, run this from `apps/travel`:
+
+```sh
+npx --yes eas-cli@latest update --channel preview --environment preview --platform android --message "Describe the change"
+```
+
+On the phone, open the standalone Wanderapp while online, then close and
+reopen it to load the downloaded update. The fingerprint runtime policy
+matches updates to compatible native builds. Changes to native dependencies
+or native configuration require a fresh APK. Wanderapp Dev uses Metro and
+Fast Refresh for day-to-day development.
 
 ## Verification
 
