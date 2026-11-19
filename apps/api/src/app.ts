@@ -9,6 +9,7 @@ export { resolveAllowedOrigins } from './app-origins.ts';
 
 import { healthRouter } from './routes/health.ts';
 import { helloRouter } from './routes/hello.ts';
+import { placesRouter } from './routes/places.ts';
 
 const MAX_REQUEST_BODY_BYTES = 1024 * 1024;
 
@@ -46,6 +47,7 @@ export function createApp(): Hono {
 
   app.route('/hello', helloRouter);
   app.route('/health', healthRouter);
+  app.route('/places', placesRouter);
 
   app.notFound((c) => {
     return c.json({ error: 'Not Found' }, 404);

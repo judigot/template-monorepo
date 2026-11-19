@@ -6,21 +6,23 @@ import { parseAuthEnvironment } from './auth-env.ts';
 
 const config = parseAuthEnvironment();
 
+export const database =
+  config === null
+    ? null
+    : new Pool({ connectionString: config.DATABASE_URL, max: 5 });
+
 /*
  * An unconfigured example template must remain usable without secrets.
  * Once any auth variable is set, auth-env.ts requires the complete set.
  * The user and session tables must be migrated before enabling the endpoint.
  */
 export const auth =
-  config === null
+  config === null || database === null
     ? null
     : betterAuth({
         baseURL: config.BETTER_AUTH_URL,
         secret: config.BETTER_AUTH_SECRET,
-        database: new Pool({
-          connectionString: config.DATABASE_URL,
-          max: 5,
-        }),
+        database,
         plugins: [expo()],
         trustedOrigins: [
           'roamtravel://',
