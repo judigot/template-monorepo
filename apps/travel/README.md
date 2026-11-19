@@ -84,6 +84,38 @@ Metro from Ubuntu PRoot running on the same physical Android device remains
 a standard Linux/macOS development host with Metro and an Android phone on the
 same network is the supported fallback.
 
+### Termux troubleshooting: ENOSPC file watcher limit
+
+On unprivileged Android/Termux Ubuntu, the error `ENOSPC: System limit for
+number of file watchers reached` means Metro exhausted Android's inotify
+quota. It does **not** mean your phone ran out of storage.
+
+The `metro.config.cjs` in this repo narrows Metro's watched roots to the
+travel app and its shared design-token workspace, while Expo SDK 58's
+on-demand resolver still reads Bun's `node_modules/.bun` dependencies
+as needed. This keeps Fast Refresh for shared UI sources.
+
+Update the checkout and restart Metro after pulling this fix:
+
+```bash
+git pull
+make dev-go
+```
+
+For the custom native development client, use `make dev` instead.
+If you continue to see watcher exhaustion, inspect the kernel quota:
+
+```bash
+cat /proc/sys/fs/inotify/max_user_watches
+cat /proc/sys/fs/inotify/max_user_instances
+```
+
+A PRoot `root` shell cannot raise these kernel limits without real Android
+root privileges. Closing other running Metro/Node processes may free
+watches. Avoid ignoring `node_modules/.bun` with Metro's `blockList`,
+because those files must remain resolvable. This mitigates Termux
+watcher pressure but does not establish verified device compatibility.
+
 ### 3. When a new APK is actually required
 
 Rebuild and install a new dev APK after upgrading the Expo SDK or React Native,
