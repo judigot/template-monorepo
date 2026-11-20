@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Wanderapp",
+    "slug": "travel-demo",
+    "scheme": "roamtravel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f41f891e-ba86-42bc-972b-34ae1f7dcb2c"
+    },
+    "ios": {
+      "bundleIdentifier": "com.judigot.roamtravel",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Wanderapp uses your location to show where you are on the Explore map."
+      }
+    },
+    "android": {
+      "package": "com.judigot.roamtravel"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "name": "Wanderapp"
+    },
+    "plugins": ["expo-router", "@maplibre/maplibre-react-native"],
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "f41f891e-ba86-42bc-972b-34ae1f7dcb2c"
+      }
+    },
+    "owner": "judigot"
+  }
+}

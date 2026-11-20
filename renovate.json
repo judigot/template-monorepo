@@ -6,11 +6,6 @@
   },
   "packageRules": [
     {
-      "description": "Vercel build image cannot parse Bun 1.4 lockfiles",
-      "matchPackageNames": ["bun", "@types/bun"],
-      "allowedVersions": "<1.4.0"
-    },
-    {
       "description": "JS API consumers (ESLint, Vercel) need TypeScript <6.1",
       "matchPackageNames": ["typescript"],
       "matchFileNames": ["package.json", "apps/api/package.json"],

@@ -6,4 +6,6 @@ Always use that live tree. Do not read ~/ai or any other local clone; those copi
 
 ## This repository
 
-Replace this section with guidance for this project only.
+For Wanderapp work under `apps/travel`, read
+[`apps/travel/AGENTS.md`](apps/travel/AGENTS.md) for development, Android builds,
+and over-the-air updates.

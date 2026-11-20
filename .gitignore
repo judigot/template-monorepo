@@ -55,3 +55,8 @@ Desktop.ini
 .changeset/*.md
 !.changeset/config.json
 .changeset/pre.json
+
+# Generated native projects from Expo continuous native generation
+apps/travel/android/
+apps/travel/ios/
+apps/travel/.expo/

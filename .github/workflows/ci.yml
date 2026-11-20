@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - app/travel-app
 
 jobs:
   checks:
@@ -17,18 +18,48 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Cache Bun downloads
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-bun1.4.2-${{ hashFiles('bun.lock', 'turbo.json') }}
+          key: bun-cache-${{ runner.os }}-bun1.4.4-${{ hashFiles('bun.lock', 'turbo.json') }}
           restore-keys: |
-            bun-cache-${{ runner.os }}-bun1.4.2-
+            bun-cache-${{ runner.os }}-bun1.4.4-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Setup Node.js for EAS CLI smoke test
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Smoke test travel CLI
+        run: |
+          bash -n apps/travel/scripts/common.sh apps/travel/scripts/travel.sh
+          bash -c 'source apps/travel/scripts/common.sh; require_bun'
+          make help
+          make -n build
+          make -n build-web
+          make -C apps/travel -n dev
+          test_dir="$(mktemp -d)"
+          trap 'rm -rf "$test_dir"' EXIT
+          printf '#!/bin/sh\nprintf "%%s\\n" "$*" >> "$EAS_TEST_LOG"\n' > "$test_dir/npx"
+          chmod +x "$test_dir/npx"
+          EAS_TEST_LOG="$test_dir/args" PATH="$test_dir:$PATH" make eas-login
+          grep -Fx -- '--yes eas-cli@latest login' "$test_dir/args"
+          EAS_TEST_LOG="$test_dir/args" PATH="$test_dir:$PATH" make build
+          if grep -Eq '"projectId"[[:space:]]*:' apps/travel/app.json; then
+            if grep -Fx -- '--yes eas-cli@latest init' "$test_dir/args"; then
+              echo 'Unexpected EAS initialization for an already linked project.'
+              exit 1
+            fi
+          else
+            grep -Fx -- '--yes eas-cli@latest init' "$test_dir/args"
+          fi
+          grep -Fx -- '--yes eas-cli@latest build --platform android --profile preview' "$test_dir/args"
 
       - name: Check formatting
         run: bun run format:check
@@ -55,7 +86,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -78,7 +109,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -116,7 +147,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -138,3 +169,149 @@ jobs:
           bun -e "const body = await Bun.file('/tmp/hello.json').json(); if (body.message !== 'Hello, world!') throw new Error('Unexpected response: ' + JSON.stringify(body));"
           curl -fsS http://127.0.0.1:3000/api/health > /tmp/health.json
           bun -e "const body = await Bun.file('/tmp/health.json').json(); if (body.status !== 'healthy') throw new Error('Unexpected health: ' + JSON.stringify(body));"
+
+  wanderapp-preview-update:
+    name: Publish Wanderapp Android preview update
+    if: github.event_name == 'push' && github.ref == 'refs/heads/app/travel-app' && github.repository == 'judigot/template-monorepo'
+    needs: [checks, e2e, api-node-runtime, api-bun-runtime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    concurrency:
+      group: wanderapp-android-preview-update
+      cancel-in-progress: false
+    steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Publish compatible Android update
+        working-directory: apps/travel
+        shell: bash
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          PREVIEW_BUILD_ID: ${{ vars.WANDERAPP_PREVIEW_BUILD_ID || '7871f884-25ce-45a9-ba2b-7586c7fef2a4' }}
+        run: |
+          if [[ -z "$EXPO_TOKEN" ]]; then
+            echo "::warning::Set the EXPO_TOKEN Actions secret to enable Wanderapp preview updates."
+            exit 0
+          fi
+
+          eas=(npx --yes eas-cli@27.10.0)
+          build_runtime=$("${eas[@]}" build:view "$PREVIEW_BUILD_ID" --json | bun -e '
+            const build = await Bun.stdin.json();
+            const config = await Bun.file("app.json").json();
+            if (
+              build.status !== "FINISHED" || build.platform !== "ANDROID" ||
+              build.buildProfile !== "preview" || build.distribution !== "INTERNAL" ||
+              build.updateChannel?.name !== "preview" ||
+              build.app?.id !== config.expo.extra.eas.projectId ||
+              typeof build.runtime?.version !== "string" || !build.runtime.version
+            ) {
+              throw new Error("Expected a finished Android preview APK for the linked Expo project.");
+            }
+            console.log(build.runtime.version);
+          ')
+          update_runtime=$("${eas[@]}" fingerprint:generate --environment preview --platform android --json | bun -e '
+            const output = await Bun.stdin.text();
+            const start = output.search(/^\s*\{/m);
+            if (start < 0) throw new Error("EAS did not return a fingerprint.");
+            const { hash } = JSON.parse(output.slice(start));
+            if (typeof hash !== "string" || !hash) throw new Error("EAS returned an empty fingerprint.");
+            console.log(hash);
+          ')
+          if [[ "$update_runtime" != "$build_runtime" ]]; then
+            echo "::notice::Android runtime changed. Build a new preview APK and update WANDERAPP_PREVIEW_BUILD_ID before publishing."
+            exit 0
+          fi
+
+          branch_tip=$(git ls-remote --exit-code origin "$GITHUB_REF" | cut -f1)
+          if [[ "$branch_tip" != "$GITHUB_SHA" ]]; then
+            echo "::notice::A newer branch commit superseded this run."
+            exit 0
+          fi
+
+          "${eas[@]}" update --channel preview --environment preview --platform android \
+            --message "Wanderapp preview ${GITHUB_SHA:0:12}" --non-interactive
+
+  wanderapp-preview-apk:
+    name: Queue standalone Wanderapp Android APK on Expo
+    if: github.event_name == 'push' && github.ref == 'refs/heads/app/travel-app' && github.repository == 'judigot/template-monorepo'
+    needs: [checks, e2e, api-node-runtime, api-bun-runtime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      EXPO_APP_VARIANT: production
+      CI: "1"
+    steps:
+      - name: Require Expo build credentials
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::Set the EXPO_TOKEN Actions secret for the linked Expo project."
+            exit 1
+          fi
+
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Setup Expo EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          packager: bun
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Verify standalone Wanderapp identity
+        working-directory: apps/travel
+        run: |
+          package=$(bun expo config --json | node -e 'let s="";process.stdin.on("data",x=>s+=x);process.stdin.on("end",()=>process.stdout.write(JSON.parse(s).android.package))')
+          test "$package" = "com.judigot.roamtravel"
+
+      - name: Queue standalone Android APK on Expo
+        working-directory: apps/travel
+        run: eas build --platform android --profile preview --non-interactive --no-wait
+
+      - name: Add mobile download instructions
+        run: |
+          {
+            echo '### Wanderapp standalone Android APK'
+            echo ''
+            echo '[View Expo Android builds](https://expo.dev/accounts/judigot/projects/travel-demo/builds)'
+            printf 'Source commit: `%s`\n' "$GITHUB_SHA"
+            echo 'Select the Android preview build for this commit. Download the APK after Expo reports Finished.'
+            echo 'This job submits the build. Expo tracks compilation and hosts the finished artifact.'
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -24,6 +24,13 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
+      command:
+        'bun run --cwd ../apps/travel build:web && python3 -m http.server 3003 --bind 127.0.0.1 --directory ../apps/travel/dist',
+      url: 'http://127.0.0.1:3003',
+      reuseExistingServer: !isCi,
+      timeout: 240_000,
+    },
+    {
       command: 'bun run --cwd ../apps/api start',
       url: `${apiOrigin}/api/health`,
       reuseExistingServer: !isCi,
