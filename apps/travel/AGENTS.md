@@ -16,6 +16,7 @@ changing authentication or testing it on a new environment.
   Build and update with the EAS `preview` environment. The push CI job
   publishes compatible updates when `EXPO_TOKEN` is configured. Check that
   job before publishing the same revision manually.
+- EAS APK builds are automatic on every CI-passing push to `app/travel-app`. Check the Expo `preview` build list before requesting a manual `make build`; the resulting APK is standalone Wanderapp, not Wanderapp Dev. Keep `EXPO_TOKEN` in GitHub Actions secrets and `EXPO_PUBLIC_API_URL` in Expo Preview.
 - Build a new APK after native dependency, Expo SDK, or native configuration
   changes. Preserve the existing package IDs, callback schemes, and signing
   keys when making a branding-only change.

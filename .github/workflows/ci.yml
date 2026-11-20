@@ -248,3 +248,70 @@ jobs:
 
           "${eas[@]}" update --channel preview --environment preview --platform android \
             --message "Wanderapp preview ${GITHUB_SHA:0:12}" --non-interactive
+
+  wanderapp-preview-apk:
+    name: Queue standalone Wanderapp Android APK on Expo
+    if: github.event_name == 'push' && github.ref == 'refs/heads/app/travel-app' && github.repository == 'judigot/template-monorepo'
+    needs: [checks, e2e, api-node-runtime, api-bun-runtime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      EXPO_APP_VARIANT: production
+      CI: "1"
+    steps:
+      - name: Require Expo build credentials
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::Set the EXPO_TOKEN Actions secret for the linked Expo project."
+            exit 1
+          fi
+
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Setup Expo EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          packager: bun
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Verify standalone Wanderapp identity
+        working-directory: apps/travel
+        run: |
+          package=$(bun expo config --json | node -e 'let s="";process.stdin.on("data",x=>s+=x);process.stdin.on("end",()=>process.stdout.write(JSON.parse(s).android.package))')
+          test "$package" = "com.judigot.roamtravel"
+
+      - name: Queue standalone Android APK on Expo
+        working-directory: apps/travel
+        run: eas build --platform android --profile preview --non-interactive --no-wait
+
+      - name: Add mobile download instructions
+        run: |
+          {
+            echo '### Wanderapp standalone Android APK'
+            echo ''
+            echo '[View Expo Android builds](https://expo.dev/accounts/judigot/projects/travel-demo/builds)'
+            printf 'Source commit: `%s`\n' "$GITHUB_SHA"
+            echo 'Select the Android preview build for this commit. Download the APK after Expo reports Finished.'
+            echo 'This job submits the build. Expo tracks compilation and hosts the finished artifact.'
+          } >> "$GITHUB_STEP_SUMMARY"

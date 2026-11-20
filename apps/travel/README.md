@@ -183,6 +183,26 @@ not use the development client. `make eas-login` and `make eas-init`
 remain optional. A separate `development` EAS profile exists as a fallback
 but GitHub Actions is the preferred build transport.
 
+### Automatic standalone Android APK builds
+
+Every push to `app/travel-app` that passes the existing CI checks automatically queues
+an EAS cloud build using the `preview` profile. The resulting signed Android APK is
+**Wanderapp** (`com.judigot.roamtravel`), not the Metro-powered **Wanderapp Dev**.
+The GitHub job submits the build without waiting for Expo to finish compiling.
+
+On your Android phone, open [Wanderapp builds on Expo](https://expo.dev/accounts/judigot/projects/travel-demo/builds),
+find the latest **finished** Android `preview` build for your commit, then download
+and install the APK. Nothing is emailed and GitHub does not host the APK.
+
+Required one-time setup: add an `EXPO_TOKEN` GitHub Actions secret with access
+to `@judigot/travel-demo`, set `EXPO_PUBLIC_API_URL` in the Expo **Preview**
+environment, and ensure Android signing credentials are available in EAS for
+non-interactive builds. The CI job fails clearly if the token is missing.
+A fresh APK is queued on **every passing push**, including JavaScript-only changes,
+which consumes EAS build quota. The existing EAS Update job is separate; after
+moving to a different native runtime, update `WANDERAPP_PREVIEW_BUILD_ID` to the
+new installed build ID so future compatible over-the-air updates resume.
+
 ### Over-the-air updates for standalone previews
 
 `make build` creates a standalone Android APK subscribed to the EAS
