@@ -1,19 +1,32 @@
 import { expect, test } from '@playwright/test';
 
+test.use({
+  launchOptions: { args: ['--enable-unsafe-swiftshader'] },
+});
+
 test('Explore draws a geographic feature on a phone-sized map', async ({
   page,
 }) => {
+  const diagnostics: string[] = [];
+  page.on('console', (message) => diagnostics.push(message.text()));
+  page.on('pageerror', (error) => diagnostics.push(error.message));
+  page.on('requestfailed', (request) => diagnostics.push(request.url()));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.route('https://tiles.openfreemap.org/styles/**', (route) =>
     route.fulfill({
+      headers: { 'access-control-allow-origin': '*' },
       json: {
         version: 8,
         sources: {
           cebu: {
             type: 'geojson',
             data: {
-              type: 'Point',
-              coordinates: [123.900296875, 10.3318875],
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'Point',
+                coordinates: [123.900296875, 10.3318875],
+              },
             },
           },
         },
@@ -40,7 +53,7 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   await expect
     .poll(async () => {
       const png = await canvas.screenshot();
-      return page.evaluate(async (base64) => {
+      const painted = await page.evaluate(async (base64) => {
         const image = new Image();
         image.src = 'data:image/png;base64,' + base64;
         await image.decode();
@@ -60,6 +73,7 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
         }
         return false;
       }, png.toString('base64'));
+      return painted ? 'painted' : diagnostics.join('\n');
     })
-    .toBe(true);
+    .toBe('painted');
 });

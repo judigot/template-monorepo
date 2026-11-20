@@ -68,7 +68,7 @@ export function PlaceMap({
           });
         };
         map.on('error', (event) => {
-          if (!map.isStyleLoaded() && !('tile' in event)) {
+          if (map.isStyleLoaded() !== true && !('tile' in event)) {
             onErrorRef.current();
           }
         });
