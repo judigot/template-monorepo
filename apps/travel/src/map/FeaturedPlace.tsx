@@ -5,10 +5,13 @@ import {
   Modal,
   Pressable,
   ScrollView,
-  useWindowDimensions,
+  StyleSheet,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { Button, Input, Slider, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../auth/auth-client';
 import { useTravel } from '../state/travel-context';
@@ -400,7 +403,9 @@ function VenueCard({
 export function FeaturedPlace() {
   const colors = useTravelColors();
   const scheme = useSystemScheme();
-  const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(true);
   const { explore, setExplore, isSaved, toggleSaved } = useTravel();
   const [places, setPlaces] = useState<readonly ICuratedPlace[]>(
     OFFLINE_CURATED_PLACES,
@@ -528,46 +533,86 @@ export function FeaturedPlace() {
   );
 
   return (
-    <SafeAreaView
-      edges={['top']}
-      style={{ flex: 1, backgroundColor: colors.canvas }}
-    >
+    <View style={{ flex: 1, backgroundColor: colors.canvas }}>
+      <View style={StyleSheet.absoluteFill}>
+        <PlaceMap
+          key={mapKey}
+          places={matches.map(({ place }) => place)}
+          camera={explore.camera}
+          dark={scheme === 'dark'}
+          focus={focus}
+          onViewChange={onViewChange}
+          onOpen={(place) => {
+            setSelected(place.slug);
+          }}
+          onError={() => {
+            setMapFailed(true);
+          }}
+        />
+        {mapFailed ? (
+          <YStack
+            items="center"
+            gap="2"
+            style={{
+              position: 'absolute',
+              top: '46%',
+              alignSelf: 'center',
+              maxWidth: '90%',
+              padding: 12,
+              borderRadius: 14,
+              backgroundColor: colors.surface,
+              borderColor: colors.line,
+              borderWidth: 1,
+            }}
+          >
+            <Text fontSize={12} style={{ color: colors.ink }}>
+              Map could not load. Matching places are listed below.
+            </Text>
+            <Button
+              size="sm"
+              onPress={() => {
+                setMapFailed(false);
+                setMapKey((previous) => previous + 1);
+              }}
+            >
+              Retry map
+            </Button>
+          </YStack>
+        ) : null}
+      </View>
       <YStack
         gap="3"
         style={{
-          width: '100%',
-          maxWidth: 1020,
-          alignSelf: 'center',
-          paddingHorizontal: 16,
-          paddingTop: 16,
-          paddingBottom: 12,
+          position: 'absolute',
+          top: insets.top + 10,
+          left: 12,
+          right: 54,
+          maxWidth: 420,
         }}
       >
-        <XStack justify="space-between" items="center">
-          <YStack gap="1">
-            <Text
-              fontSize={11}
-              fontWeight="800"
-              letterSpacing={2}
-              style={{ color: colors.accent }}
-            >
-              DISCOVER
-            </Text>
-            <Text fontSize={26} fontWeight="800" style={{ color: colors.ink }}>
-              Explore Cebu
-            </Text>
-          </YStack>
+        <XStack gap="2">
+          <Button
+            size="sm"
+            onPress={() => setFiltersOpen(!filtersOpen)}
+            accessibilityLabel="Budget and people"
+            accessibilityState={{ expanded: filtersOpen }}
+            style={{ backgroundColor: colors.surface, color: colors.ink }}
+          >
+            {pesos(explore.budget * 100)} · {String(explore.people)}{' '}
+            {explore.people === 1 ? 'person' : 'people'}
+          </Button>
           <Button
             size="sm"
             onPress={reset}
             style={{ backgroundColor: colors.surface, color: colors.ink }}
           >
-            ⌖ Recenter
+            Recenter
           </Button>
         </XStack>
         <YStack
           gap="3"
           style={{
+            display: filtersOpen ? 'flex' : 'none',
             padding: 14,
             borderRadius: 20,
             borderWidth: 1,
@@ -697,201 +742,175 @@ export function FeaturedPlace() {
       </YStack>
       <View
         style={{
-          width: '100%',
-          maxWidth: 1022,
-          alignSelf: 'center',
-          paddingHorizontal: 16,
+          position: 'absolute',
+          left: 12,
+          right: 12,
+          bottom: 32,
+          maxWidth: 460,
+          height: menuOpen ? '30%' : 46,
+          borderRadius: 18,
+          overflow: 'hidden',
+          borderWidth: 1,
+          borderColor: colors.line,
+          backgroundColor: colors.surface,
         }}
       >
-        <View
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Matching places and menu items"
+          accessibilityState={{ expanded: menuOpen }}
+          onPress={() => setMenuOpen(!menuOpen)}
           style={{
-            height: width > 800 ? 400 : 310,
-            borderRadius: 20,
-            overflow: 'hidden',
-            backgroundColor: colors.imageFallback,
+            paddingHorizontal: 16,
+            minHeight: 44,
+            justifyContent: 'center',
           }}
         >
-          <PlaceMap
-            key={mapKey}
-            places={matches.map(({ place }) => place)}
-            camera={explore.camera}
-            dark={scheme === 'dark'}
-            focus={focus}
-            onViewChange={onViewChange}
-            onOpen={(place) => {
-              setSelected(place.slug);
-            }}
-            onError={() => {
-              setMapFailed(true);
-            }}
-          />
-          {mapFailed ? (
-            <YStack
-              items="center"
-              gap="2"
-              style={{
-                position: 'absolute',
-                bottom: 12,
-                alignSelf: 'center',
-                maxWidth: '90%',
-                padding: 12,
-                borderRadius: 14,
-                backgroundColor: colors.surface,
-                borderColor: colors.line,
-                borderWidth: 1,
-              }}
-            >
-              <Text fontSize={12} style={{ color: colors.ink }}>
-                Map could not load. Matching places are listed below.
-              </Text>
-              <Button
-                size="sm"
-                onPress={() => {
-                  setMapFailed(false);
-                  setMapKey((previous) => previous + 1);
-                }}
-              >
-                Retry map
-              </Button>
-            </YStack>
-          ) : null}
-        </View>
-      </View>
-      <ScrollView
-        style={{ flex: 1 }}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingTop: 18,
-          paddingBottom: 32,
-          gap: 14,
-          maxWidth: 1020,
-          width: '100%',
-          alignSelf: 'center',
-        }}
-      >
-        <XStack justify="space-between" items="center">
-          <YStack gap="1">
-            <Text fontSize={19} fontWeight="800" style={{ color: colors.ink }}>
+          <XStack justify="space-between" items="center">
+            <Text fontWeight="800" style={{ color: colors.ink }}>
               {String(matches.length)}{' '}
               {matches.length === 1 ? 'place' : 'places'}
             </Text>
-            <Text fontSize={12} style={{ color: colors.muted }}>
-              Results follow the visible map and budget.
+            <Text style={{ color: colors.accent }}>
+              {menuOpen ? 'Hide menu' : 'Show menu'}
             </Text>
-          </YStack>
-          {catalogStatus !== 'live' ? (
-            <Button
-              size="sm"
-              onPress={() => {
-                setCatalogStatus('loading');
-                setRetry((value) => value + 1);
-              }}
-            >
-              {catalogStatus === 'loading' ? 'Syncing' : 'Retry'}
-            </Button>
-          ) : null}
-        </XStack>
-        {catalogStatus !== 'live' ? (
-          <Text fontSize={12} style={{ color: colors.muted }}>
-            {catalogStatus === 'loading'
-              ? 'Refreshing venue menus…'
-              : 'Offline menu snapshot. Live prices may differ.'}
-          </Text>
-        ) : null}
-        {matches.length === 0 ? (
-          <YStack
-            gap="2"
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: 18,
-              padding: 18,
-            }}
-          >
-            <Text fontSize={15} fontWeight="800" style={{ color: colors.ink }}>
-              {nearby.length === 0
-                ? 'No curated places in this area'
-                : 'No restaurant covers this group budget'}
-            </Text>
-            <Text fontSize={12} style={{ color: colors.muted }}>
-              Prices alone cannot confirm servings for the whole group.
-            </Text>
-            <Button
-              size="sm"
-              onPress={
-                nearby.length === 0
-                  ? reset
-                  : () => {
-                      setBudget(MAX_BUDGET);
-                    }
-              }
-            >
-              {nearby.length === 0 ? 'Explore Cebu City' : 'Increase budget'}
-            </Button>
-          </YStack>
-        ) : (
-          matches.map((match) => (
-            <VenueCard
-              key={match.place.slug}
-              match={match}
-              people={explore.people}
-              budget={explore.budget}
-              saved={isSaved(match.place.slug)}
-              onSave={() => {
-                toggleSaved(match.place.slug);
-              }}
-              onSelect={() => {
-                setSelected(match.place.slug);
-              }}
-              onLocate={() => {
-                locate(match.place);
-              }}
-            />
-          ))
-        )}
-        {independentItems.length > 0 ? (
-          <YStack gap="3" style={{ paddingTop: 8 }}>
-            <Text fontWeight="800" fontSize={18} style={{ color: colors.ink }}>
-              Individual menu prices in budget
-            </Text>
-            <Text fontSize={12} style={{ color: colors.muted }}>
-              The items below have a listed unit price within your budget, but
-              their serving sizes are unconfirmed. They do not qualify the
-              restaurant for your full group.
-            </Text>
-            {independentItems.slice(0, 12).map(({ place, item }) => (
-              <XStack
-                key={`${place.slug}:${item.id}`}
-                items="center"
-                justify="space-between"
-                gap="3"
-                style={{
-                  paddingVertical: 11,
-                  borderBottomWidth: 1,
-                  borderColor: colors.line,
+          </XStack>
+        </Pressable>
+        <ScrollView
+          style={{ flex: 1, display: menuOpen ? 'flex' : 'none' }}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: 4,
+            paddingBottom: 32,
+            gap: 14,
+            maxWidth: 1020,
+            width: '100%',
+            alignSelf: 'center',
+          }}
+        >
+          <XStack justify="flex-end">
+            {catalogStatus !== 'live' ? (
+              <Button
+                size="sm"
+                onPress={() => {
+                  setCatalogStatus('loading');
+                  setRetry((value) => value + 1);
                 }}
               >
-                <YStack flex={1} gap="1">
-                  <Text
-                    fontSize={13}
-                    fontWeight="700"
-                    style={{ color: colors.ink }}
-                  >
-                    {item.name}
-                    {item.variant === null ? '' : ` · ${item.variant}`}
+                {catalogStatus === 'loading' ? 'Syncing' : 'Retry'}
+              </Button>
+            ) : null}
+          </XStack>
+          {catalogStatus !== 'live' ? (
+            <Text fontSize={12} style={{ color: colors.muted }}>
+              {catalogStatus === 'loading'
+                ? 'Refreshing venue menus…'
+                : 'Offline menu snapshot. Live prices may differ.'}
+            </Text>
+          ) : null}
+          {matches.length === 0 ? (
+            <YStack
+              gap="2"
+              style={{
+                backgroundColor: colors.surface,
+                borderRadius: 18,
+                padding: 18,
+              }}
+            >
+              <Text
+                fontSize={15}
+                fontWeight="800"
+                style={{ color: colors.ink }}
+              >
+                {nearby.length === 0
+                  ? 'No curated places in this area'
+                  : 'No restaurant covers this group budget'}
+              </Text>
+              <Text fontSize={12} style={{ color: colors.muted }}>
+                Prices alone cannot confirm servings for the whole group.
+              </Text>
+              <Button
+                size="sm"
+                onPress={
+                  nearby.length === 0
+                    ? reset
+                    : () => {
+                        setBudget(MAX_BUDGET);
+                      }
+                }
+              >
+                {nearby.length === 0 ? 'Explore Cebu City' : 'Increase budget'}
+              </Button>
+            </YStack>
+          ) : (
+            matches.map((match) => (
+              <VenueCard
+                key={match.place.slug}
+                match={match}
+                people={explore.people}
+                budget={explore.budget}
+                saved={isSaved(match.place.slug)}
+                onSave={() => {
+                  toggleSaved(match.place.slug);
+                }}
+                onSelect={() => {
+                  setSelected(match.place.slug);
+                }}
+                onLocate={() => {
+                  locate(match.place);
+                }}
+              />
+            ))
+          )}
+          {independentItems.length > 0 ? (
+            <YStack gap="3" style={{ paddingTop: 8 }}>
+              <Text
+                fontWeight="800"
+                fontSize={18}
+                style={{ color: colors.ink }}
+              >
+                Individual menu prices in budget
+              </Text>
+              <Text fontSize={12} style={{ color: colors.muted }}>
+                The items below have a listed unit price within your budget, but
+                their serving sizes are unconfirmed. They do not qualify the
+                restaurant for your full group.
+              </Text>
+              {independentItems.slice(0, 12).map(({ place, item }) => (
+                <XStack
+                  key={`${place.slug}:${item.id}`}
+                  items="center"
+                  justify="space-between"
+                  gap="3"
+                  style={{
+                    paddingVertical: 11,
+                    borderBottomWidth: 1,
+                    borderColor: colors.line,
+                  }}
+                >
+                  <YStack flex={1} gap="1">
+                    <Text
+                      fontSize={13}
+                      fontWeight="700"
+                      style={{ color: colors.ink }}
+                    >
+                      {item.name}
+                      {item.variant === null ? '' : ` · ${item.variant}`}
+                    </Text>
+                    <Text fontSize={11} style={{ color: colors.muted }}>
+                      {place.name}
+                    </Text>
+                  </YStack>
+                  <Text fontWeight="800" style={{ color: colors.accent }}>
+                    {pesos(item.priceCentavos ?? 0)}
                   </Text>
-                  <Text fontSize={11} style={{ color: colors.muted }}>
-                    {place.name}
-                  </Text>
-                </YStack>
-                <Text fontWeight="800" style={{ color: colors.accent }}>
-                  {pesos(item.priceCentavos ?? 0)}
-                </Text>
-              </XStack>
-            ))}
-          </YStack>
-        ) : null}
-      </ScrollView>
+                </XStack>
+              ))}
+            </YStack>
+          ) : null}
+        </ScrollView>
+      </View>
       <VenueDetails
         match={selectedMatch}
         people={explore.people}
@@ -911,6 +930,6 @@ export function FeaturedPlace() {
           }
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 }

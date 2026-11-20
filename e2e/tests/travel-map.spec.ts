@@ -50,6 +50,22 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   await page.goto('http://127.0.0.1:3003');
   const canvas = page.locator('.maplibregl-canvas');
   await expect(canvas).toBeInViewport({ ratio: 0.9 });
+  const menu = page.getByRole('button', {
+    name: 'Matching places and menu items',
+  });
+  const mapBox = await canvas.boundingBox();
+  const menuBox = await menu.boundingBox();
+  if (mapBox === null || menuBox === null) {
+    throw new Error('Missing map or menu');
+  }
+  expect(mapBox.width).toBeGreaterThanOrEqual(389);
+  expect(mapBox.height).toBeGreaterThan(700);
+  expect(menuBox.y).toBeGreaterThan(mapBox.y);
+  expect(menuBox.y + menuBox.height).toBeLessThan(mapBox.y + mapBox.height);
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
   // A visible canvas can still be blank if its worker never processes data.
   await expect
     .poll(async () => {
