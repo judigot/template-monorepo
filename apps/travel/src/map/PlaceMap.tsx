@@ -15,12 +15,15 @@ export function PlaceMap({
   const [ready, setReady] = useState(false);
   const mapRef = useRef<MapView | null>(null);
   const markersRef = useRef<MapMarker[]>([]);
+  const initialCamera = useRef(camera);
   const onOpenRef = useRef(onOpen);
   const onViewChangeRef = useRef(onViewChange);
   const onErrorRef = useRef(onError);
-  onOpenRef.current = onOpen;
-  onViewChangeRef.current = onViewChange;
-  onErrorRef.current = onError;
+  useEffect(() => {
+    onOpenRef.current = onOpen;
+    onViewChangeRef.current = onViewChange;
+    onErrorRef.current = onError;
+  }, [onOpen, onViewChange, onError]);
 
   useEffect(() => {
     const node = container.current;
@@ -35,8 +38,8 @@ export function PlaceMap({
         const map = new Map({
           container: node,
           style: MAP_STYLE,
-          center: camera.center,
-          zoom: camera.zoom,
+          center: initialCamera.current.center,
+          zoom: initialCamera.current.zoom,
           cooperativeGestures: false,
         });
         mapRef.current = map;
@@ -106,9 +109,8 @@ export function PlaceMap({
   }, [places, ready]);
 
   return (
-    <div
+    <section
       ref={container}
-      role="region"
       aria-label="Interactive map of curated Cebu City places"
       style={{ width: '100%', height: '100%' }}
     />

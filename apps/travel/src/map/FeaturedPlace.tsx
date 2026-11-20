@@ -142,7 +142,7 @@ export function FeaturedPlace() {
   );
   const [catalogStatus, setCatalogStatus] = useState<
     'cached' | 'live' | 'loading'
-  >('cached');
+  >(authBaseUrl === null ? 'cached' : 'loading');
   const [retry, setRetry] = useState(0);
   const [mapFailed, setMapFailed] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
@@ -152,22 +152,16 @@ export function FeaturedPlace() {
   const setBudget = useCallback(
     (amount: number) => {
       if (!Number.isFinite(amount)) return;
-      setExplore((previous) => ({
-        ...previous,
-        budget: Math.min(5000, Math.max(0, Math.round(amount))),
-      }));
+      const budget = Math.min(5000, Math.max(0, Math.round(amount)));
+      setExplore((previous) => ({ ...previous, budget }));
+      setExactBudget(String(budget));
     },
     [setExplore],
   );
 
   useEffect(() => {
-    setExactBudget(String(explore.budget));
-  }, [explore.budget]);
-
-  useEffect(() => {
     if (authBaseUrl === null) return;
     const controller = new AbortController();
-    setCatalogStatus('loading');
     void fetchCuratedPlaces(authBaseUrl, controller.signal)
       .then((result) => {
         if (controller.signal.aborted) return;
@@ -366,7 +360,13 @@ export function FeaturedPlace() {
             area
           </Text>
           {catalogStatus !== 'live' && (
-            <Button size="sm" onPress={() => setRetry((value) => value + 1)}>
+            <Button
+              size="sm"
+              onPress={() => {
+                setCatalogStatus('loading');
+                setRetry((value) => value + 1);
+              }}
+            >
               {catalogStatus === 'loading' ? 'Loading…' : 'Retry catalog'}
             </Button>
           )}

@@ -5,7 +5,7 @@ import {
   Marker,
 } from '@maplibre/maplibre-react-native';
 import { useRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { type IExploreMapProps, MAP_STYLE } from './place';
 
 export function PlaceMap({
