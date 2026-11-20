@@ -27,7 +27,6 @@ import {
   orderSummary,
   pesos,
 } from './estimate';
-import { mapFrameWidth } from './map-layout';
 import { PlaceMap } from './PlaceMap';
 import type { IExploreCamera } from './place';
 
@@ -698,60 +697,66 @@ export function FeaturedPlace() {
       </YStack>
       <View
         style={{
-          width: mapFrameWidth(width),
+          width: '100%',
+          maxWidth: 1022,
           alignSelf: 'center',
-          height: width > 800 ? 400 : 310,
-          marginHorizontal: 16,
-          borderRadius: 20,
-          overflow: 'hidden',
-          backgroundColor: colors.imageFallback,
+          paddingHorizontal: 16,
         }}
       >
-        <PlaceMap
-          key={mapKey}
-          places={matches.map(({ place }) => place)}
-          camera={explore.camera}
-          dark={scheme === 'dark'}
-          focus={focus}
-          onViewChange={onViewChange}
-          onOpen={(place) => {
-            setSelected(place.slug);
+        <View
+          style={{
+            height: width > 800 ? 400 : 310,
+            borderRadius: 20,
+            overflow: 'hidden',
+            backgroundColor: colors.imageFallback,
           }}
-          onError={() => {
-            setMapFailed(true);
-          }}
-        />
-        {mapFailed ? (
-          <YStack
-            items="center"
-            gap="2"
-            style={{
-              position: 'absolute',
-              bottom: 12,
-              alignSelf: 'center',
-              maxWidth: '90%',
-              padding: 12,
-              borderRadius: 14,
-              backgroundColor: colors.surface,
-              borderColor: colors.line,
-              borderWidth: 1,
+        >
+          <PlaceMap
+            key={mapKey}
+            places={matches.map(({ place }) => place)}
+            camera={explore.camera}
+            dark={scheme === 'dark'}
+            focus={focus}
+            onViewChange={onViewChange}
+            onOpen={(place) => {
+              setSelected(place.slug);
             }}
-          >
-            <Text fontSize={12} style={{ color: colors.ink }}>
-              Map could not load fully. Your matching places are still available
-              below.
-            </Text>
-            <Button
-              size="sm"
-              onPress={() => {
-                setMapFailed(false);
-                setMapKey((previous) => previous + 1);
+            onError={() => {
+              setMapFailed(true);
+            }}
+          />
+          {mapFailed ? (
+            <YStack
+              items="center"
+              gap="2"
+              style={{
+                position: 'absolute',
+                bottom: 12,
+                alignSelf: 'center',
+                maxWidth: '90%',
+                padding: 12,
+                borderRadius: 14,
+                backgroundColor: colors.surface,
+                borderColor: colors.line,
+                borderWidth: 1,
               }}
             >
-              Retry map
-            </Button>
-          </YStack>
-        ) : null}
+              <Text fontSize={12} style={{ color: colors.ink }}>
+                Map could not load fully. Your matching places are still available
+                below.
+              </Text>
+              <Button
+                size="sm"
+                onPress={() => {
+                  setMapFailed(false);
+                  setMapKey((previous) => previous + 1);
+                }}
+              >
+                Retry map
+              </Button>
+            </YStack>
+          ) : null}
+        </View>
       </View>
       <ScrollView
         style={{ flex: 1 }}

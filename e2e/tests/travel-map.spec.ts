@@ -49,7 +49,7 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   });
   await page.goto('http://127.0.0.1:3003');
   const canvas = page.locator('.maplibregl-canvas');
-  await expect(canvas).toBeVisible();
+  await expect(canvas).toBeInViewport({ ratio: 0.9 });
   // A visible canvas can still be blank if its worker never processes data.
   await expect
     .poll(async () => {
@@ -76,16 +76,11 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
             return 'painted';
           }
         }
-        const colors = new Set<number>();
-        for (let i = 0; i < data.length; i += 40) {
-          colors.add(((data[i] ?? 0) << 16) + ((data[i + 1] ?? 0) << 8) + (data[i + 2] ?? 0));
-        }
-        const canvas = document.querySelector('.maplibregl-canvas');
-        const rect = canvas?.getBoundingClientRect();
-        const covering = rect ? document.elementsFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2).slice(0, 6).map((el) => el.tagName + '.' + el.className).join(' ') : '';
-        return JSON.stringify({ width: image.width, height: image.height, colors: [...colors].slice(0, 20), covering });
+        return 'blank map';
       }, png.toString('base64'));
-      return painted === 'painted' ? painted : [painted, ...diagnostics].join('\n');
+      return painted === 'painted'
+        ? painted
+        : [painted, ...diagnostics].join('\n');
     })
     .toBe('painted');
 });
