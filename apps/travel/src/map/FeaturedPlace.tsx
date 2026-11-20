@@ -7,15 +7,15 @@ import { useTravel } from '../state/travel-context';
 import { useTravelColors } from '../theme';
 import {
   fetchCuratedPlaces,
+  type ICuratedPlace,
   inViewport,
   OFFLINE_CURATED_PLACES,
-  type ICuratedPlace,
 } from './catalog';
 import {
   estimateGroup,
+  type IGroupEstimate,
   orderSummary,
   pesos,
-  type IGroupEstimate,
 } from './estimate';
 import { PlaceMap } from './PlaceMap';
 
@@ -149,12 +149,20 @@ export function FeaturedPlace() {
   const [mapKey, setMapKey] = useState(0);
   const [exactBudget, setExactBudget] = useState(String(explore.budget));
 
-  const setBudget = useCallback((amount: number) => {
-    if (!Number.isFinite(amount)) return;
-    setExplore((previous) => ({ ...previous, budget: Math.min(5000, Math.max(0, Math.round(amount))) }));
-  }, [setExplore]);
+  const setBudget = useCallback(
+    (amount: number) => {
+      if (!Number.isFinite(amount)) return;
+      setExplore((previous) => ({
+        ...previous,
+        budget: Math.min(5000, Math.max(0, Math.round(amount))),
+      }));
+    },
+    [setExplore],
+  );
 
-  useEffect(() => { setExactBudget(String(explore.budget)); }, [explore.budget]);
+  useEffect(() => {
+    setExactBudget(String(explore.budget));
+  }, [explore.budget]);
 
   useEffect(() => {
     if (authBaseUrl === null) return;
@@ -172,25 +180,41 @@ export function FeaturedPlace() {
     return () => controller.abort();
   }, [retry]);
 
-  const matches = useMemo(() => places.flatMap((place) => {
-    if (!inViewport(place, explore.camera.bounds)) return [];
-    const estimate = estimateGroup(place.menuItems, explore.people);
-    if (estimate === null || estimate.totalCentavos > explore.budget * 100) return [];
-    return [{ place, estimate }];
-  }).sort((a, b) =>
-    a.estimate.totalCentavos - b.estimate.totalCentavos ||
-    a.place.name.localeCompare(b.place.name) ||
-    a.place.slug.localeCompare(b.place.slug),
-  ), [places, explore.budget, explore.people, explore.camera.bounds]);
+  const matches = useMemo(
+    () =>
+      places
+        .flatMap((place) => {
+          if (!inViewport(place, explore.camera.bounds)) return [];
+          const estimate = estimateGroup(place.menuItems, explore.people);
+          if (
+            estimate === null ||
+            estimate.totalCentavos > explore.budget * 100
+          )
+            return [];
+          return [{ place, estimate }];
+        })
+        .sort(
+          (a, b) =>
+            a.estimate.totalCentavos - b.estimate.totalCentavos ||
+            a.place.name.localeCompare(b.place.name) ||
+            a.place.slug.localeCompare(b.place.slug),
+        ),
+    [places, explore.budget, explore.people, explore.camera.bounds],
+  );
 
-  const availableMatches = useMemo(() => places.filter(
-    (place) => inViewport(place, explore.camera.bounds),
-  ), [places, explore.camera.bounds]);
-  const selectedMatch = matches.find((match) => match.place.slug === selected) ?? null;
+  const availableMatches = useMemo(
+    () => places.filter((place) => inViewport(place, explore.camera.bounds)),
+    [places, explore.camera.bounds],
+  );
+  const selectedMatch =
+    matches.find((match) => match.place.slug === selected) ?? null;
 
-  const onViewChange = useCallback((camera: typeof explore.camera) => {
-    setExplore((previous) => ({ ...previous, camera }));
-  }, [setExplore]);
+  const onViewChange = useCallback(
+    (camera: typeof explore.camera) => {
+      setExplore((previous) => ({ ...previous, camera }));
+    },
+    [setExplore],
+  );
 
   const resetCebu = () => {
     setExplore((previous) => ({
@@ -206,21 +230,35 @@ export function FeaturedPlace() {
   };
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.canvas }}>
-      <YStack gap="3" style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12 }}>
-        <Text fontSize={24} fontWeight="800" style={{ color: colors.ink }}>Explore Cebu City</Text>
+    <SafeAreaView
+      edges={['top']}
+      style={{ flex: 1, backgroundColor: colors.canvas }}
+    >
+      <YStack
+        gap="3"
+        style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12 }}
+      >
+        <Text fontSize={24} fontWeight="800" style={{ color: colors.ink }}>
+          Explore Cebu City
+        </Text>
         <XStack gap="3" items="center">
           <YStack flex={1} gap="2">
-            <Text fontWeight="700" style={{ color: colors.ink }}>Total budget: {pesos(explore.budget * 100)}</Text>
+            <Text fontWeight="700" style={{ color: colors.ink }}>
+              Total budget: {pesos(explore.budget * 100)}
+            </Text>
             <Slider
               min={0}
               max={5000}
               step={10}
               value={[Math.round(explore.budget / 10) * 10]}
-              onValueChange={(values) => { setBudget(values[0] ?? 0); }}
+              onValueChange={(values) => {
+                setBudget(values[0] ?? 0);
+              }}
               accessibilityLabel="Maximum total budget in pesos"
             >
-              <Slider.Track><Slider.TrackActive /></Slider.Track>
+              <Slider.Track>
+                <Slider.TrackActive />
+              </Slider.Track>
               <Slider.Thumb index={0} circular />
             </Slider>
             <Input
@@ -237,15 +275,27 @@ export function FeaturedPlace() {
             />
           </YStack>
           <YStack gap="2" items="center">
-            <Text fontWeight="700" style={{ color: colors.ink }}>People</Text>
+            <Text fontWeight="700" style={{ color: colors.ink }}>
+              People
+            </Text>
             <XStack items="center" gap="2">
               <Button
                 size="sm"
                 accessibilityLabel="Remove one person"
                 disabled={explore.people <= 1}
-                onPress={() => setExplore((p) => ({ ...p, people: Math.max(1, p.people - 1) }))}
-              >−</Button>
-              <Text accessibilityLabel={`${explore.people} people`} style={{ color: colors.ink }}>
+                onPress={() =>
+                  setExplore((p) => ({
+                    ...p,
+                    people: Math.max(1, p.people - 1),
+                  }))
+                }
+              >
+                −
+              </Button>
+              <Text
+                accessibilityLabel={`${explore.people} people`}
+                style={{ color: colors.ink }}
+              >
                 {explore.people}
               </Text>
               <Button

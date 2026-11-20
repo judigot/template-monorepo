@@ -1,6 +1,6 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-import type { Map as MapView, Marker as MapMarker } from 'maplibre-gl';
+import type { Marker as MapMarker, Map as MapView } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
 import { type IExploreMapProps, MAP_STYLE } from './place';
 

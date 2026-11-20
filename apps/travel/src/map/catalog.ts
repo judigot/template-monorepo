@@ -153,9 +153,13 @@ export const OFFLINE_CURATED_PLACES: readonly ICuratedPlace[] = [
 
 const catalogSchema = z.object({ places: z.array(curatedPlaceSchema) });
 
-export async function fetchCuratedPlaces(baseUrl: string, signal: AbortSignal): Promise<ICuratedPlace[]> {
+export async function fetchCuratedPlaces(
+  baseUrl: string,
+  signal: AbortSignal,
+): Promise<ICuratedPlace[]> {
   const response = await fetch(`${baseUrl}/api/places`, { signal });
-  if (!response.ok) throw new Error(`Catalog request failed (${response.status})`);
+  if (!response.ok)
+    throw new Error(`Catalog request failed (${response.status})`);
   const payload: unknown = await response.json();
   return catalogSchema.parse(payload).places;
 }
@@ -168,13 +172,22 @@ export interface IViewport {
 }
 
 export const CEBU_VIEWPORT: IViewport = {
-  west: 123.88, south: 10.315, east: 123.92, north: 10.35,
+  west: 123.88,
+  south: 10.315,
+  east: 123.92,
+  north: 10.35,
 };
 
 export function inViewport(place: ICuratedPlace, bounds: IViewport): boolean {
-  if (!Number.isFinite(place.latitude) || !Number.isFinite(place.longitude)) return false;
-  const longitudeInView = bounds.west <= bounds.east
-    ? place.longitude >= bounds.west && place.longitude <= bounds.east
-    : place.longitude >= bounds.west || place.longitude <= bounds.east;
-  return longitudeInView && place.latitude >= bounds.south && place.latitude <= bounds.north;
+  if (!Number.isFinite(place.latitude) || !Number.isFinite(place.longitude))
+    return false;
+  const longitudeInView =
+    bounds.west <= bounds.east
+      ? place.longitude >= bounds.west && place.longitude <= bounds.east
+      : place.longitude >= bounds.west || place.longitude <= bounds.east;
+  return (
+    longitudeInView &&
+    place.latitude >= bounds.south &&
+    place.latitude <= bounds.north
+  );
 }

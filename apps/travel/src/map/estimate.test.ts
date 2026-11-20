@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test';
 import {
-  TATANGS_CURATED,
-  inViewport,
   CEBU_VIEWPORT,
   type IMenuItem,
+  inViewport,
+  TATANGS_CURATED,
 } from './catalog';
 import { estimateGroup } from './estimate';
 

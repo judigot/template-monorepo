@@ -1,8 +1,8 @@
 import {
   Camera,
   Map,
-  Marker,
   type MapRef,
+  Marker,
 } from '@maplibre/maplibre-react-native';
 import { useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
