@@ -26,21 +26,27 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Explore',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 25 }}>{icons.index}</Text>,
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 25 }}>{icons.index}</Text>
+          ),
         }}
       />
       <Tabs.Screen
         name="saved"
         options={{
           title: 'Saved',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 24 }}>{icons.saved}</Text>,
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 24 }}>{icons.saved}</Text>
+          ),
         }}
       />
       <Tabs.Screen
         name="account"
         options={{
           title: 'Account',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 22 }}>{icons.account}</Text>,
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 22 }}>{icons.account}</Text>
+          ),
         }}
       />
     </Tabs>

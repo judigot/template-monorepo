@@ -22,7 +22,11 @@ export function PlaceMap({
   const cameraRef = useRef<CameraRef>(null);
   useEffect(() => {
     if (focus !== null) {
-      cameraRef.current?.flyTo({ center: [focus.longitude, focus.latitude], zoom: 16, duration: 720 });
+      cameraRef.current?.flyTo({
+        center: [focus.longitude, focus.latitude],
+        zoom: 16,
+        duration: 720,
+      });
     }
   }, [focus]);
   return (
@@ -46,7 +50,10 @@ export function PlaceMap({
       }}
       accessibilityLabel="Interactive map of curated Cebu City places"
     >
-      <Camera ref={cameraRef} initialViewState={{ center: camera.center, zoom: camera.zoom }} />
+      <Camera
+        ref={cameraRef}
+        initialViewState={{ center: camera.center, zoom: camera.zoom }}
+      />
       {places.map((place) => (
         <Marker
           key={place.slug}
@@ -59,12 +66,21 @@ export function PlaceMap({
             }}
             accessibilityRole="button"
             accessibilityLabel={`Open ${place.name}`}
-            style={[styles.marker, dark ? styles.markerDark : styles.markerLight]}
+            style={[
+              styles.marker,
+              dark ? styles.markerDark : styles.markerLight,
+            ]}
           >
             <Text style={styles.icon}>
               {place.iconKey === 'lechon' ? '🍖' : '📍'}
             </Text>
-            <Text style={[styles.label, dark ? styles.labelDark : styles.labelLight]} numberOfLines={1}>
+            <Text
+              style={[
+                styles.label,
+                dark ? styles.labelDark : styles.labelLight,
+              ]}
+              numberOfLines={1}
+            >
               {place.name.split(' ')[0]}
             </Text>
           </Pressable>

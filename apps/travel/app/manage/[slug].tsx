@@ -3,11 +3,23 @@ import { useCallback, useState } from 'react';
 import { Modal, ScrollView, Switch, View } from 'react-native';
 import { Button, Input, Text, XStack, YStack } from 'tamagui';
 import {
-  addOwner, getAccountAccess, getManagedPlaces,
-  listOwners, removeOwner, saveMenuItem, savePlace,
-  type IAccountAccess, type IManagedPlace, type IMenuEdit,
+  addOwner,
+  getAccountAccess,
+  getManagedPlaces,
+  type IAccountAccess,
+  type IManagedPlace,
+  type IMenuEdit,
+  listOwners,
+  removeOwner,
+  saveMenuItem,
+  savePlace,
 } from '../../src/admin/api';
-import { draftFromPlace, PlaceFields, placeInput, type IPlaceDraft } from '../../src/admin/PlaceFields';
+import {
+  draftFromPlace,
+  type IPlaceDraft,
+  PlaceFields,
+  placeInput,
+} from '../../src/admin/PlaceFields';
 import { Page } from '../../src/components/Page';
 import { pesos } from '../../src/map/estimate';
 import { useTravelColors } from '../../src/theme';
@@ -25,8 +37,15 @@ interface IItemDraft {
 }
 
 const NEW_ITEM: IItemDraft = {
-  id: '', name: '', variant: '', section: 'Menu',
-  price: '', serves: '', eligible: false, available: true, servingBasis: 'unknown',
+  id: '',
+  name: '',
+  variant: '',
+  section: 'Menu',
+  price: '',
+  serves: '',
+  eligible: false,
+  available: true,
+  servingBasis: 'unknown',
 };
 
 function toDraft(item: IManagedPlace['menuItems'][number]): IItemDraft {
@@ -45,7 +64,9 @@ function toDraft(item: IManagedPlace['menuItems'][number]): IItemDraft {
 
 function validItem(draft: IItemDraft): IMenuEdit {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(draft.id)) {
-    throw new Error('The item ID must use lowercase letters, numbers, and hyphens.');
+    throw new Error(
+      'The item ID must use lowercase letters, numbers, and hyphens.',
+    );
   }
   if (draft.name.trim().length === 0) {
     throw new Error('Enter a menu item name.');
@@ -53,16 +74,30 @@ function validItem(draft: IItemDraft): IMenuEdit {
   if (draft.price.length > 0 && !/^\d{1,7}(?:\.\d{1,2})?$/.test(draft.price)) {
     throw new Error('Enter a peso price with at most two decimal places.');
   }
-  const priceCentavos = draft.price.length === 0 ? null : Math.round(Number(draft.price) * 100);
+  const priceCentavos =
+    draft.price.length === 0 ? null : Math.round(Number(draft.price) * 100);
   const serves = draft.serves.length === 0 ? null : Number(draft.serves);
-  if (priceCentavos !== null && (priceCentavos <= 0 || priceCentavos > 100000000)) {
+  if (
+    priceCentavos !== null &&
+    (priceCentavos <= 0 || priceCentavos > 100000000)
+  ) {
     throw new Error('Price must be between ₱0.01 and ₱1,000,000.');
   }
-  if (serves !== null && (!Number.isInteger(serves) || serves < 1 || serves > 100)) {
+  if (
+    serves !== null &&
+    (!Number.isInteger(serves) || serves < 1 || serves > 100)
+  ) {
     throw new Error('Serving count must be between 1 and 100.');
   }
-  if (draft.eligible && (serves === null || priceCentavos === null || draft.servingBasis === 'unknown')) {
-    throw new Error('An eligible group meal needs a price and a documented or assumed serving count.');
+  if (
+    draft.eligible &&
+    (serves === null ||
+      priceCentavos === null ||
+      draft.servingBasis === 'unknown')
+  ) {
+    throw new Error(
+      'An eligible group meal needs a price and a documented or assumed serving count.',
+    );
   }
   return {
     name: draft.name.trim(),
@@ -77,7 +112,12 @@ function validItem(draft: IItemDraft): IMenuEdit {
 }
 
 function ItemEditor({
-  draft, onChange, onCancel, onSave, busy, error,
+  draft,
+  onChange,
+  onCancel,
+  onSave,
+  busy,
+  error,
 }: {
   draft: IItemDraft;
   onChange: (value: IItemDraft) => void;
@@ -97,27 +137,43 @@ function ItemEditor({
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ padding: 20, paddingTop: 56, gap: 16 }}
         >
-          <Text fontSize={25} fontWeight="800" style={{ color: colors.ink }}>Menu item</Text>
+          <Text fontSize={25} fontWeight="800" style={{ color: colors.ink }}>
+            Menu item
+          </Text>
           <Text fontSize={12} style={{ color: colors.muted }}>
             Save to publish this menu change across Wanderapp.
           </Text>
-          {([
-            ['id', 'Stable item ID', 'lowercase-with-hyphens'],
-            ['name', 'Item name', 'Lechon belly'],
-            ['variant', 'Variant or size', 'Optional'],
-            ['section', 'Menu section', 'Mains, Value meals, Drinks'],
-            ['price', 'Price in PHP', '180.00'],
-            ['serves', 'People served', 'Leave blank if unknown'],
-          ] as const).map(([key, label, placeholder]) => (
+          {(
+            [
+              ['id', 'Stable item ID', 'lowercase-with-hyphens'],
+              ['name', 'Item name', 'Lechon belly'],
+              ['variant', 'Variant or size', 'Optional'],
+              ['section', 'Menu section', 'Mains, Value meals, Drinks'],
+              ['price', 'Price in PHP', '180.00'],
+              ['serves', 'People served', 'Leave blank if unknown'],
+            ] as const
+          ).map(([key, label, placeholder]) => (
             <YStack key={key} gap="2">
-              <Text fontWeight="700" fontSize={12} style={{ color: colors.muted }}>{label}</Text>
+              <Text
+                fontWeight="700"
+                fontSize={12}
+                style={{ color: colors.muted }}
+              >
+                {label}
+              </Text>
               <Input
                 value={draft[key]}
                 accessibilityLabel={label}
                 placeholder={placeholder}
                 editable={true}
-                keyboardType={key === 'price' || key === 'serves' ? 'decimal-pad' : 'default'}
-                onChangeText={(value) => { change(key, value); }}
+                keyboardType={
+                  key === 'price' || key === 'serves'
+                    ? 'decimal-pad'
+                    : 'default'
+                }
+                onChangeText={(value) => {
+                  change(key, value);
+                }}
                 style={{ backgroundColor: colors.surface, color: colors.ink }}
               />
             </YStack>

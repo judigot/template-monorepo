@@ -62,12 +62,29 @@ describe('Explore group budgeting', () => {
     expect(estimateGroup(eligible, 2)?.lines[0]?.itemId).toBe('a');
   });
   test('menu items track price changes while preserving unknown serving counts', () => {
-    expect(affordableItems(TATANGS_CURATED, 17900, 1).some(({item}) => item.id === 'value-belly')).toBe(false);
-    expect(affordableItems(TATANGS_CURATED, 18000, 1).some(({item}) => item.id === 'value-belly')).toBe(true);
+    expect(
+      affordableItems(TATANGS_CURATED, 17900, 1).some(
+        ({ item }) => item.id === 'value-belly',
+      ),
+    ).toBe(false);
+    expect(
+      affordableItems(TATANGS_CURATED, 18000, 1).some(
+        ({ item }) => item.id === 'value-belly',
+      ),
+    ).toBe(true);
     const exact = affordableItems(TATANGS_CURATED, 20000, 2);
-    expect(exact.some(({item}) => item.id === 'value-belly')).toBe(false);
-    expect(exact.some(({item,groupTotal}) => item.id === 'sisig-sharing' && groupTotal === 20000)).toBe(true);
-    expect(exact.some(({item,groupTotal}) => item.id === 'dinuguan' && groupTotal === null)).toBe(true);
+    expect(exact.some(({ item }) => item.id === 'value-belly')).toBe(false);
+    expect(
+      exact.some(
+        ({ item, groupTotal }) =>
+          item.id === 'sisig-sharing' && groupTotal === 20000,
+      ),
+    ).toBe(true);
+    expect(
+      exact.some(
+        ({ item, groupTotal }) => item.id === 'dinuguan' && groupTotal === null,
+      ),
+    ).toBe(true);
   });
   test('viewport excludes places after panning away', () => {
     expect(inViewport(TATANGS_CURATED, CEBU_VIEWPORT)).toBe(true);

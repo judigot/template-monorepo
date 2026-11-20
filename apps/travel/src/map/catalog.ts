@@ -161,18 +161,34 @@ export function affordableItems(
   budgetCentavos: number,
   people: number,
 ): { item: IMenuItem; groupTotal: number | null; quantity: number | null }[] {
-  return place.menuItems.flatMap((item) => {
-    if (item.available === false || item.priceCentavos === null || item.priceCentavos <= 0) {
-      return [];
-    }
-    const quantity = item.serves === null ? null : Math.ceil(people / item.serves);
-    const groupTotal = quantity === null ? null : quantity * item.priceCentavos;
-    if (groupTotal !== null ? groupTotal > budgetCentavos : item.priceCentavos > budgetCentavos) {
-      return [];
-    }
-    return [{ item, quantity, groupTotal }];
-  }).sort((a, b) => (a.groupTotal ?? a.item.priceCentavos ?? 0) -
-    (b.groupTotal ?? b.item.priceCentavos ?? 0) || a.item.name.localeCompare(b.item.name));
+  return place.menuItems
+    .flatMap((item) => {
+      if (
+        item.available === false ||
+        item.priceCentavos === null ||
+        item.priceCentavos <= 0
+      ) {
+        return [];
+      }
+      const quantity =
+        item.serves === null ? null : Math.ceil(people / item.serves);
+      const groupTotal =
+        quantity === null ? null : quantity * item.priceCentavos;
+      if (
+        groupTotal !== null
+          ? groupTotal > budgetCentavos
+          : item.priceCentavos > budgetCentavos
+      ) {
+        return [];
+      }
+      return [{ item, quantity, groupTotal }];
+    })
+    .sort(
+      (a, b) =>
+        (a.groupTotal ?? a.item.priceCentavos ?? 0) -
+          (b.groupTotal ?? b.item.priceCentavos ?? 0) ||
+        a.item.name.localeCompare(b.item.name),
+    );
 }
 
 const catalogSchema = z.object({ places: z.array(curatedPlaceSchema) });

@@ -3,9 +3,13 @@ import { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Button, Input, Text, XStack, YStack } from 'tamagui';
 import {
-  addAdmin, getAccountAccess, getManagedPlaces,
-  listAdmins, removeAdmin,
-  type IAccountAccess, type IManagedPlace,
+  addAdmin,
+  getAccountAccess,
+  getManagedPlaces,
+  type IAccountAccess,
+  type IManagedPlace,
+  listAdmins,
+  removeAdmin,
 } from '../../src/admin/api';
 import { Page } from '../../src/components/Page';
 import { useTravelColors } from '../../src/theme';
@@ -31,7 +35,11 @@ export default function ManageHome() {
         setAdmins(profile.role === 'admin' ? await listAdmins() : []);
         setError(null);
       } catch (cause) {
-        setError(cause instanceof Error ? cause.message : 'Could not load management workspace.');
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : 'Could not load management workspace.',
+        );
       }
     })();
   }, []);
@@ -43,10 +51,16 @@ export default function ManageHome() {
     try {
       await addAdmin(email.trim());
       setEmail('');
-      setNotice('Administrator access granted. This person can sign in with the verified Google account.');
+      setNotice(
+        'Administrator access granted. This person can sign in with the verified Google account.',
+      );
       refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not grant administrator access.');
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : 'Could not grant administrator access.',
+      );
     } finally {
       setBusy(false);
     }
@@ -55,27 +69,52 @@ export default function ManageHome() {
   return (
     <Page>
       <YStack gap="1" style={{ paddingTop: 8 }}>
-        <Text letterSpacing={1.6} fontSize={11} fontWeight="800" style={{ color: colors.accent }}>
+        <Text
+          letterSpacing={1.6}
+          fontSize={11}
+          fontWeight="800"
+          style={{ color: colors.accent }}
+        >
           WANDERAPP WORKSPACE
         </Text>
-        <Text fontWeight="800" fontSize={28} style={{ color: colors.ink }}>Manage places</Text>
+        <Text fontWeight="800" fontSize={28} style={{ color: colors.ink }}>
+          Manage places
+        </Text>
         <Text fontSize={13} style={{ color: colors.muted }}>
           Venue details, menus, pricing, and authorized accounts.
         </Text>
       </YStack>
       {access !== null ? (
-        <View style={{ alignSelf: 'flex-start', backgroundColor: colors.accentSoft, borderRadius: 10, padding: 9 }}>
+        <View
+          style={{
+            alignSelf: 'flex-start',
+            backgroundColor: colors.accentSoft,
+            borderRadius: 10,
+            padding: 9,
+          }}
+        >
           <Text fontSize={11} fontWeight="800" style={{ color: colors.accent }}>
-            {access.role === 'admin' ? 'PLATFORM ADMINISTRATOR' :
-              access.role === 'owner' ? 'VENUE OWNER' : 'NO MANAGEMENT ACCESS'}
+            {access.role === 'admin'
+              ? 'PLATFORM ADMINISTRATOR'
+              : access.role === 'owner'
+                ? 'VENUE OWNER'
+                : 'NO MANAGEMENT ACCESS'}
           </Text>
         </View>
       ) : null}
-      {error !== null ? <Text accessibilityRole="alert" style={{ color: colors.error }}>{error}</Text> : null}
-      {notice !== null ? <Text style={{ color: colors.accent }}>{notice}</Text> : null}
+      {error !== null ? (
+        <Text accessibilityRole="alert" style={{ color: colors.error }}>
+          {error}
+        </Text>
+      ) : null}
+      {notice !== null ? (
+        <Text style={{ color: colors.accent }}>{notice}</Text>
+      ) : null}
       {access?.role === 'admin' ? (
         <Button
-          onPress={() => { router.push('/manage/new'); }}
+          onPress={() => {
+            router.push('/manage/new');
+          }}
           style={{ backgroundColor: colors.accent, color: colors.onAccent }}
         >
           + Create a place
@@ -87,7 +126,8 @@ export default function ManageHome() {
         </Text>
         {places.length === 0 ? (
           <Text fontSize={13} style={{ color: colors.muted }}>
-            No managed venues. An administrator can assign a restaurant owner by verified email.
+            No managed venues. An administrator can assign a restaurant owner by
+            verified email.
           </Text>
         ) : places.map((place) => (
           <Pressable

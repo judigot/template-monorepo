@@ -10,14 +10,30 @@ import { useTravelColors } from '../../src/theme';
 
 function RoleLabel({ access }: { access: IAccountAccess | null }) {
   const colors = useTravelColors();
-  const label = access?.role === 'admin' ? 'PLATFORM ADMINISTRATOR' :
-    access?.role === 'owner' ? 'VERIFIED VENUE OWNER' : access === null ? 'ACCOUNT MEMBER' : 'TRAVELER';
+  const label =
+    access?.role === 'admin'
+      ? 'PLATFORM ADMINISTRATOR'
+      : access?.role === 'owner'
+        ? 'VERIFIED VENUE OWNER'
+        : access === null
+          ? 'ACCOUNT MEMBER'
+          : 'TRAVELER';
   return (
-    <View style={{
-      backgroundColor: colors.accentSoft, paddingHorizontal: 11, paddingVertical: 6,
-      borderRadius: 9, alignSelf: 'flex-start',
-    }}>
-      <Text fontSize={10} letterSpacing={1} fontWeight="800" style={{ color: colors.accent }}>
+    <View
+      style={{
+        backgroundColor: colors.accentSoft,
+        paddingHorizontal: 11,
+        paddingVertical: 6,
+        borderRadius: 9,
+        alignSelf: 'flex-start',
+      }}
+    >
+      <Text
+        fontSize={10}
+        letterSpacing={1}
+        fontWeight="800"
+        style={{ color: colors.accent }}
+      >
         {label}
       </Text>
     </View>
@@ -25,7 +41,10 @@ function RoleLabel({ access }: { access: IAccountAccess | null }) {
 }
 
 function SettingsRow({
-  title, description, symbol, onPress,
+  title,
+  description,
+  symbol,
+  onPress,
 }: {
   title: string;
   description: string;
@@ -39,22 +58,40 @@ function SettingsRow({
       accessibilityRole={onPress === undefined ? 'text' : 'button'}
       onPress={onPress}
       style={{
-        flexDirection: 'row', alignItems: 'center', gap: 12,
-        paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: colors.line,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.line,
       }}
     >
-      <View style={{
-        height: 42, width: 42, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
-        backgroundColor: colors.accentSoft,
-      }}>
-        <Text fontSize={20} style={{ color: colors.accent }}>{symbol}</Text>
+      <View
+        style={{
+          height: 42,
+          width: 42,
+          borderRadius: 14,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.accentSoft,
+        }}
+      >
+        <Text fontSize={20} style={{ color: colors.accent }}>
+          {symbol}
+        </Text>
       </View>
       <YStack flex={1} gap="1">
-        <Text fontSize={15} fontWeight="700" style={{ color: colors.ink }}>{title}</Text>
-        <Text fontSize={12} style={{ color: colors.muted }}>{description}</Text>
+        <Text fontSize={15} fontWeight="700" style={{ color: colors.ink }}>
+          {title}
+        </Text>
+        <Text fontSize={12} style={{ color: colors.muted }}>
+          {description}
+        </Text>
       </YStack>
       {onPress === undefined ? null : (
-        <Text fontSize={22} style={{ color: colors.muted }}>›</Text>
+        <Text fontSize={22} style={{ color: colors.muted }}>
+          ›
+        </Text>
       )}
     </Pressable>
   );
@@ -73,9 +110,11 @@ function AuthenticatedAccount() {
     void refetch();
   }, [refetch]);
 
-  useFocusEffect(useCallback(() => {
-    refresh();
-  }, [refresh]));
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh]),
+  );
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -96,17 +135,19 @@ function AuthenticatedAccount() {
       return;
     }
     let active = true;
-    void getAccountAccess().then((value) => {
-      if (active) {
-        setAccess(value);
-        setAccessError(false);
-      }
-    }).catch(() => {
-      if (active) {
-        setAccess(null);
-        setAccessError(true);
-      }
-    });
+    void getAccountAccess()
+      .then((value) => {
+        if (active) {
+          setAccess(value);
+          setAccessError(false);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setAccess(null);
+          setAccessError(true);
+        }
+      });
     return () => {
       active = false;
     };
@@ -154,7 +195,12 @@ function AuthenticatedAccount() {
   return (
     <Page>
       <YStack gap="1" style={{ paddingTop: 12 }}>
-        <Text letterSpacing={1.5} fontSize={11} fontWeight="800" style={{ color: colors.accent }}>
+        <Text
+          letterSpacing={1.5}
+          fontSize={11}
+          fontWeight="800"
+          style={{ color: colors.accent }}
+        >
           WANDERAPP
         </Text>
         <Text fontSize={30} fontWeight="800" style={{ color: colors.ink }}>Account</Text>

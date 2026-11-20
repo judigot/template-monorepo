@@ -1,10 +1,16 @@
-import { Hono } from 'hono';
 import type { Context } from 'hono';
+import { Hono } from 'hono';
 import { z } from 'zod';
 import { auth, database } from '../auth.ts';
 
-const emailSchema = z.email().max(254).transform((value) => value.trim().toLowerCase());
-const slugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(100);
+const emailSchema = z
+  .email()
+  .max(254)
+  .transform((value) => value.trim().toLowerCase());
+const slugSchema = z
+  .string()
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  .max(100);
 const metadataSchema = z.strictObject({
   name: z.string().trim().min(2).max(150),
   description: z.string().trim().min(1).max(3000),
@@ -15,27 +21,44 @@ const metadataSchema = z.strictObject({
   longitude: z.number().min(-180).max(180),
   latitude: z.number().min(-90).max(90),
   directionsUrl: z.url().refine((value) => value.startsWith('https://')),
-  coverImageUrl: z.url().refine((value) => value.startsWith('https://')).nullable(),
+  coverImageUrl: z
+    .url()
+    .refine((value) => value.startsWith('https://'))
+    .nullable(),
 });
 const placeCreateSchema = metadataSchema.extend({ slug: slugSchema });
-const menuSchema = z.strictObject({
-  name: z.string().trim().min(1).max(160),
-  variant: z.string().trim().max(160).nullable(),
-  section: z.string().trim().min(1).max(70),
-  priceCentavos: z.number().int().positive().max(100000000).nullable(),
-  serves: z.number().int().min(1).max(100).nullable(),
-  eligible: z.boolean(),
-  available: z.boolean(),
-  servingBasis: z.enum(['printed', 'assumed', 'unknown']),
-}).refine(
-  (item) => !item.eligible || (item.priceCentavos !== null && item.serves !== null && item.servingBasis !== 'unknown'),
-  { message: 'Eligible items require a price and a known or explicitly assumed serving count' },
-);
+const menuSchema = z
+  .strictObject({
+    name: z.string().trim().min(1).max(160),
+    variant: z.string().trim().max(160).nullable(),
+    section: z.string().trim().min(1).max(70),
+    priceCentavos: z.number().int().positive().max(100000000).nullable(),
+    serves: z.number().int().min(1).max(100).nullable(),
+    eligible: z.boolean(),
+    available: z.boolean(),
+    servingBasis: z.enum(['printed', 'assumed', 'unknown']),
+  })
+  .refine(
+    (item) =>
+      !item.eligible ||
+      (item.priceCentavos !== null &&
+        item.serves !== null &&
+        item.servingBasis !== 'unknown'),
+    {
+      message:
+        'Eligible items require a price and a known or explicitly assumed serving count',
+    },
+  );
 
 type IActor = { id: string; email: string; admin: boolean };
-type IEnv = { Variables: { actor: IActor; pool: NonNullable<typeof database> } };
+type IEnv = {
+  Variables: { actor: IActor; pool: NonNullable<typeof database> };
+};
 
-async function authorizedPlace(c: Context<IEnv>, slug: string): Promise<string | null> {
+async function authorizedPlace(
+  c: Context<IEnv>,
+  slug: string,
+): Promise<string | null> {
   const actor = c.get('actor');
   const result = await c.get('pool').query<{ id: string }>(
     `SELECT p.id FROM wanderapp.places p
@@ -100,10 +123,12 @@ manageRouter.get('/me', async (c) => {
 manageRouter.get('/places', async (c) => {
   const actor = c.get('actor');
   if (!actor.admin) {
-    const hasOwner = await c.get('pool').query<{ ok: boolean }>(
-      'SELECT EXISTS(SELECT 1 FROM wanderapp.place_owners WHERE email = $1) AS ok',
-      [actor.email],
-    );
+    const hasOwner = await c
+      .get('pool')
+      .query<{ ok: boolean }>(
+        'SELECT EXISTS(SELECT 1 FROM wanderapp.place_owners WHERE email = $1) AS ok',
+        [actor.email],
+      );
     if (hasOwner.rows[0]?.ok !== true) {
       return c.json({ places: [] });
     }
@@ -153,8 +178,18 @@ manageRouter.post('/places', async (c) => {
        VALUES ($1, $2, $3, $4, $5, 'PH',
          public.ST_SetSRID(public.ST_MakePoint($6, $7), 4326)::public.geography,
          $8, now(), $9, $10) RETURNING id`,
-      [p.slug, p.name, p.description, p.address, p.locality,
-        p.longitude, p.latitude, p.directionsUrl, p.category, p.coverImageUrl],
+      [
+        p.slug,
+        p.name,
+        p.description,
+        p.address,
+        p.locality,
+        p.longitude,
+        p.latitude,
+        p.directionsUrl,
+        p.category,
+        p.coverImageUrl,
+      ],
     );
     const id = created.rows[0]?.id;
     if (id === undefined) {
@@ -186,7 +221,10 @@ manageRouter.patch('/places/:slug', async (c) => {
   }
   const body = metadataSchema.partial().safeParse(await c.req.json());
   if (!body.success) {
-    return c.json({ error: 'Invalid changes', details: body.error.issues }, 400);
+    return c.json(
+      { error: 'Invalid changes', details: body.error.issues },
+      400,
+    );
   }
   if (Object.keys(body.data).length === 0) {
     return c.json({ error: 'No fields provided' }, 400);
@@ -208,10 +246,19 @@ manageRouter.patch('/places/:slug', async (c) => {
           COALESCE($11, public.ST_Y(location::public.geometry))
         ), 4326)::public.geography,
         updated_at = now() WHERE id = $1`,
-      [placeId, p.name ?? null, p.description ?? null, p.address ?? null,
-        p.locality ?? null, p.category ?? null, p.directionsUrl ?? null,
-        p.coverImageUrl !== undefined, p.coverImageUrl ?? null,
-        p.longitude ?? null, p.latitude ?? null],
+      [
+        placeId,
+        p.name ?? null,
+        p.description ?? null,
+        p.address ?? null,
+        p.locality ?? null,
+        p.category ?? null,
+        p.directionsUrl ?? null,
+        p.coverImageUrl !== undefined,
+        p.coverImageUrl ?? null,
+        p.longitude ?? null,
+        p.latitude ?? null,
+      ],
     );
     if (p.iconKey !== undefined) {
       await client.query(
@@ -220,7 +267,9 @@ manageRouter.patch('/places/:slug', async (c) => {
         [placeId, p.iconKey],
       );
     }
-    await logChange(client, actor, placeId, 'place.updated', { fields: Object.keys(p) });
+    await logChange(client, actor, placeId, 'place.updated', {
+      fields: Object.keys(p),
+    });
     await client.query('COMMIT');
     return c.json({ updated: true });
   } catch (error) {
@@ -243,7 +292,10 @@ manageRouter.put('/places/:slug/items/:itemId', async (c) => {
   }
   const body = menuSchema.safeParse(await c.req.json());
   if (!body.success) {
-    return c.json({ error: 'Invalid menu item', details: body.error.issues }, 400);
+    return c.json(
+      { error: 'Invalid menu item', details: body.error.issues },
+      400,
+    );
   }
   const p = body.data;
   const actor = c.get('actor');
