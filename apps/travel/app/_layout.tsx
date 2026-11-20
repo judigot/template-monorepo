@@ -1,20 +1,22 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useColorScheme } from 'react-native';
+import { Theme } from 'tamagui';
+import { useSystemScheme } from '../src/theme-scheme';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 import { TravelProvider } from '../src/state/travel-context';
 import { tamaguiConfig } from '../tamagui.config';
 
 export default function RootLayout() {
-  const isDark = useColorScheme() === 'dark';
+  const isDark = useSystemScheme() === 'dark';
 
   return (
     <TamaguiProvider
       config={tamaguiConfig}
       defaultTheme={isDark ? 'dark' : 'light'}
     >
-      <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+      <Theme name={isDark ? 'dark' : 'light'}>
+        <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
         <SafeAreaProvider>
           <TravelProvider>
             <StatusBar style={isDark ? 'light' : 'dark'} />
@@ -24,7 +26,8 @@ export default function RootLayout() {
             </Stack>
           </TravelProvider>
         </SafeAreaProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </Theme>
     </TamaguiProvider>
   );
 }

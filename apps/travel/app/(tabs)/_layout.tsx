@@ -1,5 +1,8 @@
 import { Tabs } from 'expo-router';
+import { Text } from 'react-native';
 import { useTravelColors } from '../../src/theme';
+
+const icons = { index: '⌕', saved: '♡', account: '◉' } as const;
 
 export default function TabLayout() {
   const colors = useTravelColors();
@@ -9,23 +12,37 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.muted,
-        tabBarIconStyle: { display: 'none' },
-        tabBarLabelPosition: 'beside-icon',
-        tabBarLabelStyle: {
-          fontSize: 14,
-          fontWeight: '700',
-          marginStart: 0,
-          marginEnd: 0,
-        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.line,
+          borderTopWidth: 1,
+          paddingTop: 6,
+          height: 62,
         },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Explore' }} />
-      <Tabs.Screen name="saved" options={{ title: 'Saved places' }} />
-      <Tabs.Screen name="account" options={{ title: 'Account' }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 25 }}>{icons.index}</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="saved"
+        options={{
+          title: 'Saved',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 24 }}>{icons.saved}</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="account"
+        options={{
+          title: 'Account',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 22 }}>{icons.account}</Text>,
+        }}
+      />
     </Tabs>
   );
 }

@@ -3,7 +3,7 @@ import {
   THEME_SURFACES,
   THEMES,
 } from '@monorepo/design-tokens/palette';
-import { useColorScheme } from 'react-native';
+import { useSystemScheme } from './theme-scheme';
 
 const lightColors = {
   accent: PALETTE.teal['600'] ?? '#0f766e',
@@ -34,5 +34,5 @@ const darkColors: typeof lightColors = {
 };
 
 export function useTravelColors() {
-  return useColorScheme() === 'dark' ? darkColors : lightColors;
+  return useSystemScheme() === 'dark' ? darkColors : lightColors;
 }

@@ -58,7 +58,10 @@ export async function fetchFeaturedPlace(baseUrl: string, signal: AbortSignal) {
   return placeSchema.parse(payload);
 }
 
-export const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
+export const MAP_STYLES = {
+  light: 'https://tiles.openfreemap.org/styles/liberty',
+  dark: 'https://tiles.openfreemap.org/styles/dark',
+} as const;
 export const MAP_ZOOM = 15.5;
 
 export interface IExploreCamera {
@@ -72,4 +75,6 @@ export interface IExploreMapProps {
   onOpen: (place: ICuratedPlace) => void;
   onViewChange: (camera: IExploreCamera) => void;
   onError: () => void;
+  dark: boolean;
+  focus: { longitude: number; latitude: number; request: number } | null;
 }

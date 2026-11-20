@@ -2,7 +2,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 import type { Marker as MapMarker, Map as MapView } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
-import { type IExploreMapProps, MAP_STYLE } from './place';
+import { type IExploreMapProps, MAP_STYLES } from './place';
 
 export function PlaceMap({
   places,
@@ -10,6 +10,8 @@ export function PlaceMap({
   onOpen,
   onViewChange,
   onError,
+  dark,
+  focus,
 }: IExploreMapProps) {
   const container = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -41,7 +43,7 @@ export function PlaceMap({
         );
         const map = new Map({
           container: node,
-          style: MAP_STYLE,
+          style: dark ? MAP_STYLES.dark : MAP_STYLES.light,
           center: initialCamera.current.center,
           zoom: initialCamera.current.zoom,
           cooperativeGestures: false,
@@ -104,7 +106,10 @@ export function PlaceMap({
           element.setAttribute('aria-label', `Open ${place.name}`);
           element.title = place.name;
           element.style.cssText =
-            'background:#fff;border:2px solid #b4233d;border-radius:22px;padding:6px 10px;box-shadow:0 2px 8px #0003;cursor:pointer;font-size:14px;font-weight:700;white-space:nowrap';
+            (dark
+              ? 'background:#142337;color:#f6fbfa;border:2px solid #4fd1c5;'
+              : 'background:#fff;color:#122b31;border:2px solid #0f766e;') +
+            'border-radius:24px;padding:7px 11px;box-shadow:0 3px 12px #0003;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap';
           element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0] ?? place.name}`;
           element.addEventListener('click', () => {
             onOpenRef.current(place);
@@ -123,6 +128,24 @@ export function PlaceMap({
       cancelled = true;
     };
   }, [places, ready]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map !== null) {
+      map.setStyle(dark ? MAP_STYLES.dark : MAP_STYLES.light);
+    }
+  }, [dark]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map !== null && focus !== null) {
+      map.flyTo({
+        center: [focus.longitude, focus.latitude],
+        zoom: Math.max(16, map.getZoom()),
+        duration: 720,
+      });
+    }
+  }, [focus]);
 
   return (
     <section
