@@ -821,6 +821,7 @@ export function FeaturedPlace() {
         </Animated.View>
       )}
       <Animated.View
+        testID="explore-results-drawer"
         style={{
           position: 'absolute',
           left: 0,
@@ -836,7 +837,7 @@ export function FeaturedPlace() {
           borderTopLeftRadius: 22,
           borderTopRightRadius: 22,
           overflow: 'hidden',
-          backgroundColor: colors.surface,
+          backgroundColor: colors.resultsSurface,
         }}
       >
         <MenuHandle

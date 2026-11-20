@@ -67,6 +67,10 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   expect(menuBox.x).toBeCloseTo(mapBox.x, 0);
   expect(menuBox.width).toBeCloseTo(mapBox.width, 0);
   expect(menuBox.y + menuBox.height).toBeCloseTo(mapBox.y + mapBox.height, 0);
+  await expect(page.getByTestId('explore-results-drawer')).toHaveCSS(
+    'background-color',
+    'rgb(15, 23, 42)',
+  );
   await expect(menu).toHaveText('1 place fits your budget');
   await expect(page.getByRole('link', { name: /OpenStreetMap/ })).toBeVisible();
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
