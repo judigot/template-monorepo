@@ -40,9 +40,7 @@ export function PlaceMap({
         if (disposed) {
           return;
         }
-        setWorkerUrl(
-          `https://cdn.jsdelivr.net/npm/maplibre-gl@${getVersion()}/dist/maplibre-gl-worker.mjs`,
-        );
+        setWorkerUrl(`/maplibre-gl-worker.mjs?v=${getVersion()}`);
         const map = new Map({
           container: node,
           style: initialDark.current ? MAP_STYLES.dark : MAP_STYLES.light,
@@ -69,6 +67,11 @@ export function PlaceMap({
             },
           });
         };
+        map.on('error', (event) => {
+          if (!map.getStyle()?.layers && !('tile' in event)) {
+            onErrorRef.current();
+          }
+        });
         map.on('load', report);
         map.on('moveend', report);
         map.addControl(new NavigationControl({ showCompass: false }));

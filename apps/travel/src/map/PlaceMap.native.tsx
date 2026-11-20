@@ -32,6 +32,7 @@ export function PlaceMap({
   return (
     <Map
       ref={mapRef}
+      androidView="texture"
       style={styles.map}
       mapStyle={dark ? MAP_STYLES.dark : MAP_STYLES.light}
       onDidFailLoadingMap={onError}
@@ -91,7 +92,7 @@ export function PlaceMap({
 }
 
 const styles = StyleSheet.create({
-  map: { flex: 1 },
+  map: { ...StyleSheet.absoluteFillObject },
   marker: {
     flexDirection: 'row',
     alignItems: 'center',

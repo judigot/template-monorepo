@@ -770,7 +770,7 @@ export function FeaturedPlace() {
           <YStack gap="1">
             <Text fontSize={19} fontWeight="800" style={{ color: colors.ink }}>
               {String(matches.length)}{' '}
-              {matches.length === 1 ? 'place' : 'places'} for your group
+              {matches.length === 1 ? 'place' : 'places'}
             </Text>
             <Text fontSize={12} style={{ color: colors.muted }}>
               Results follow the visible map and budget.
