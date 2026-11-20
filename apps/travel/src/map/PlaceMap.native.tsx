@@ -45,7 +45,9 @@ export function PlaceMap({
           anchor="bottom"
         >
           <Pressable
-            onPress={() => onOpen(place)}
+            onPress={() => {
+              onOpen(place);
+            }}
             accessibilityRole="button"
             accessibilityLabel={`Open ${place.name}`}
             style={styles.marker}

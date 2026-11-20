@@ -27,11 +27,15 @@ export function PlaceMap({
 
   useEffect(() => {
     const node = container.current;
-    if (node === null) return;
+    if (node === null) {
+      return;
+    }
     let disposed = false;
     void import('maplibre-gl')
       .then(({ getVersion, Map, NavigationControl, setWorkerUrl }) => {
-        if (disposed) return;
+        if (disposed) {
+          return;
+        }
         setWorkerUrl(
           `https://cdn.jsdelivr.net/npm/maplibre-gl@${getVersion()}/dist/maplibre-gl-worker.mjs`,
         );
@@ -61,12 +65,16 @@ export function PlaceMap({
         map.on('load', report);
         map.on('moveend', report);
         map.on('error', () => {
-          if (!map.isStyleLoaded()) onErrorRef.current();
+          if (map.isStyleLoaded() !== true) {
+            onErrorRef.current();
+          }
         });
         map.addControl(new NavigationControl({ showCompass: false }));
       })
       .catch(() => {
-        if (!disposed) onErrorRef.current();
+        if (!disposed) {
+          onErrorRef.current();
+        }
       });
     return () => {
       disposed = true;
@@ -81,11 +89,15 @@ export function PlaceMap({
     let cancelled = false;
     void import('maplibre-gl')
       .then(({ Marker }) => {
-        if (cancelled) return;
+        if (cancelled) {
+          return;
+        }
         const map = mapRef.current;
         markersRef.current.forEach((marker) => marker.remove());
         markersRef.current = [];
-        if (map === null) return;
+        if (map === null) {
+          return;
+        }
         for (const place of places) {
           const element = document.createElement('button');
           element.type = 'button';
@@ -93,8 +105,10 @@ export function PlaceMap({
           element.title = place.name;
           element.style.cssText =
             'background:#fff;border:2px solid #b4233d;border-radius:22px;padding:6px 10px;box-shadow:0 2px 8px #0003;cursor:pointer;font-size:14px;font-weight:700;white-space:nowrap';
-          element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0]}`;
-          element.addEventListener('click', () => onOpenRef.current(place));
+          element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0] ?? place.name}`;
+          element.addEventListener('click', () => {
+            onOpenRef.current(place);
+          });
           markersRef.current.push(
             new Marker({ element, anchor: 'bottom' })
               .setLngLat([place.longitude, place.latitude])
@@ -102,7 +116,9 @@ export function PlaceMap({
           );
         }
       })
-      .catch(() => onErrorRef.current());
+      .catch(() => {
+        onErrorRef.current();
+      });
     return () => {
       cancelled = true;
     };

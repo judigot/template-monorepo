@@ -9,7 +9,9 @@ import { estimateGroup } from './estimate';
 
 const menu = TATANGS_CURATED.menuItems;
 const valueMeal = menu.find((item) => item.id === 'value-belly');
-if (valueMeal === undefined) throw new Error('Missing test menu item');
+if (valueMeal === undefined) {
+  throw new Error('Missing test menu item');
+}
 const total = (people: number) =>
   estimateGroup(menu, people)?.totalCentavos ?? null;
 

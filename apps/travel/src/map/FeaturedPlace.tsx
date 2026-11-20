@@ -3,6 +3,7 @@ import { Linking, Modal, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, H2, Input, Slider, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../auth/auth-client';
+import type { IExploreCamera } from './place';
 import { useTravel } from '../state/travel-context';
 import { useTravelColors } from '../theme';
 import {
@@ -101,7 +102,7 @@ function PlaceProfile({
                       <Text fontSize={12} style={{ color: colors.muted }}>
                         {item.serves === null
                           ? 'Serving count unknown'
-                          : `Serves ${item.serves} (${item.servingBasis})`}
+                          : `Serves ${String(item.serves)} (${item.servingBasis})`}
                       </Text>
                     </YStack>
                     <Text fontWeight="700" style={{ color: colors.ink }}>
@@ -151,7 +152,9 @@ export function FeaturedPlace() {
 
   const setBudget = useCallback(
     (amount: number) => {
-      if (!Number.isFinite(amount)) return;
+      if (!Number.isFinite(amount)) {
+        return;
+      }
       const budget = Math.min(5000, Math.max(0, Math.round(amount)));
       setExplore((previous) => ({ ...previous, budget }));
       setExactBudget(String(budget));
@@ -160,31 +163,42 @@ export function FeaturedPlace() {
   );
 
   useEffect(() => {
-    if (authBaseUrl === null) return;
+    if (authBaseUrl === null) {
+      return;
+    }
     const controller = new AbortController();
     void fetchCuratedPlaces(authBaseUrl, controller.signal)
       .then((result) => {
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted) {
+          return;
+        }
         setPlaces(result);
         setCatalogStatus('live');
       })
       .catch(() => {
-        if (!controller.signal.aborted) setCatalogStatus('cached');
+        if (!controller.signal.aborted) {
+          setCatalogStatus('cached');
+        }
       });
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+    };
   }, [retry]);
 
   const matches = useMemo(
     () =>
       places
         .flatMap((place) => {
-          if (!inViewport(place, explore.camera.bounds)) return [];
+          if (!inViewport(place, explore.camera.bounds)) {
+            return [];
+          }
           const estimate = estimateGroup(place.menuItems, explore.people);
           if (
             estimate === null ||
             estimate.totalCentavos > explore.budget * 100
-          )
+          ) {
             return [];
+          }
           return [{ place, estimate }];
         })
         .sort(
@@ -204,7 +218,7 @@ export function FeaturedPlace() {
     matches.find((match) => match.place.slug === selected) ?? null;
 
   const onViewChange = useCallback(
-    (camera: typeof explore.camera) => {
+    (camera: IExploreCamera) => {
       setExplore((previous) => ({ ...previous, camera }));
     },
     [setExplore],
@@ -261,9 +275,13 @@ export function FeaturedPlace() {
               value={exactBudget}
               onChangeText={(value) => {
                 setExactBudget(value);
-                if (/^\d{1,5}$/.test(value)) setBudget(Number(value));
+                if (/^\d{1,5}$/.test(value)) {
+                  setBudget(Number(value));
+                }
               }}
-              onBlur={() => setExactBudget(String(explore.budget))}
+              onBlur={() => {
+                setExactBudget(String(explore.budget));
+              }}
               accessibilityLabel="Exact total budget in Philippine pesos"
               placeholder="Exact ₱ amount"
             />
@@ -277,17 +295,17 @@ export function FeaturedPlace() {
                 size="sm"
                 accessibilityLabel="Remove one person"
                 disabled={explore.people <= 1}
-                onPress={() =>
+                onPress={() => {
                   setExplore((p) => ({
                     ...p,
                     people: Math.max(1, p.people - 1),
-                  }))
-                }
+                  }));
+                }}
               >
                 −
               </Button>
               <Text
-                accessibilityLabel={`${explore.people} people`}
+                accessibilityLabel={`${String(explore.people)} people`}
                 style={{ color: colors.ink }}
               >
                 {explore.people}
@@ -296,12 +314,12 @@ export function FeaturedPlace() {
                 size="sm"
                 accessibilityLabel="Add one person"
                 disabled={explore.people >= 20}
-                onPress={() =>
+                onPress={() => {
                   setExplore((p) => ({
                     ...p,
                     people: Math.min(20, p.people + 1),
-                  }))
-                }
+                  }));
+                }}
               >
                 +
               </Button>
@@ -344,8 +362,12 @@ export function FeaturedPlace() {
             places={matches.map(({ place }) => place)}
             camera={explore.camera}
             onViewChange={onViewChange}
-            onOpen={(place) => setSelected(place.slug)}
-            onError={() => setMapFailed(true)}
+            onOpen={(place) => {
+              setSelected(place.slug);
+            }}
+            onError={() => {
+              setMapFailed(true);
+            }}
           />
         )}
       </View>
@@ -393,7 +415,9 @@ export function FeaturedPlace() {
               onPress={
                 availableMatches.length === 0
                   ? resetCebu
-                  : () => setBudget(5000)
+                  : () => {
+                      setBudget(5000);
+                    }
               }
             >
               {availableMatches.length === 0
@@ -406,8 +430,10 @@ export function FeaturedPlace() {
             <Pressable
               key={match.place.slug}
               accessibilityRole="button"
-              accessibilityLabel={`View ${match.place.name}, ${pesos(match.estimate.totalCentavos)} for ${explore.people}`}
-              onPress={() => setSelected(match.place.slug)}
+              accessibilityLabel={`View ${match.place.name}, ${pesos(match.estimate.totalCentavos)} for ${String(explore.people)}`}
+              onPress={() => {
+                setSelected(match.place.slug);
+              }}
             >
               <YStack
                 rounded={14}
@@ -440,7 +466,9 @@ export function FeaturedPlace() {
       <PlaceProfile
         match={selectedMatch}
         people={explore.people}
-        onClose={() => setSelected(null)}
+        onClose={() => {
+          setSelected(null);
+        }}
       />
     </SafeAreaView>
   );

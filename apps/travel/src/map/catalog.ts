@@ -158,8 +158,9 @@ export async function fetchCuratedPlaces(
   signal: AbortSignal,
 ): Promise<ICuratedPlace[]> {
   const response = await fetch(`${baseUrl}/api/places`, { signal });
-  if (!response.ok)
-    throw new Error(`Catalog request failed (${response.status})`);
+  if (!response.ok) {
+    throw new Error(`Catalog request failed (${String(response.status)})`);
+  }
   const payload: unknown = await response.json();
   return catalogSchema.parse(payload).places;
 }
@@ -179,8 +180,9 @@ export const CEBU_VIEWPORT: IViewport = {
 };
 
 export function inViewport(place: ICuratedPlace, bounds: IViewport): boolean {
-  if (!Number.isFinite(place.latitude) || !Number.isFinite(place.longitude))
+  if (!Number.isFinite(place.latitude) || !Number.isFinite(place.longitude)) {
     return false;
+  }
   const longitudeInView =
     bounds.west <= bounds.east
       ? place.longitude >= bounds.west && place.longitude <= bounds.east

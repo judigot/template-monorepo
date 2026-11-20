@@ -21,9 +21,15 @@ interface IPath {
 }
 
 function preferred(a: IPath, b: IPath | undefined): boolean {
-  if (b === undefined) return true;
-  if (a.cost !== b.cost) return a.cost < b.cost;
-  if (a.count !== b.count) return a.count < b.count;
+  if (b === undefined) {
+    return true;
+  }
+  if (a.cost !== b.cost) {
+    return a.cost < b.cost;
+  }
+  if (a.count !== b.count) {
+    return a.count < b.count;
+  }
   return a.ids.join('|') < b.ids.join('|');
 }
 
@@ -32,7 +38,9 @@ export function estimateGroup(
   items: readonly IMenuItem[],
   people: number,
 ): IGroupEstimate | null {
-  if (!Number.isInteger(people) || people < 1) return null;
+  if (!Number.isInteger(people) || people < 1) {
+    return null;
+  }
   const eligible = items
     .filter(
       (item) =>
@@ -45,34 +53,46 @@ export function estimateGroup(
         item.serves > 0,
     )
     .sort((a, b) => a.id.localeCompare(b.id));
-  if (eligible.length === 0) return null;
+  if (eligible.length === 0) {
+    return null;
+  }
   const maxServings = Math.max(...eligible.map((item) => item.serves ?? 0));
   const limit = people + maxServings - 1;
-  const dp: Array<IPath | undefined> = Array.from({ length: limit + 1 });
+  const dp: (IPath | undefined)[] = Array.from({ length: limit + 1 });
   dp[0] = { cost: 0, count: 0, ids: [] };
   for (let covered = 0; covered <= limit; covered += 1) {
     const current = dp[covered];
-    if (current === undefined) continue;
+    if (current === undefined) {
+      continue;
+    }
     for (const item of eligible) {
       const servings = item.serves;
       const price = item.priceCentavos;
-      if (servings === null || price === null) continue;
+      if (servings === null || price === null) {
+        continue;
+      }
       const next = covered + servings;
-      if (next > limit) continue;
+      if (next > limit) {
+        continue;
+      }
       const ids = [...current.ids, item.id].sort();
       const candidate = {
         cost: current.cost + price,
         count: current.count + 1,
         ids,
       };
-      if (preferred(candidate, dp[next])) dp[next] = candidate;
+      if (preferred(candidate, dp[next])) {
+        dp[next] = candidate;
+      }
     }
   }
 
   let winner: { covered: number; path: IPath } | undefined;
   for (let covered = people; covered <= limit; covered += 1) {
     const path = dp[covered];
-    if (path === undefined) continue;
+    if (path === undefined) {
+      continue;
+    }
     const current = winner;
     if (
       current === undefined ||
@@ -84,10 +104,13 @@ export function estimateGroup(
       winner = { covered, path };
     }
   }
-  if (winner === undefined) return null;
+  if (winner === undefined) {
+    return null;
+  }
   const quantities = new Map<string, number>();
-  for (const id of winner.path.ids)
+  for (const id of winner.path.ids) {
     quantities.set(id, (quantities.get(id) ?? 0) + 1);
+  }
   const lines = eligible
     .filter((item) => quantities.has(item.id))
     .map((item) => {
@@ -115,6 +138,6 @@ export function pesos(centavos: number): string {
 
 export function orderSummary(estimate: IGroupEstimate): string {
   return estimate.lines
-    .map((line) => `${line.quantity} × ${line.name}`)
+    .map((line) => `${String(line.quantity)} × ${line.name}`)
     .join(', ');
 }

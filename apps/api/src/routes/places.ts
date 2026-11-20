@@ -18,8 +18,9 @@ const PLACE_COLUMNS = `
 
 export const placesRouter = new Hono()
   .get('/', async (c) => {
-    if (database === null)
+    if (database === null) {
       return c.json({ error: 'Place catalog is not configured' }, 503);
+    }
     const result = await database.query<Record<string, unknown>>(
       `SELECT ${PLACE_COLUMNS}, f.icon_key AS "iconKey",
         COALESCE((
@@ -46,8 +47,9 @@ export const placesRouter = new Hono()
     if (slug.length > 120 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
       return c.json({ error: 'Invalid place slug' }, 400);
     }
-    if (database === null)
+    if (database === null) {
       return c.json({ error: 'Place catalog is not configured' }, 503);
+    }
 
     const result = await database.query<Record<string, unknown>>(
       `SELECT ${PLACE_COLUMNS}
@@ -56,7 +58,9 @@ export const placesRouter = new Hono()
       [slug],
     );
     const place = result.rows[0];
-    if (place === undefined) return c.json({ error: 'Place not found' }, 404);
+    if (place === undefined) {
+      return c.json({ error: 'Place not found' }, 404);
+    }
     c.header('Cache-Control', 'public, max-age=60');
     return c.json(place);
   });
