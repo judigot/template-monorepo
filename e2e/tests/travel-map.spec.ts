@@ -62,6 +62,14 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   expect(mapBox.height).toBeGreaterThan(700);
   expect(menuBox.y).toBeGreaterThan(mapBox.y);
   expect(menuBox.y + menuBox.height).toBeLessThan(mapBox.y + mapBox.height);
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  const x = menuBox.x + menuBox.width / 2;
+  const y = menuBox.y + menuBox.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x, y - 250, { steps: 12 });
+  await page.mouse.up();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
   await menu.click();
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
   await menu.click();

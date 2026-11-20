@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Animated,
   Image,
   Linking,
   Modal,
+  PanResponder,
   Pressable,
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import {
@@ -405,7 +408,50 @@ export function FeaturedPlace() {
   const scheme = useSystemScheme();
   const insets = useSafeAreaInsets();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [sheetProgress] = useState(() => new Animated.Value(0));
+  const dragStart = useRef(0);
+  const { height } = useWindowDimensions();
+  const sheetTravel = Math.max(1, Math.min(420, height * 0.45));
+  const settleMenu = useCallback(
+    (open: boolean) => {
+      setMenuOpen(open);
+      Animated.timing(sheetProgress, {
+        toValue: open ? 1 : 0,
+        duration: 180,
+        useNativeDriver: false,
+      }).start();
+    },
+    [sheetProgress],
+  );
+  const handleDrag = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponderCapture: (_, { dx, dy }) =>
+          Math.abs(dy) > 4 && Math.abs(dy) > Math.abs(dx),
+        onPanResponderGrant: () => {
+          sheetProgress.stopAnimation((value: number) => {
+            dragStart.current = value;
+          });
+        },
+        onPanResponderMove: (_, { dy }) => {
+          sheetProgress.setValue(
+            Math.max(0, Math.min(1, dragStart.current - dy / sheetTravel)),
+          );
+        },
+        onPanResponderRelease: (_, { dy, vy }) => {
+          const open =
+            Math.abs(vy) > 0.35
+              ? vy < 0
+              : dragStart.current - dy / sheetTravel >= 0.5;
+          settleMenu(open);
+        },
+        onPanResponderTerminate: () => {
+          settleMenu(menuOpen);
+        },
+      }),
+    [menuOpen, settleMenu, sheetProgress, sheetTravel],
+  );
   const { explore, setExplore, isSaved, toggleSaved } = useTravel();
   const [places, setPlaces] = useState<readonly ICuratedPlace[]>(
     OFFLINE_CURATED_PLACES,
@@ -505,6 +551,7 @@ export function FeaturedPlace() {
   const selectedMatch =
     matches.find(({ place }) => place.slug === selected) ?? null;
   const locate = (place: ICuratedPlace) => {
+    settleMenu(false);
     setSelected(null);
     setFocus((previous) => ({
       longitude: place.longitude,
@@ -742,14 +789,17 @@ export function FeaturedPlace() {
           </XStack>
         </YStack>
       </YStack>
-      <View
+      <Animated.View
         style={{
           position: 'absolute',
           left: 12,
           right: 12,
-          bottom: 32,
+          bottom: 24,
           maxWidth: 460,
-          height: menuOpen ? '30%' : 46,
+          height: sheetProgress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [48, 48 + sheetTravel],
+          }),
           borderRadius: 18,
           overflow: 'hidden',
           borderWidth: 1,
@@ -757,31 +807,39 @@ export function FeaturedPlace() {
           backgroundColor: colors.surface,
         }}
       >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Matching places and menu items"
-          aria-expanded={menuOpen}
-          onPress={() => {
-            setMenuOpen(!menuOpen);
-          }}
-          style={{
-            paddingHorizontal: 16,
-            minHeight: 44,
-            justifyContent: 'center',
-          }}
-        >
-          <XStack justify="space-between" items="center">
-            <Text fontWeight="800" style={{ color: colors.ink }}>
+        <View {...handleDrag.panHandlers} style={{ touchAction: 'none' }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Matching places and menu items"
+            aria-expanded={menuOpen}
+            onPress={() => {
+              settleMenu(!menuOpen);
+            }}
+            style={{
+              height: 46,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View
+              style={{
+                width: 40,
+                height: 4,
+                borderRadius: 2,
+                marginBottom: 4,
+                backgroundColor: colors.muted,
+              }}
+            />
+            <Text fontWeight="700" style={{ color: colors.ink }}>
               {String(matches.length)}{' '}
               {matches.length === 1 ? 'place' : 'places'}
             </Text>
-            <Text style={{ color: colors.accent }}>
-              {menuOpen ? 'Hide menu' : 'Show menu'}
-            </Text>
-          </XStack>
-        </Pressable>
+          </Pressable>
+        </View>
         <ScrollView
-          style={{ flex: 1, display: menuOpen ? 'flex' : 'none' }}
+          style={{ flex: 1 }}
+          aria-hidden={!menuOpen}
+          importantForAccessibility={menuOpen ? 'auto' : 'no-hide-descendants'}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: 16,
@@ -914,7 +972,7 @@ export function FeaturedPlace() {
             </YStack>
           ) : null}
         </ScrollView>
-      </View>
+      </Animated.View>
       <VenueDetails
         match={selectedMatch}
         people={explore.people}
