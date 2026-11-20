@@ -70,7 +70,6 @@ function DirectionsButton({
   compact?: boolean;
 }) {
   const colors = useTravelColors();
-  const scheme = useSystemScheme();
   return (
     <Pressable
       accessibilityRole="link"
@@ -85,8 +84,9 @@ function DirectionsButton({
         paddingHorizontal: compact ? 10 : 14,
         minHeight: 40,
         borderRadius: 12,
-
-        backgroundColor: colors.surface,
+        backgroundColor: colors.accentSoft,
+        borderWidth: 1,
+        borderColor: colors.accent,
       }}
     >
       <Image
@@ -96,9 +96,47 @@ function DirectionsButton({
       <Text
         fontSize={compact ? 12 : 13}
         fontWeight="700"
-        style={{ color: scheme === 'dark' ? '#fff' : colors.ink }}
+        style={{ color: colors.accent }}
       >
         Directions
+      </Text>
+    </Pressable>
+  );
+}
+
+function SavePlaceButton({
+  saved,
+  onPress,
+  compact = false,
+}: {
+  saved: boolean;
+  onPress: () => void;
+  compact?: boolean;
+}) {
+  const colors = useTravelColors();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={saved ? 'Remove saved place' : 'Save place'}
+      accessibilityState={{ selected: saved }}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        width: compact ? 40 : 44,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 12,
+        backgroundColor: pressed ? colors.accentSoft : colors.surface,
+        borderWidth: 1,
+        borderColor: saved ? colors.favorite : colors.line,
+      })}
+    >
+      <Text
+        fontSize={28}
+        fontWeight="700"
+        style={{ color: saved ? colors.favorite : colors.ink, lineHeight: 32 }}
+      >
+        {saved ? '♥' : '♡'}
       </Text>
     </Pressable>
   );
@@ -201,9 +239,7 @@ function VenueDetails({
                 Locate on map
               </TravelButton>
               <DirectionsButton url={match.place.directionsUrl} />
-              <TravelButton onPress={onSave} labelColor={colors.accent}>
-                {saved ? '♥ Saved' : '♡ Save place'}
-              </TravelButton>
+              <SavePlaceButton saved={saved} onPress={onSave} />
             </XStack>
             <Text fontSize={19} fontWeight="800" style={{ color: colors.ink }}>
               Menu and prices
@@ -415,14 +451,7 @@ function VenueCard({
           ⌖ Show on map
         </TravelButton>
         <DirectionsButton url={match.place.directionsUrl} compact />
-        <TravelButton
-          size="sm"
-          onPress={onSave}
-          aria-label="Save venue"
-          labelColor={colors.accent}
-        >
-          {saved ? '♥' : '♡'}
-        </TravelButton>
+        <SavePlaceButton saved={saved} onPress={onSave} compact />
       </XStack>
     </YStack>
   );
