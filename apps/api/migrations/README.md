@@ -3,11 +3,13 @@
 Run these migrations in order with a direct connection to the target Neon
 branch. The Better Auth migration must have created `public."user"` before
 the catalog migration runs. Apply the numbered schema migration once per
-database. The second migration is an optional, repeatable demo seed. Apply migration 003 after 002, and rerun 003 to refresh the November 2026 Tatang's menu.
+database. The second migration is an optional, repeatable demo seed. Apply migration 003 after 002, then 004 for RBAC and editable catalogs. The August 2026 Tatang's photo prices are seeded without overwriting later owner edits.
 
 ```sh
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/migrations/001_wanderapp_places.sql
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/migrations/002_seed_tatangs.sql\npsql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/migrations/003_wanderapp_explore_menu.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/migrations/002_seed_tatangs.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/migrations/003_wanderapp_explore_menu.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/migrations/004_wanderapp_management.sql
 ```
 
 The catalog lives in the `wanderapp` schema. A published place has a stable

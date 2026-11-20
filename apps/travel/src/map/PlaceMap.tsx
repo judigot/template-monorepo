@@ -1,8 +1,15 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import type { Marker as MapMarker, Map as MapView } from 'maplibre-gl';
+import mapPackage from 'maplibre-gl/package.json';
 import { useEffect, useRef, useState } from 'react';
-import { type IExploreMapProps, MAP_STYLE } from './place';
+import { type IExploreMapProps, MAP_STYLES } from './place';
+
+// Keep MapLibre's published renderer and its worker together as browser modules.
+function loadRenderer(): Promise<typeof import('maplibre-gl')> {
+  const url = `/maplibre/${mapPackage.version}/maplibre-gl.mjs`;
+  return import(/* @metro-ignore */ url);
+}
 
 export function PlaceMap({
   places,
@@ -10,12 +17,16 @@ export function PlaceMap({
   onOpen,
   onViewChange,
   onError,
+  dark,
+  focus,
 }: IExploreMapProps) {
   const container = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const mapRef = useRef<MapView | null>(null);
   const markersRef = useRef<MapMarker[]>([]);
   const initialCamera = useRef(camera);
+  const initialDark = useRef(dark);
+  const activeStyle = useRef<string | null>(null);
   const onOpenRef = useRef(onOpen);
   const onViewChangeRef = useRef(onViewChange);
   const onErrorRef = useRef(onError);
@@ -31,22 +42,22 @@ export function PlaceMap({
       return;
     }
     let disposed = false;
-    void import('maplibre-gl')
-      .then(({ getVersion, Map, NavigationControl, setWorkerUrl }) => {
+    void loadRenderer()
+      .then(({ Map, NavigationControl }) => {
         if (disposed) {
           return;
         }
-        setWorkerUrl(
-          `https://cdn.jsdelivr.net/npm/maplibre-gl@${getVersion()}/dist/maplibre-gl-worker.mjs`,
-        );
         const map = new Map({
           container: node,
-          style: MAP_STYLE,
+          style: initialDark.current ? MAP_STYLES.dark : MAP_STYLES.light,
           center: initialCamera.current.center,
           zoom: initialCamera.current.zoom,
           cooperativeGestures: false,
         });
         mapRef.current = map;
+        activeStyle.current = initialDark.current
+          ? MAP_STYLES.dark
+          : MAP_STYLES.light;
         setReady(true);
         const report = () => {
           const bounds = map.getBounds();
@@ -62,17 +73,19 @@ export function PlaceMap({
             },
           });
         };
-        map.on('load', report);
-        map.on('moveend', report);
-        map.on('error', () => {
-          if (map.isStyleLoaded() !== true) {
+        map.on('error', (event) => {
+          if (map.isStyleLoaded() !== true && !('tile' in event)) {
+            console.warn('Explore map style failed to load', event.error);
             onErrorRef.current();
           }
         });
+        map.on('load', report);
+        map.on('moveend', report);
         map.addControl(new NavigationControl({ showCompass: false }));
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!disposed) {
+          console.warn('Explore map initialization failed', error);
           onErrorRef.current();
         }
       });
@@ -82,12 +95,13 @@ export function PlaceMap({
       markersRef.current = [];
       mapRef.current?.remove();
       mapRef.current = null;
+      activeStyle.current = null;
     };
   }, []);
 
   useEffect(() => {
     let cancelled = false;
-    void import('maplibre-gl')
+    void loadRenderer()
       .then(({ Marker }) => {
         if (cancelled) {
           return;
@@ -104,7 +118,10 @@ export function PlaceMap({
           element.setAttribute('aria-label', `Open ${place.name}`);
           element.title = place.name;
           element.style.cssText =
-            'background:#fff;border:2px solid #b4233d;border-radius:22px;padding:6px 10px;box-shadow:0 2px 8px #0003;cursor:pointer;font-size:14px;font-weight:700;white-space:nowrap';
+            (dark
+              ? 'background:#142337;color:#f6fbfa;border:2px solid #4fd1c5;'
+              : 'background:#fff;color:#122b31;border:2px solid #0f766e;') +
+            'border-radius:24px;padding:7px 11px;box-shadow:0 3px 12px #0003;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap';
           element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0] ?? place.name}`;
           element.addEventListener('click', () => {
             onOpenRef.current(place);
@@ -122,7 +139,27 @@ export function PlaceMap({
     return () => {
       cancelled = true;
     };
-  }, [places, ready]);
+  }, [places, ready, dark]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    const nextStyle = dark ? MAP_STYLES.dark : MAP_STYLES.light;
+    if (map !== null && activeStyle.current !== nextStyle) {
+      activeStyle.current = nextStyle;
+      map.setStyle(nextStyle);
+    }
+  }, [dark, ready]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map !== null && focus !== null) {
+      map.flyTo({
+        center: [focus.longitude, focus.latitude],
+        zoom: Math.max(16, map.getZoom()),
+        duration: 720,
+      });
+    }
+  }, [focus]);
 
   return (
     <section

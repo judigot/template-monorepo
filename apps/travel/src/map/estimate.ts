@@ -45,6 +45,7 @@ export function estimateGroup(
     .filter(
       (item) =>
         item.eligible &&
+        item.available !== false &&
         item.priceCentavos !== null &&
         Number.isSafeInteger(item.priceCentavos) &&
         item.priceCentavos > 0 &&

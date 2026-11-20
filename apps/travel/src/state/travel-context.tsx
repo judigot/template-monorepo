@@ -28,7 +28,7 @@ export function TravelProvider({ children }: { children: ReactNode }) {
   const [savedIds, setSavedIds] = useState<readonly string[]>([]);
   const [explore, setExplore] = useState<IExploreState>({
     budget: 500,
-    people: 2,
+    people: 1,
     camera: {
       center: [123.900296875, 10.3318875],
       zoom: 15.5,
