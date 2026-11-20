@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Image,
@@ -410,7 +410,6 @@ export function FeaturedPlace() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [sheetProgress] = useState(() => new Animated.Value(0));
-  const dragStart = useRef(0);
   const { height } = useWindowDimensions();
   const sheetTravel = Math.max(1, Math.min(420, height * 0.45));
   const settleMenu = useCallback(
@@ -424,34 +423,33 @@ export function FeaturedPlace() {
     },
     [sheetProgress],
   );
-  const handleDrag = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponderCapture: (_, { dx, dy }) =>
-          Math.abs(dy) > 4 && Math.abs(dy) > Math.abs(dx),
-        onPanResponderGrant: () => {
-          sheetProgress.stopAnimation((value: number) => {
-            dragStart.current = value;
-          });
-        },
-        onPanResponderMove: (_, { dy }) => {
-          sheetProgress.setValue(
-            Math.max(0, Math.min(1, dragStart.current - dy / sheetTravel)),
-          );
-        },
-        onPanResponderRelease: (_, { dy, vy }) => {
-          const open =
-            Math.abs(vy) > 0.35
-              ? vy < 0
-              : dragStart.current - dy / sheetTravel >= 0.5;
-          settleMenu(open);
-        },
-        onPanResponderTerminate: () => {
-          settleMenu(menuOpen);
-        },
-      }),
-    [menuOpen, settleMenu, sheetProgress, sheetTravel],
-  );
+  const handleDrag = useMemo(() => {
+    let dragStart = 0;
+    return PanResponder.create({
+      onMoveShouldSetPanResponderCapture: (_, { dx, dy }) =>
+        Math.abs(dy) > 4 && Math.abs(dy) > Math.abs(dx),
+      onPanResponderGrant: () => {
+        sheetProgress.stopAnimation((value: number) => {
+          dragStart = value;
+        });
+      },
+      onPanResponderMove: (_, { dy }) => {
+        sheetProgress.setValue(
+          Math.max(0, Math.min(1, dragStart - dy / sheetTravel)),
+        );
+      },
+      onPanResponderRelease: (_, { dy, vy }) => {
+        const open =
+          Math.abs(vy) > 0.35
+            ? vy < 0
+            : dragStart - dy / sheetTravel >= 0.5;
+        settleMenu(open);
+      },
+      onPanResponderTerminate: () => {
+        settleMenu(menuOpen);
+      },
+    });
+  }, [menuOpen, settleMenu, sheetProgress, sheetTravel]);
   const { explore, setExplore, isSaved, toggleSaved } = useTravel();
   const [places, setPlaces] = useState<readonly ICuratedPlace[]>(
     OFFLINE_CURATED_PLACES,

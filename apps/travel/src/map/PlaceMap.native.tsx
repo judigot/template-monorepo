@@ -6,7 +6,7 @@ import {
   Marker,
 } from '@maplibre/maplibre-react-native';
 import { useEffect, useRef } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { type IExploreMapProps, MAP_STYLES } from './place';
 
 export function PlaceMap({
@@ -58,15 +58,18 @@ export function PlaceMap({
       {places.map((place) => (
         <Marker
           key={place.slug}
+          id={place.slug}
           lngLat={[place.longitude, place.latitude]}
           anchor="bottom"
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${place.name}`}
+          onPress={() => {
+            onOpen(place);
+          }}
         >
-          <Pressable
-            onPress={() => {
-              onOpen(place);
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={`Open ${place.name}`}
+          <View
+            collapsable={false}
+            pointerEvents="none"
             style={[
               styles.marker,
               dark ? styles.markerDark : styles.markerLight,
@@ -84,7 +87,7 @@ export function PlaceMap({
             >
               {place.name.split(' ')[0]}
             </Text>
-          </Pressable>
+          </View>
         </Marker>
       ))}
     </Map>
