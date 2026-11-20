@@ -92,7 +92,7 @@ export function PlaceMap({
 }
 
 const styles = StyleSheet.create({
-  map: { ...StyleSheet.absoluteFillObject },
+  map: { width: '100%', height: '100%' },
   marker: {
     flexDirection: 'row',
     alignItems: 'center',
