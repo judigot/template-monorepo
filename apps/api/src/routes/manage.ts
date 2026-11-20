@@ -50,7 +50,11 @@ const menuSchema = z
     },
   );
 
-interface IActor { id: string; email: string; admin: boolean }
+interface IActor {
+  id: string;
+  email: string;
+  admin: boolean;
+}
 interface IEnv {
   Variables: { actor: IActor; pool: NonNullable<typeof database> };
 }
