@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-export interface MenuHandleProps {
+export interface IMenuHandleProps {
   children: ReactNode;
   open: boolean;
   onToggle: () => void;

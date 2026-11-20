@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import type { MenuHandleProps } from './menu-handle-props';
+import type { IMenuHandleProps } from './menu-handle-props';
 
 export function MenuHandle({
   children,
@@ -7,7 +7,7 @@ export function MenuHandle({
   onToggle,
   onDrag,
   onRelease,
-}: MenuHandleProps) {
+}: IMenuHandleProps) {
   const start = useRef<number | null>(null);
   const dragged = useRef(false);
   return (

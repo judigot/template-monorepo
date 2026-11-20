@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Pressable } from 'react-native';
-import type { MenuHandleProps } from './menu-handle-props';
+import type { IMenuHandleProps } from './menu-handle-props';
 
 export function MenuHandle({
   children,
@@ -8,7 +8,7 @@ export function MenuHandle({
   onToggle,
   onDrag,
   onRelease,
-}: MenuHandleProps) {
+}: IMenuHandleProps) {
   const start = useRef(0);
   const dragged = useRef(false);
   return (
