@@ -4,7 +4,6 @@ import {
   Image,
   Linking,
   Modal,
-  PanResponder,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -33,6 +32,7 @@ import {
   orderSummary,
   pesos,
 } from './estimate';
+import { MenuHandle } from './MenuHandle';
 import { PlaceMap } from './PlaceMap';
 import type { IExploreCamera } from './place';
 
@@ -423,31 +423,6 @@ export function FeaturedPlace() {
     },
     [sheetProgress],
   );
-  const handleDrag = useMemo(() => {
-    let dragStart = 0;
-    return PanResponder.create({
-      onMoveShouldSetPanResponderCapture: (_, { dx, dy }) =>
-        Math.abs(dy) > 4 && Math.abs(dy) > Math.abs(dx),
-      onPanResponderGrant: () => {
-        sheetProgress.stopAnimation((value: number) => {
-          dragStart = value;
-        });
-      },
-      onPanResponderMove: (_, { dy }) => {
-        sheetProgress.setValue(
-          Math.max(0, Math.min(1, dragStart - dy / sheetTravel)),
-        );
-      },
-      onPanResponderRelease: (_, { dy, vy }) => {
-        const open =
-          Math.abs(vy) > 0.35 ? vy < 0 : dragStart - dy / sheetTravel >= 0.5;
-        settleMenu(open);
-      },
-      onPanResponderTerminate: () => {
-        settleMenu(menuOpen);
-      },
-    });
-  }, [menuOpen, settleMenu, sheetProgress, sheetTravel]);
   const { explore, setExplore, isSaved, toggleSaved } = useTravel();
   const [places, setPlaces] = useState<readonly ICuratedPlace[]>(
     OFFLINE_CURATED_PLACES,
@@ -803,35 +778,35 @@ export function FeaturedPlace() {
           backgroundColor: colors.surface,
         }}
       >
-        <View {...handleDrag.panHandlers} style={{ touchAction: 'none' }}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Matching places and menu items"
-            aria-expanded={menuOpen}
-            onPress={() => {
-              settleMenu(!menuOpen);
-            }}
+        <MenuHandle
+          open={menuOpen}
+          onToggle={() => {
+            settleMenu(!menuOpen);
+          }}
+          onDrag={(dy) => {
+            const start = menuOpen ? 1 : 0;
+            sheetProgress.setValue(
+              Math.max(0, Math.min(1, start - dy / sheetTravel)),
+            );
+          }}
+          onRelease={(dy) => {
+            settleMenu(Math.abs(dy) < 24 ? menuOpen : dy < 0);
+          }}
+        >
+          <View
             style={{
-              height: 46,
-              alignItems: 'center',
-              justifyContent: 'center',
+              width: 40,
+              height: 4,
+              borderRadius: 2,
+              marginBottom: 4,
+              backgroundColor: colors.muted,
             }}
-          >
-            <View
-              style={{
-                width: 40,
-                height: 4,
-                borderRadius: 2,
-                marginBottom: 4,
-                backgroundColor: colors.muted,
-              }}
-            />
-            <Text fontWeight="700" style={{ color: colors.ink }}>
-              {String(matches.length)}{' '}
-              {matches.length === 1 ? 'place' : 'places'}
-            </Text>
-          </Pressable>
-        </View>
+          />
+          <Text fontWeight="700" style={{ color: colors.ink }}>
+            {String(matches.length)}{' '}
+            {matches.length === 1 ? 'place' : 'places'}
+          </Text>
+        </MenuHandle>
         <ScrollView
           style={{ flex: 1 }}
           aria-hidden={!menuOpen}
