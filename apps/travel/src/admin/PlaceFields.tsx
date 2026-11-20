@@ -143,18 +143,78 @@ export function PlaceFields({
           placeholder="venue-name"
         />
       ) : null}
-      <Field label="Venue name" value={draft.name} onChange={(value) => { update('name', value); }} />
-      <Field label="Description" value={draft.description} onChange={(value) => { update('description', value); }} />
-      <Field label="Category" value={draft.category} onChange={(value) => { update('category', value); }} />
-      <Field label="Street address" value={draft.address} onChange={(value) => { update('address', value); }} />
-      <Field label="Locality" value={draft.locality} onChange={(value) => { update('locality', value); }} />
-      <Field label="Latitude" value={draft.latitude} keyboardType="numeric" onChange={(value) => { update('latitude', value); }} />
-      <Field label="Longitude" value={draft.longitude} keyboardType="numeric" onChange={(value) => { update('longitude', value); }} />
-      <Field label="Google Maps directions URL" value={draft.directionsUrl}
-        onChange={(value) => { update('directionsUrl', value); }} />
-      <Field label="Cover image HTTPS URL (optional)" value={draft.coverImageUrl}
-        onChange={(value) => { update('coverImageUrl', value); }} />
-      <Field label="Map icon key" value={draft.iconKey} onChange={(value) => { update('iconKey', value); }} />
+      <Field
+        label="Venue name"
+        value={draft.name}
+        onChange={(value) => {
+          update('name', value);
+        }}
+      />
+      <Field
+        label="Description"
+        value={draft.description}
+        onChange={(value) => {
+          update('description', value);
+        }}
+      />
+      <Field
+        label="Category"
+        value={draft.category}
+        onChange={(value) => {
+          update('category', value);
+        }}
+      />
+      <Field
+        label="Street address"
+        value={draft.address}
+        onChange={(value) => {
+          update('address', value);
+        }}
+      />
+      <Field
+        label="Locality"
+        value={draft.locality}
+        onChange={(value) => {
+          update('locality', value);
+        }}
+      />
+      <Field
+        label="Latitude"
+        value={draft.latitude}
+        keyboardType="numeric"
+        onChange={(value) => {
+          update('latitude', value);
+        }}
+      />
+      <Field
+        label="Longitude"
+        value={draft.longitude}
+        keyboardType="numeric"
+        onChange={(value) => {
+          update('longitude', value);
+        }}
+      />
+      <Field
+        label="Google Maps directions URL"
+        value={draft.directionsUrl}
+        onChange={(value) => {
+          update('directionsUrl', value);
+        }}
+      />
+      <Field
+        label="Cover image HTTPS URL (optional)"
+        value={draft.coverImageUrl}
+        onChange={(value) => {
+          update('coverImageUrl', value);
+        }}
+      />
+      <Field
+        label="Map icon key"
+        value={draft.iconKey}
+        onChange={(value) => {
+          update('iconKey', value);
+        }}
+      />
     </YStack>
   );
 }

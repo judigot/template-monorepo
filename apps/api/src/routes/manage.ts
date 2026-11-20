@@ -315,10 +315,23 @@ manageRouter.put('/places/:slug/items/:itemId', async (c) => {
          source_month = excluded.source_month, source_reference = excluded.source_reference,
          section = excluded.section, available = excluded.available,
          updated_at = now()`,
-      [placeId, itemId.data, p.name, p.variant, p.priceCentavos,
-        p.serves, p.eligible, p.servingBasis, p.section, p.available],
+      [
+        placeId,
+        itemId.data,
+        p.name,
+        p.variant,
+        p.priceCentavos,
+        p.serves,
+        p.eligible,
+        p.servingBasis,
+        p.section,
+        p.available,
+      ],
     );
-    await logChange(client, actor, placeId, 'menu.item.upserted', { itemId: itemId.data, priceCentavos: p.priceCentavos });
+    await logChange(client, actor, placeId, 'menu.item.upserted', {
+      itemId: itemId.data,
+      priceCentavos: p.priceCentavos,
+    });
     await client.query('COMMIT');
     return c.json({ saved: true, id: itemId.data });
   } catch (error) {
@@ -333,9 +346,11 @@ manageRouter.get('/admins', async (c) => {
   if (!c.get('actor').admin) {
     return c.json({ error: 'Administrator permission required' }, 403);
   }
-  const result = await c.get('pool').query<{ email: string }>(
-    'SELECT email FROM wanderapp.admin_grants ORDER BY email',
-  );
+  const result = await c
+    .get('pool')
+    .query<{ email: string }>(
+      'SELECT email FROM wanderapp.admin_grants ORDER BY email',
+    );
   return c.json({ admins: result.rows });
 });
 
@@ -344,7 +359,9 @@ manageRouter.post('/admins', async (c) => {
   if (!actor.admin) {
     return c.json({ error: 'Administrator permission required' }, 403);
   }
-  const body = z.strictObject({ email: emailSchema }).safeParse(await c.req.json());
+  const body = z
+    .strictObject({ email: emailSchema })
+    .safeParse(await c.req.json());
   if (!body.success) {
     return c.json({ error: 'Valid email required' }, 400);
   }
@@ -371,9 +388,14 @@ manageRouter.delete('/admins/:email', async (c) => {
     return c.json({ error: 'Invalid email' }, 400);
   }
   if (email.data === actor.email || email.data === 'judigot@gmail.com') {
-    return c.json({ error: 'Cannot revoke the current or bootstrap administrator' }, 403);
+    return c.json(
+      { error: 'Cannot revoke the current or bootstrap administrator' },
+      403,
+    );
   }
-  await c.get('pool').query('DELETE FROM wanderapp.admin_grants WHERE email = $1', [email.data]);
+  await c
+    .get('pool')
+    .query('DELETE FROM wanderapp.admin_grants WHERE email = $1', [email.data]);
   return c.json({ revoked: true });
 });
 
@@ -394,15 +416,18 @@ manageRouter.post('/places/:slug/owners', async (c) => {
   if (!actor.admin) {
     return c.json({ error: 'Administrator permission required' }, 403);
   }
-  const body = z.strictObject({ email: emailSchema }).safeParse(await c.req.json());
+  const body = z
+    .strictObject({ email: emailSchema })
+    .safeParse(await c.req.json());
   const slug = slugSchema.safeParse(c.req.param('slug'));
   if (!body.success || !slug.success) {
     return c.json({ error: 'Valid place and email required' }, 400);
   }
-  const result = await c.get('pool').query<{ id: string }>(
-    'SELECT id FROM wanderapp.places WHERE slug = $1',
-    [slug.data],
-  );
+  const result = await c
+    .get('pool')
+    .query<{ id: string }>('SELECT id FROM wanderapp.places WHERE slug = $1', [
+      slug.data,
+    ]);
   const placeId = result.rows[0]?.id;
   if (placeId === undefined) {
     return c.json({ error: 'Place not found' }, 404);

@@ -148,18 +148,27 @@ export default function SavedScreen() {
                   </Text>
                 </YStack>
               </XStack>
-              <Text fontSize={13} style={{ color: colors.muted }}>{place.description}</Text>
+              <Text fontSize={13} style={{ color: colors.muted }}>
+                {place.description}
+              </Text>
               <XStack gap="2" flexWrap="wrap">
                 <Button
                   size="sm"
-                  onPress={() => { void Linking.openURL(place.directionsUrl); }}
-                  style={{ backgroundColor: colors.accentSoft, color: colors.accent }}
+                  onPress={() => {
+                    void Linking.openURL(place.directionsUrl);
+                  }}
+                  style={{
+                    backgroundColor: colors.accentSoft,
+                    color: colors.accent,
+                  }}
                 >
                   ↗ Google Maps directions
                 </Button>
                 <Button
                   size="sm"
-                  onPress={() => { toggleSaved(place.slug); }}
+                  onPress={() => {
+                    toggleSaved(place.slug);
+                  }}
                   style={{ color: colors.ink }}
                 >
                   Remove saved place
@@ -170,7 +179,8 @@ export default function SavedScreen() {
         </YStack>
       )}
       <Text fontSize={11} style={{ color: colors.muted }}>
-        Saved places are stored in this app session. Account-based synchronization is planned separately.
+        Saved places are stored in this app session. Account-based
+        synchronization is planned separately.
       </Text>
     </Page>
   );

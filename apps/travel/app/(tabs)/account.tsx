@@ -203,103 +203,188 @@ function AuthenticatedAccount() {
         >
           WANDERAPP
         </Text>
-        <Text fontSize={30} fontWeight="800" style={{ color: colors.ink }}>Account</Text>
-        <Text fontSize={14} style={{ color: colors.muted }}>Your profile, preferences, and workspace.</Text>
+        <Text fontSize={30} fontWeight="800" style={{ color: colors.ink }}>
+          Account
+        </Text>
+        <Text fontSize={14} style={{ color: colors.muted }}>
+          Your profile, preferences, and workspace.
+        </Text>
       </YStack>
       {isPending ? (
         <Text style={{ color: colors.muted }}>Checking your session…</Text>
       ) : session?.user ? (
         <YStack gap="4">
-          <YStack gap="3" style={{
-            padding: 20, borderRadius: 22, backgroundColor: colors.surface,
-            borderWidth: 1, borderColor: colors.line,
-          }}>
+          <YStack
+            gap="3"
+            style={{
+              padding: 20,
+              borderRadius: 22,
+              backgroundColor: colors.surface,
+              borderWidth: 1,
+              borderColor: colors.line,
+            }}
+          >
             <XStack gap="3" items="center">
-              <View style={{
-                height: 64, width: 64, borderRadius: 22,
-                backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Text fontWeight="800" fontSize={27} style={{ color: colors.onAccent }}>
+              <View
+                style={{
+                  height: 64,
+                  width: 64,
+                  borderRadius: 22,
+                  backgroundColor: colors.accent,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
+                  fontWeight="800"
+                  fontSize={27}
+                  style={{ color: colors.onAccent }}
+                >
                   {session.user.name?.slice(0, 1).toUpperCase() ?? 'W'}
                 </Text>
               </View>
               <YStack flex={1} gap="1">
-                <Text fontSize={20} fontWeight="800" style={{ color: colors.ink }}>
+                <Text
+                  fontSize={20}
+                  fontWeight="800"
+                  style={{ color: colors.ink }}
+                >
                   {session.user.name || 'Wanderapp member'}
                 </Text>
-                <Text fontSize={12} style={{ color: colors.muted }}>{session.user.email}</Text>
+                <Text fontSize={12} style={{ color: colors.muted }}>
+                  {session.user.email}
+                </Text>
               </YStack>
             </XStack>
             {accessError ? (
               <Text fontSize={12} style={{ color: colors.error }}>
-                Unable to verify account permissions. Management controls are unavailable.
+                Unable to verify account permissions. Management controls are
+                unavailable.
               </Text>
-            ) : access !== null ? <RoleLabel access={access} /> : (
-              <Text fontSize={12} style={{ color: colors.muted }}>Verifying permissions…</Text>
+            ) : access !== null ? (
+              <RoleLabel access={access} />
+            ) : (
+              <Text fontSize={12} style={{ color: colors.muted }}>
+                Verifying permissions…
+              </Text>
             )}
           </YStack>
           <YStack gap="1">
-            <Text fontSize={12} fontWeight="800" letterSpacing={1.5} style={{ color: colors.muted }}>
+            <Text
+              fontSize={12}
+              fontWeight="800"
+              letterSpacing={1.5}
+              style={{ color: colors.muted }}
+            >
               YOUR WORKSPACE
             </Text>
-            <YStack style={{
-              paddingHorizontal: 16, borderRadius: 20, backgroundColor: colors.surface,
-              borderWidth: 1, borderColor: colors.line,
-            }}>
-              {(access?.role === 'admin' || access?.role === 'owner') ? (
+            <YStack
+              style={{
+                paddingHorizontal: 16,
+                borderRadius: 20,
+                backgroundColor: colors.surface,
+                borderWidth: 1,
+                borderColor: colors.line,
+              }}
+            >
+              {access?.role === 'admin' || access?.role === 'owner' ? (
                 <SettingsRow
-                  title={access.role === 'admin' ? 'Manage all places' : 'Manage my restaurants'}
+                  title={
+                    access.role === 'admin'
+                      ? 'Manage all places'
+                      : 'Manage my restaurants'
+                  }
                   description="Update venue details, menus, and prices."
                   symbol="⌂"
-                  onPress={() => { router.push('/manage'); }}
+                  onPress={() => {
+                    router.push('/manage');
+                  }}
                 />
               ) : (
-                <SettingsRow title="Your places" description="Explore and save places you love." symbol="⌂" />
+                <SettingsRow
+                  title="Your places"
+                  description="Explore and save places you love."
+                  symbol="⌂"
+                />
               )}
               {access?.role === 'admin' ? (
                 <SettingsRow
                   title="People and access"
                   description="Add administrators and assign restaurant owners."
                   symbol="♙"
-                  onPress={() => { router.push('/manage'); }}
+                  onPress={() => {
+                    router.push('/manage');
+                  }}
                 />
               ) : null}
-              <SettingsRow title="Appearance" description="Automatically follows your device theme." symbol="◐" />
-              <SettingsRow title="Secure sign-in" description="Google account authentication." symbol="◇" />
+              <SettingsRow
+                title="Appearance"
+                description="Automatically follows your device theme."
+                symbol="◐"
+              />
+              <SettingsRow
+                title="Secure sign-in"
+                description="Google account authentication."
+                symbol="◇"
+              />
             </YStack>
           </YStack>
           <Button
             disabled={busy}
-            onPress={() => { void signOut(); }}
-            style={{ backgroundColor: colors.surface, color: colors.ink, borderWidth: 1, borderColor: colors.line }}
+            onPress={() => {
+              void signOut();
+            }}
+            style={{
+              backgroundColor: colors.surface,
+              color: colors.ink,
+              borderWidth: 1,
+              borderColor: colors.line,
+            }}
           >
             {busy ? 'Signing out…' : 'Sign out'}
           </Button>
         </YStack>
       ) : (
         <YStack gap="4">
-          <YStack gap="3" style={{
-            padding: 20, borderRadius: 22, backgroundColor: colors.surface,
-            borderWidth: 1, borderColor: colors.line,
-          }}>
-            <Text fontSize={22} fontWeight="800" style={{ color: colors.ink }}>Your travel space</Text>
+          <YStack
+            gap="3"
+            style={{
+              padding: 20,
+              borderRadius: 22,
+              backgroundColor: colors.surface,
+              borderWidth: 1,
+              borderColor: colors.line,
+            }}
+          >
+            <Text fontSize={22} fontWeight="800" style={{ color: colors.ink }}>
+              Your travel space
+            </Text>
             <Text fontSize={14} style={{ color: colors.muted }}>
-              Sign in to manage your profile, saved places, and authorized venue workspace.
+              Sign in to manage your profile, saved places, and authorized venue
+              workspace.
             </Text>
             <Button
               disabled={busy}
               accessibilityLabel="Continue with Google"
-              onPress={() => { void signIn(); }}
+              onPress={() => {
+                void signIn();
+              }}
               style={{ backgroundColor: colors.accent, color: colors.onAccent }}
             >
               {busy ? 'Connecting…' : 'Continue with Google'}
             </Button>
           </YStack>
-          <SettingsRow title="Private and secure" description="Access is linked to a verified Google account." symbol="◇" />
+          <SettingsRow
+            title="Private and secure"
+            description="Access is linked to a verified Google account."
+            symbol="◇"
+          />
         </YStack>
       )}
       {error !== null ? (
-        <Text accessibilityRole="alert" style={{ color: colors.error }}>{error}</Text>
+        <Text accessibilityRole="alert" style={{ color: colors.error }}>
+          {error}
+        </Text>
       ) : null}
     </Page>
   );
@@ -311,9 +396,12 @@ export default function AccountScreen() {
     return (
       <Page>
         <YStack gap="2" style={{ paddingTop: 12 }}>
-          <Text fontSize={30} fontWeight="800" style={{ color: colors.ink }}>Account</Text>
+          <Text fontSize={30} fontWeight="800" style={{ color: colors.ink }}>
+            Account
+          </Text>
           <Text style={{ color: colors.muted }}>
-            Connect the Wanderapp API to enable Google sign-in and secure account management.
+            Connect the Wanderapp API to enable Google sign-in and secure
+            account management.
           </Text>
           <Text fontSize={12} style={{ color: colors.accent }}>
             Configuration required: EXPO_PUBLIC_API_URL

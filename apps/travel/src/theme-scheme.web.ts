@@ -9,7 +9,9 @@ function subscribe(listener: () => void): () => void {
 }
 
 function snapshot(): 'dark' | 'light' {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
 }
 
 export function useSystemScheme(): 'dark' | 'light' {

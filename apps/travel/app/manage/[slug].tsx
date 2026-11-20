@@ -178,16 +178,24 @@ function ItemEditor({
               />
             </YStack>
           ))}
-          <Text fontWeight="700" style={{ color: colors.ink }}>Serving count basis</Text>
+          <Text fontWeight="700" style={{ color: colors.ink }}>
+            Serving count basis
+          </Text>
           <XStack gap="2">
             {(['printed', 'assumed', 'unknown'] as const).map((basis) => (
               <Button
                 key={basis}
                 size="sm"
-                onPress={() => { change('servingBasis', basis); }}
+                onPress={() => {
+                  change('servingBasis', basis);
+                }}
                 style={{
-                  backgroundColor: draft.servingBasis === basis ? colors.accentSoft : colors.surface,
-                  color: draft.servingBasis === basis ? colors.accent : colors.ink,
+                  backgroundColor:
+                    draft.servingBasis === basis
+                      ? colors.accentSoft
+                      : colors.surface,
+                  color:
+                    draft.servingBasis === basis ? colors.accent : colors.ink,
                 }}
               >
                 {basis}
@@ -196,27 +204,43 @@ function ItemEditor({
           </XStack>
           <XStack items="center" justify="space-between">
             <YStack flex={1} gap="1">
-              <Text fontWeight="700" style={{ color: colors.ink }}>Counts toward group budget</Text>
+              <Text fontWeight="700" style={{ color: colors.ink }}>
+                Counts toward group budget
+              </Text>
               <Text fontSize={11} style={{ color: colors.muted }}>
                 Only select if price and servings are known.
               </Text>
             </YStack>
             <Switch
               value={draft.eligible}
-              onValueChange={(value) => { change('eligible', value); }}
+              onValueChange={(value) => {
+                change('eligible', value);
+              }}
               accessibilityLabel="Item qualifies for group budget"
             />
           </XStack>
           <XStack items="center" justify="space-between">
-            <Text fontWeight="700" style={{ color: colors.ink }}>Available on menu</Text>
+            <Text fontWeight="700" style={{ color: colors.ink }}>
+              Available on menu
+            </Text>
             <Switch
               value={draft.available}
-              onValueChange={(value) => { change('available', value); }}
+              onValueChange={(value) => {
+                change('available', value);
+              }}
               accessibilityLabel="Available on menu"
             />
           </XStack>
-          {error !== null ? <Text accessibilityRole="alert" style={{ color: colors.error }}>{error}</Text> : null}
-          <Button disabled={busy} onPress={onSave} style={{ backgroundColor: colors.accent, color: colors.onAccent }}>
+          {error !== null ? (
+            <Text accessibilityRole="alert" style={{ color: colors.error }}>
+              {error}
+            </Text>
+          ) : null}
+          <Button
+            disabled={busy}
+            onPress={onSave}
+            style={{ backgroundColor: colors.accent, color: colors.onAccent }}
+          >
             {busy ? 'Saving…' : 'Publish menu item'}
           </Button>
           <Button onPress={onCancel}>Cancel</Button>
@@ -249,7 +273,9 @@ export default function ManageVenueScreen() {
     void (async () => {
       try {
         const profile = await getAccountAccess();
-        const venue = (await getManagedPlaces()).find((item) => item.slug === slug);
+        const venue = (await getManagedPlaces()).find(
+          (item) => item.slug === slug,
+        );
         if (venue === undefined) {
           throw new Error('You do not have permission to manage this venue.');
         }
@@ -259,7 +285,9 @@ export default function ManageVenueScreen() {
         setOwners(profile.role === 'admin' ? await listOwners(slug) : []);
         setError(null);
       } catch (cause) {
-        setError(cause instanceof Error ? cause.message : 'Could not load venue.');
+        setError(
+          cause instanceof Error ? cause.message : 'Could not load venue.',
+        );
       }
     })();
   }, [slug]);
@@ -277,7 +305,9 @@ export default function ManageVenueScreen() {
       setNotice('Venue details published.');
       refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not save place.');
+      setError(
+        cause instanceof Error ? cause.message : 'Could not save place.',
+      );
     } finally {
       setBusy(false);
     }
@@ -295,7 +325,9 @@ export default function ManageVenueScreen() {
       setNotice('Menu updated and published.');
       refresh();
     } catch (cause) {
-      setItemError(cause instanceof Error ? cause.message : 'Could not save menu item.');
+      setItemError(
+        cause instanceof Error ? cause.message : 'Could not save menu item.',
+      );
     } finally {
       setBusy(false);
     }
@@ -313,7 +345,11 @@ export default function ManageVenueScreen() {
       setNotice('Venue ownership granted to this verified email.');
       refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not assign venue owner.');
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : 'Could not assign venue owner.',
+      );
     } finally {
       setBusy(false);
     }
@@ -322,7 +358,12 @@ export default function ManageVenueScreen() {
   return (
     <Page>
       <YStack gap="1" style={{ paddingTop: 8 }}>
-        <Text fontSize={11} fontWeight="800" letterSpacing={1.4} style={{ color: colors.accent }}>
+        <Text
+          fontSize={11}
+          fontWeight="800"
+          letterSpacing={1.4}
+          style={{ color: colors.accent }}
+        >
           VENUE WORKSPACE
         </Text>
         <Text fontSize={27} fontWeight="800" style={{ color: colors.ink }}>
@@ -332,25 +373,54 @@ export default function ManageVenueScreen() {
           Edit property details and publish accurate menu prices.
         </Text>
       </YStack>
-      {error !== null ? <Text accessibilityRole="alert" style={{ color: colors.error }}>{error}</Text> : null}
-      {notice !== null ? <Text style={{ color: colors.accent }}>{notice}</Text> : null}
+      {error !== null ? (
+        <Text accessibilityRole="alert" style={{ color: colors.error }}>
+          {error}
+        </Text>
+      ) : null}
+      {notice !== null ? (
+        <Text style={{ color: colors.accent }}>{notice}</Text>
+      ) : null}
       {draft !== null && place !== null ? (
-        <YStack gap="3" style={{
-          padding: 16, backgroundColor: colors.surface, borderColor: colors.line,
-          borderWidth: 1, borderRadius: 20,
-        }}>
+        <YStack
+          gap="3"
+          style={{
+            padding: 16,
+            backgroundColor: colors.surface,
+            borderColor: colors.line,
+            borderWidth: 1,
+            borderRadius: 20,
+          }}
+        >
           <XStack justify="space-between" items="center">
-            <Text fontSize={18} fontWeight="800" style={{ color: colors.ink }}>Venue details</Text>
-            <Button size="sm" onPress={() => { setEditingPlace((current) => !current); }}>
+            <Text fontSize={18} fontWeight="800" style={{ color: colors.ink }}>
+              Venue details
+            </Text>
+            <Button
+              size="sm"
+              onPress={() => {
+                setEditingPlace((current) => !current);
+              }}
+            >
               {editingPlace ? 'Collapse' : 'Edit'}
             </Button>
           </XStack>
-          <Text fontSize={12} style={{ color: colors.muted }}>{place.address}</Text>
+          <Text fontSize={12} style={{ color: colors.muted }}>
+            {place.address}
+          </Text>
           {editingPlace ? (
             <YStack gap="3">
               <PlaceFields draft={draft} onChange={setDraft} />
-              <Button disabled={busy} onPress={() => { void updateVenue(); }}
-                style={{ backgroundColor: colors.accent, color: colors.onAccent }}>
+              <Button
+                disabled={busy}
+                onPress={() => {
+                  void updateVenue();
+                }}
+                style={{
+                  backgroundColor: colors.accent,
+                  color: colors.onAccent,
+                }}
+              >
                 {busy ? 'Saving…' : 'Save venue'}
               </Button>
             </YStack>
@@ -359,10 +429,15 @@ export default function ManageVenueScreen() {
       ) : null}
       <YStack gap="3">
         <XStack justify="space-between" items="center">
-          <Text fontSize={18} fontWeight="800" style={{ color: colors.ink }}>Menu and prices</Text>
+          <Text fontSize={18} fontWeight="800" style={{ color: colors.ink }}>
+            Menu and prices
+          </Text>
           <Button
             size="sm"
-            onPress={() => { setItemError(null); setItemDraft({ ...NEW_ITEM }); }}
+            onPress={() => {
+              setItemError(null);
+              setItemDraft({ ...NEW_ITEM });
+            }}
             style={{ backgroundColor: colors.accentSoft, color: colors.accent }}
           >
             + Add item
@@ -372,23 +447,46 @@ export default function ManageVenueScreen() {
           <View
             key={item.id}
             style={{
-              padding: 14, borderWidth: 1, borderColor: colors.line,
-              borderRadius: 16, backgroundColor: colors.surface,
+              padding: 14,
+              borderWidth: 1,
+              borderColor: colors.line,
+              borderRadius: 16,
+              backgroundColor: colors.surface,
             }}
           >
             <XStack items="center" justify="space-between" gap="3">
               <YStack flex={1} gap="1">
-                <Text fontSize={14} fontWeight="800" style={{ color: colors.ink }}>
-                  {item.name}{item.variant === null ? '' : ` · ${item.variant}`}
+                <Text
+                  fontSize={14}
+                  fontWeight="800"
+                  style={{ color: colors.ink }}
+                >
+                  {item.name}
+                  {item.variant === null ? '' : ` · ${item.variant}`}
                 </Text>
                 <Text fontSize={11} style={{ color: colors.muted }}>
-                  {item.section ?? 'Menu'} · {item.available === false ? 'Hidden from catalog' : 'Published'}
+                  {item.section ?? 'Menu'} ·{' '}
+                  {item.available === false
+                    ? 'Hidden from catalog'
+                    : 'Published'}
                 </Text>
               </YStack>
-              <Text fontSize={14} fontWeight="800" style={{ color: colors.accent }}>
-                {item.priceCentavos === null ? 'Ask venue' : pesos(item.priceCentavos)}
+              <Text
+                fontSize={14}
+                fontWeight="800"
+                style={{ color: colors.accent }}
+              >
+                {item.priceCentavos === null
+                  ? 'Ask venue'
+                  : pesos(item.priceCentavos)}
               </Text>
-              <Button size="sm" onPress={() => { setItemError(null); setItemDraft(toDraft(item)); }}>
+              <Button
+                size="sm"
+                onPress={() => {
+                  setItemError(null);
+                  setItemDraft(toDraft(item));
+                }}
+              >
                 Edit
               </Button>
             </XStack>
@@ -396,27 +494,47 @@ export default function ManageVenueScreen() {
         ))}
       </YStack>
       {access?.role === 'admin' && typeof slug === 'string' ? (
-        <YStack gap="3" style={{
-          borderWidth: 1, borderColor: colors.line,
-          backgroundColor: colors.surface, borderRadius: 20, padding: 16,
-        }}>
-          <Text fontSize={18} fontWeight="800" style={{ color: colors.ink }}>Restaurant owners</Text>
+        <YStack
+          gap="3"
+          style={{
+            borderWidth: 1,
+            borderColor: colors.line,
+            backgroundColor: colors.surface,
+            borderRadius: 20,
+            padding: 16,
+          }}
+        >
+          <Text fontSize={18} fontWeight="800" style={{ color: colors.ink }}>
+            Restaurant owners
+          </Text>
           <Text fontSize={12} style={{ color: colors.muted }}>
-            Each assigned owner can edit only this venue and its menu. Invitees must sign in with their verified Google email.
+            Each assigned owner can edit only this venue and its menu. Invitees
+            must sign in with their verified Google email.
           </Text>
           {owners.map((owner) => (
             <XStack key={owner} justify="space-between" items="center">
-              <Text flex={1} fontSize={13} style={{ color: colors.ink }}>{owner}</Text>
-              <Button size="sm" onPress={() => {
-                void (async () => {
-                  try {
-                    await removeOwner(slug, owner);
-                    refresh();
-                  } catch (cause) {
-                    setError(cause instanceof Error ? cause.message : 'Could not revoke owner.');
-                  }
-                })();
-              }}>Revoke</Button>
+              <Text flex={1} fontSize={13} style={{ color: colors.ink }}>
+                {owner}
+              </Text>
+              <Button
+                size="sm"
+                onPress={() => {
+                  void (async () => {
+                    try {
+                      await removeOwner(slug, owner);
+                      refresh();
+                    } catch (cause) {
+                      setError(
+                        cause instanceof Error
+                          ? cause.message
+                          : 'Could not revoke owner.',
+                      );
+                    }
+                  })();
+                }}
+              >
+                Revoke
+              </Button>
             </XStack>
           ))}
           <Input
@@ -427,20 +545,34 @@ export default function ManageVenueScreen() {
             placeholder="owner@example.com"
             accessibilityLabel="New venue owner email"
           />
-          <Button disabled={busy || ownerEmail.trim().length === 0}
-            onPress={() => { void inviteOwner(); }}
-            style={{ backgroundColor: colors.accentSoft, color: colors.accent }}>
+          <Button
+            disabled={busy || ownerEmail.trim().length === 0}
+            onPress={() => {
+              void inviteOwner();
+            }}
+            style={{ backgroundColor: colors.accentSoft, color: colors.accent }}
+          >
             Add restaurant owner
           </Button>
         </YStack>
       ) : null}
-      <Button onPress={() => { router.back(); }}>Back to workspace</Button>
+      <Button
+        onPress={() => {
+          router.back();
+        }}
+      >
+        Back to workspace
+      </Button>
       {itemDraft !== null ? (
         <ItemEditor
           draft={itemDraft}
           onChange={setItemDraft}
-          onCancel={() => { setItemDraft(null); }}
-          onSave={() => { void updateItem(); }}
+          onCancel={() => {
+            setItemDraft(null);
+          }}
+          onSave={() => {
+            void updateItem();
+          }}
           busy={busy}
           error={itemError}
         />
