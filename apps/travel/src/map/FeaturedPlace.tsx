@@ -427,7 +427,7 @@ export function FeaturedPlace() {
                 </Text>
                 <Text fontWeight="700" style={{ color: colors.accent }}>
                   From {pesos(match.estimate.totalCentavos)} for{' '}
-                  {explore.people}   {orderSummary(match.estimate)}
+                  {explore.people} · {orderSummary(match.estimate)}
                 </Text>
                 <Text fontSize={12} style={{ color: colors.muted }}>
                   Menu-based estimate
