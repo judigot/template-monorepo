@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react';
 import { Button } from 'tamagui';
 import { useTravelColors } from '../theme';
-import { useSystemScheme } from '../theme-scheme';
+import { APP_FONT_FAMILY, CONTROL_RADIUS, FONT_WEIGHT } from '../typography';
 
 export function TravelButton({
   children,
@@ -16,32 +16,31 @@ export function TravelButton({
   ComponentProps<typeof Button>,
   'children' | 'size' | 'disabled' | 'onPress' | 'aria-label' | 'aria-expanded'
 > & { labelColor?: string; tone?: 'default' | 'accent' | 'surface' }) {
-  const scheme = useSystemScheme();
   const colors = useTravelColors();
   const backgroundColor =
     tone === 'accent'
       ? colors.accentSoft
-      : tone === 'surface'
-        ? colors.surface
-        : undefined;
-  const foregroundColor =
-    scheme === 'dark'
-      ? colors.ink
-      : (labelColor ??
-        (tone === 'accent'
-          ? colors.accent
-          : tone === 'surface'
-            ? colors.ink
-            : undefined));
+      : colors.surface;
+  const foregroundColor = labelColor ?? (tone === 'accent' ? colors.accent : colors.ink);
   return (
     <Button
       size={size}
       disabled={disabled}
       onPress={onPress}
-      style={{ backgroundColor }}
+      style={{
+        backgroundColor,
+        borderWidth: 0,
+        borderRadius: CONTROL_RADIUS,
+      }}
       aria-label={label}
       aria-expanded={expanded}
-      textProps={{ style: { color: foregroundColor } }}
+      textProps={{
+        style: {
+          color: foregroundColor,
+          fontFamily: APP_FONT_FAMILY,
+          fontWeight: FONT_WEIGHT.semibold,
+        },
+      }}
     >
       {children}
     </Button>
