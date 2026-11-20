@@ -9,6 +9,8 @@ const menuItemSchema = z.object({
   currency: z.literal('PHP'),
   serves: z.number().int().positive().nullable(),
   eligible: z.boolean(),
+  available: z.boolean().optional(),
+  section: z.string().optional(),
   servingBasis: z.enum(['printed', 'assumed', 'unknown']),
   sourceMonth: z.string(),
   sourceReference: z.string(),
@@ -25,6 +27,8 @@ export const curatedPlaceSchema = z.object({
   latitude: z.number().min(-90).max(90),
   directionsUrl: z.url(),
   iconKey: z.string(),
+  category: z.string().optional(),
+  coverImageUrl: z.url().nullable().optional(),
   badges: z.array(
     z.object({
       slug: z.string(),
@@ -37,9 +41,9 @@ export const curatedPlaceSchema = z.object({
 });
 export type ICuratedPlace = z.infer<typeof curatedPlaceSchema>;
 
-const SOURCE_MONTH = '2026-11';
+const SOURCE_MONTH = '2026-08';
 const SOURCE_REFERENCE =
-  "Tatang's Extra Crispy Boneless Cebu Lechon menu photograph (November 2026)";
+  "Tatang's Extra Crispy Boneless Cebu Lechon menu photograph (August 2026)";
 function item(
   id: string,
   name: string,
@@ -66,12 +70,13 @@ function item(
 export const TATANGS_CURATED: ICuratedPlace = {
   ...TATANGS,
   iconKey: 'lechon',
+  category: 'Restaurant',
   menuItems: [
     item(
       'value-belly',
       'Value meal',
       'Lechon belly (2 puso + soft drink)',
-      80,
+      180,
       1,
       'assumed',
     ),
@@ -79,7 +84,7 @@ export const TATANGS_CURATED: ICuratedPlace = {
       'value-sisig',
       'Value meal',
       'Lechon sisig (2 puso + soft drink)',
-      80,
+      180,
       1,
       'assumed',
     ),
@@ -87,7 +92,7 @@ export const TATANGS_CURATED: ICuratedPlace = {
       'value-flakes',
       'Value meal',
       'Lechon flakes (2 puso + soft drink)',
-      80,
+      180,
       1,
       'assumed',
     ),
@@ -150,6 +155,25 @@ export const TATANGS_CURATED: ICuratedPlace = {
 export const OFFLINE_CURATED_PLACES: readonly ICuratedPlace[] = [
   TATANGS_CURATED,
 ];
+
+export function affordableItems(
+  place: ICuratedPlace,
+  budgetCentavos: number,
+  people: number,
+): { item: IMenuItem; groupTotal: number | null; quantity: number | null }[] {
+  return place.menuItems.flatMap((item) => {
+    if (item.available === false || item.priceCentavos === null || item.priceCentavos <= 0) {
+      return [];
+    }
+    const quantity = item.serves === null ? null : Math.ceil(people / item.serves);
+    const groupTotal = quantity === null ? null : quantity * item.priceCentavos;
+    if (groupTotal !== null ? groupTotal > budgetCentavos : item.priceCentavos > budgetCentavos) {
+      return [];
+    }
+    return [{ item, quantity, groupTotal }];
+  }).sort((a, b) => (a.groupTotal ?? a.item.priceCentavos ?? 0) -
+    (b.groupTotal ?? b.item.priceCentavos ?? 0) || a.item.name.localeCompare(b.item.name));
+}
 
 const catalogSchema = z.object({ places: z.array(curatedPlaceSchema) });
 
