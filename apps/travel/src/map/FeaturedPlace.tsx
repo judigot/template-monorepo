@@ -28,6 +28,7 @@ import {
   pesos,
 } from './estimate';
 import { PlaceMap } from './PlaceMap';
+import { mapFrameWidth } from './map-layout';
 import type { IExploreCamera } from './place';
 
 const GOOGLE_MAPS_ICON =
@@ -697,7 +698,7 @@ export function FeaturedPlace() {
       </YStack>
       <View
         style={{
-          width: width > 1040 ? 990 : undefined,
+          width: mapFrameWidth(width),
           alignSelf: 'center',
           height: width > 800 ? 400 : 310,
           marginHorizontal: 16,
@@ -706,42 +707,50 @@ export function FeaturedPlace() {
           backgroundColor: colors.imageFallback,
         }}
       >
+        <PlaceMap
+          key={mapKey}
+          places={matches.map(({ place }) => place)}
+          camera={explore.camera}
+          dark={scheme === 'dark'}
+          focus={focus}
+          onViewChange={onViewChange}
+          onOpen={(place) => {
+            setSelected(place.slug);
+          }}
+          onError={() => {
+            setMapFailed(true);
+          }}
+        />
         {mapFailed ? (
           <YStack
-            flex={1}
             items="center"
-            justify="center"
-            gap="3"
-            style={{ padding: 18 }}
+            gap="2"
+            style={{
+              position: 'absolute',
+              bottom: 12,
+              alignSelf: 'center',
+              maxWidth: '90%',
+              padding: 12,
+              borderRadius: 14,
+              backgroundColor: colors.surface,
+              borderColor: colors.line,
+              borderWidth: 1,
+            }}
           >
-            <Text style={{ color: colors.muted }}>
-              Map unavailable. Matching places remain listed below.
+            <Text fontSize={12} style={{ color: colors.ink }}>
+              Map could not load fully. Your matching places are still available below.
             </Text>
             <Button
+              size="sm"
               onPress={() => {
                 setMapFailed(false);
                 setMapKey((previous) => previous + 1);
               }}
             >
-              Try map again
+              Retry map
             </Button>
           </YStack>
-        ) : (
-          <PlaceMap
-            key={mapKey}
-            places={matches.map(({ place }) => place)}
-            camera={explore.camera}
-            dark={scheme === 'dark'}
-            focus={focus}
-            onViewChange={onViewChange}
-            onOpen={(place) => {
-              setSelected(place.slug);
-            }}
-            onError={() => {
-              setMapFailed(true);
-            }}
-          />
-        )}
+        ) : null}
       </View>
       <ScrollView
         style={{ flex: 1 }}

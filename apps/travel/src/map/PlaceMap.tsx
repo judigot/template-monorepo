@@ -18,6 +18,8 @@ export function PlaceMap({
   const mapRef = useRef<MapView | null>(null);
   const markersRef = useRef<MapMarker[]>([]);
   const initialCamera = useRef(camera);
+  const initialDark = useRef(dark);
+  const activeStyle = useRef<string | null>(null);
   const onOpenRef = useRef(onOpen);
   const onViewChangeRef = useRef(onViewChange);
   const onErrorRef = useRef(onError);
@@ -43,12 +45,13 @@ export function PlaceMap({
         );
         const map = new Map({
           container: node,
-          style: dark ? MAP_STYLES.dark : MAP_STYLES.light,
+          style: initialDark.current ? MAP_STYLES.dark : MAP_STYLES.light,
           center: initialCamera.current.center,
           zoom: initialCamera.current.zoom,
           cooperativeGestures: false,
         });
         mapRef.current = map;
+        activeStyle.current = initialDark.current ? MAP_STYLES.dark : MAP_STYLES.light;
         setReady(true);
         const report = () => {
           const bounds = map.getBounds();
@@ -66,11 +69,6 @@ export function PlaceMap({
         };
         map.on('load', report);
         map.on('moveend', report);
-        map.on('error', () => {
-          if (map.isStyleLoaded() !== true) {
-            onErrorRef.current();
-          }
-        });
         map.addControl(new NavigationControl({ showCompass: false }));
       })
       .catch(() => {
@@ -84,6 +82,7 @@ export function PlaceMap({
       markersRef.current = [];
       mapRef.current?.remove();
       mapRef.current = null;
+      activeStyle.current = null;
     };
   }, []);
 
@@ -127,14 +126,16 @@ export function PlaceMap({
     return () => {
       cancelled = true;
     };
-  }, [places, ready]);
+  }, [places, ready, dark]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (map !== null) {
-      map.setStyle(dark ? MAP_STYLES.dark : MAP_STYLES.light);
+    const nextStyle = dark ? MAP_STYLES.dark : MAP_STYLES.light;
+    if (map !== null && activeStyle.current !== nextStyle) {
+      activeStyle.current = nextStyle;
+      map.setStyle(nextStyle);
     }
-  }, [dark]);
+  }, [dark, ready]);
 
   useEffect(() => {
     const map = mapRef.current;

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Linking, Pressable, View } from 'react-native';
+import { Linking, View } from 'react-native';
 import { Button, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../../src/auth/auth-client';
 import { Page } from '../../src/components/Page';

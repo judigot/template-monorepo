@@ -130,8 +130,10 @@ function AuthenticatedAccount() {
     };
   }, [refresh]);
 
+  const sessionUserId = session?.user?.id;
+
   useEffect(() => {
-    if (session?.user === undefined) {
+    if (sessionUserId === undefined) {
       return;
     }
     let active = true;
@@ -151,7 +153,7 @@ function AuthenticatedAccount() {
     return () => {
       active = false;
     };
-  }, [session?.user?.id]);
+  }, [sessionUserId]);
 
   const signIn = async () => {
     setBusy(true);
