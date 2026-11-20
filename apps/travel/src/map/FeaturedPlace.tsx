@@ -597,7 +597,7 @@ export function FeaturedPlace() {
               setFiltersOpen(!filtersOpen);
             }}
             accessibilityLabel="Budget and people"
-            accessibilityState={{ expanded: filtersOpen }}
+            aria-expanded={filtersOpen}
             style={{ backgroundColor: colors.surface, color: colors.ink }}
           >
             {pesos(explore.budget * 100)} · {String(explore.people)}{' '}
@@ -760,7 +760,7 @@ export function FeaturedPlace() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Matching places and menu items"
-          accessibilityState={{ expanded: menuOpen }}
+          aria-expanded={menuOpen}
           onPress={() => {
             setMenuOpen(!menuOpen);
           }}
