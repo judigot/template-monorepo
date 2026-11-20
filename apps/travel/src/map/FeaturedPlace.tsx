@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Linking, Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Linking, Modal, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, H2, Input, Slider, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../auth/auth-client';

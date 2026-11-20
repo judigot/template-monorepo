@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { ICuratedPlace, IViewport } from './catalog';
 
 const httpsUrl = z.url().refine((value) => value.startsWith('https://'));
 
@@ -61,8 +62,6 @@ export const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
 export const MAP_ZOOM = 15.5;
 
 
-
-import type { ICuratedPlace, IViewport } from './catalog';
 
 export interface IExploreCamera {
   center: [number, number];

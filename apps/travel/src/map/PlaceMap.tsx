@@ -1,8 +1,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import type { Map as MapView, Marker as MapMarker } from 'maplibre-gl';
-import { useEffect, useRef } from 'react';
-import type { ICuratedPlace } from './catalog';
+import { useEffect, useRef, useState } from 'react';
 import {
   type IExploreMapProps,
   MAP_STYLE,
@@ -16,6 +15,7 @@ export function PlaceMap({
   onError,
 }: IExploreMapProps) {
   const container = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
   const mapRef = useRef<MapView | null>(null);
   const markersRef = useRef<MapMarker[]>([]);
   const onOpenRef = useRef(onOpen);
@@ -43,6 +43,7 @@ export function PlaceMap({
           cooperativeGestures: false,
         });
         mapRef.current = map;
+        setReady(true);
         const report = () => {
           const bounds = map.getBounds();
           const center = map.getCenter();
@@ -99,7 +100,7 @@ export function PlaceMap({
       }
     }).catch(() => onErrorRef.current());
     return () => { cancelled = true; };
-  }, [places]);
+  }, [places, ready]);
 
   return (
     <div

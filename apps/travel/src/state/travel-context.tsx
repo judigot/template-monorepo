@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
+import type { IExploreCamera } from '../map/place';
 import {
   createContext,
   useCallback,
@@ -7,7 +8,15 @@ import {
   useState,
 } from 'react';
 
+export interface IExploreState {
+  budget: number;
+  people: number;
+  camera: IExploreCamera;
+}
+
 export interface ITravelState {
+  explore: IExploreState;
+  setExplore: Dispatch<SetStateAction<IExploreState>>;
   savedIds: readonly string[];
   toggleSaved: (id: string) => void;
   isSaved: (id: string) => boolean;
@@ -17,6 +26,15 @@ const TravelContext = createContext<ITravelState | undefined>(undefined);
 
 export function TravelProvider({ children }: { children: ReactNode }) {
   const [savedIds, setSavedIds] = useState<readonly string[]>([]);
+  const [explore, setExplore] = useState<IExploreState>({
+    budget: 500,
+    people: 2,
+    camera: {
+      center: [123.900296875, 10.3318875],
+      zoom: 15.5,
+      bounds: { west: 123.88, south: 10.315, east: 123.92, north: 10.35 },
+    },
+  });
 
   const toggleSaved = useCallback((id: string) => {
     setSavedIds((current) =>
@@ -31,8 +49,8 @@ export function TravelProvider({ children }: { children: ReactNode }) {
     [savedIds],
   );
   const state = useMemo(
-    () => ({ savedIds, toggleSaved, isSaved }),
-    [savedIds, toggleSaved, isSaved],
+    () => ({ savedIds, toggleSaved, isSaved, explore, setExplore }),
+    [savedIds, toggleSaved, isSaved, explore],
   );
 
   return (
