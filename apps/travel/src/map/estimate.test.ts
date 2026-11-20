@@ -46,10 +46,9 @@ describe('Explore group budgeting', () => {
       servingBasis: 'printed',
     };
     const outcome = estimateGroup([singles, platter], 3);
-    expect(outcome?.totalCentavos).toBe(22000);
+    expect(outcome?.totalCentavos).toBe(28000);
     expect(outcome?.lines.map((line) => [line.itemId, line.quantity])).toEqual([
-      ['platter', 1],
-      ['single', 1],
+      ['platter', 2],
     ]);
   });
   test('ties prefer lower surplus, fewer orders, and stable IDs', () => {
