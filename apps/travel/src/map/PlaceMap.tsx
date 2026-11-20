@@ -23,6 +23,7 @@ export function PlaceMap({
   onError,
   dark,
   focus,
+  userLocation,
 }: IExploreMapProps) {
   const container = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -149,6 +150,37 @@ export function PlaceMap({
 
   useEffect(() => {
     const map = mapRef.current;
+    if (map === null || userLocation === null) {
+      return;
+    }
+    let cancelled = false;
+    let marker: MapMarker | undefined;
+    void loadRenderer()
+      .then(({ Marker }) => {
+        if (cancelled) {
+          return;
+        }
+        const dot = document.createElement('div');
+        dot.setAttribute('role', 'img');
+        dot.setAttribute('aria-label', 'Your current location');
+        dot.style.cssText =
+          'width:18px;height:18px;border:3px solid white;border-radius:50%;' +
+          'background:#1a73e8;box-shadow:0 0 0 5px #1a73e843;pointer-events:none';
+        marker = new Marker({ element: dot })
+          .setLngLat([userLocation.longitude, userLocation.latitude])
+          .addTo(map);
+      })
+      .catch(() => {
+        onErrorRef.current();
+      });
+    return () => {
+      cancelled = true;
+      marker?.remove();
+    };
+  }, [ready, userLocation]);
+
+  useEffect(() => {
+    const map = mapRef.current;
     const nextStyle = dark ? MAP_STYLES.dark : MAP_STYLES.light;
     if (map !== null && activeStyle.current !== nextStyle) {
       activeStyle.current = nextStyle;
@@ -165,7 +197,7 @@ export function PlaceMap({
         duration: 720,
       });
     }
-  }, [focus]);
+  }, [focus, ready]);
 
   return (
     <section

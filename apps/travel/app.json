@@ -14,7 +14,10 @@
     },
     "ios": {
       "bundleIdentifier": "com.judigot.roamtravel",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Wanderapp uses your location to show where you are on the Explore map."
+      }
     },
     "android": {
       "package": "com.judigot.roamtravel"

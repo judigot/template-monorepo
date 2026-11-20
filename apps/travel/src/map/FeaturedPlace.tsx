@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Animated,
   Image,
@@ -25,6 +31,7 @@ import {
   type ICuratedPlace,
   OFFLINE_CURATED_PLACES,
 } from './catalog';
+import { getCurrentLocation, type IMapLocation } from './current-location';
 import {
   estimateGroup,
   type IGroupEstimate,
@@ -45,6 +52,41 @@ interface IMatch {
   estimate: IGroupEstimate;
 }
 
+function ExploreButton({
+  children,
+  size,
+  disabled,
+  onPress,
+  style,
+  labelColor,
+  'aria-label': label,
+  'aria-expanded': expanded,
+}: Pick<
+  ComponentProps<typeof Button>,
+  | 'children'
+  | 'size'
+  | 'disabled'
+  | 'onPress'
+  | 'style'
+  | 'aria-label'
+  | 'aria-expanded'
+> & { labelColor?: string }) {
+  const scheme = useSystemScheme();
+  return (
+    <Button
+      size={size}
+      disabled={disabled}
+      onPress={onPress}
+      style={style}
+      aria-label={label}
+      aria-expanded={expanded}
+      textProps={{ style: { color: scheme === 'dark' ? '#fff' : labelColor } }}
+    >
+      {children}
+    </Button>
+  );
+}
+
 function DirectionsButton({
   url,
   compact = false,
@@ -53,6 +95,7 @@ function DirectionsButton({
   compact?: boolean;
 }) {
   const colors = useTravelColors();
+  const scheme = useSystemScheme();
   return (
     <Pressable
       accessibilityRole="link"
@@ -79,7 +122,7 @@ function DirectionsButton({
       <Text
         fontSize={compact ? 12 : 13}
         fontWeight="700"
-        style={{ color: colors.ink }}
+        style={{ color: scheme === 'dark' ? '#fff' : colors.ink }}
       >
         Directions
       </Text>
@@ -140,13 +183,13 @@ function VenueDetails({
             >
               VENUE DETAILS
             </Text>
-            <Button
+            <ExploreButton
               size="sm"
               aria-label="Close place details"
               onPress={onClose}
             >
               Close
-            </Button>
+            </ExploreButton>
           </XStack>
           <ScrollView
             contentContainerStyle={{
@@ -202,19 +245,17 @@ function VenueDetails({
               </Text>
             </YStack>
             <XStack gap="2" flexWrap="wrap">
-              <Button
+              <ExploreButton
                 onPress={onLocate}
-                style={{
-                  backgroundColor: colors.accentSoft,
-                  color: colors.accent,
-                }}
+                style={{ backgroundColor: colors.accentSoft }}
+                labelColor={colors.accent}
               >
                 Locate on map
-              </Button>
+              </ExploreButton>
               <DirectionsButton url={match.place.directionsUrl} />
-              <Button onPress={onSave} style={{ color: colors.accent }}>
+              <ExploreButton onPress={onSave} labelColor={colors.accent}>
                 {saved ? '♥ Saved' : '♡ Save place'}
-              </Button>
+              </ExploreButton>
             </XStack>
             <Text fontSize={19} fontWeight="800" style={{ color: colors.ink }}>
               Menu and prices
@@ -417,23 +458,24 @@ function VenueCard({
         </YStack>
       ) : null}
       <XStack gap="2" flexWrap="wrap">
-        <Button
+        <ExploreButton
           size="sm"
           onPress={onLocate}
-          style={{ backgroundColor: colors.accentSoft, color: colors.accent }}
-          accessibilityLabel={`Show ${match.place.name} on map`}
+          style={{ backgroundColor: colors.accentSoft }}
+          labelColor={colors.accent}
+          aria-label={`Show ${match.place.name} on map`}
         >
           ⌖ Show on map
-        </Button>
+        </ExploreButton>
         <DirectionsButton url={match.place.directionsUrl} compact />
-        <Button
+        <ExploreButton
           size="sm"
           onPress={onSave}
           aria-label="Save venue"
-          style={{ color: colors.accent }}
+          labelColor={colors.accent}
         >
           {saved ? '♥' : '♡'}
-        </Button>
+        </ExploreButton>
       </XStack>
     </YStack>
   );
@@ -475,6 +517,9 @@ export function FeaturedPlace() {
     latitude: number;
     request: number;
   } | null>(null);
+  const [userLocation, setUserLocation] = useState<IMapLocation | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [exactBudget, setExactBudget] = useState(String(explore.budget));
 
   const setBudget = useCallback(
@@ -546,18 +591,26 @@ export function FeaturedPlace() {
       request: (previous?.request ?? 0) + 1,
     }));
   };
-  const reset = () => {
-    setExplore((previous) => ({
-      ...previous,
-      camera: {
-        center: [123.900296875, 10.3318875],
-        zoom: 15.5,
-        bounds: { west: 123.88, south: 10.315, east: 123.92, north: 10.35 },
-      },
-    }));
-    setFocus(null);
-    setMapFailed(false);
-    setMapKey((previous) => previous + 1);
+  const recenter = async () => {
+    setLocating(true);
+    setLocationError(null);
+    try {
+      const position = await getCurrentLocation();
+      setUserLocation(position);
+      setFocus((previous) => ({
+        ...position,
+        request: (previous?.request ?? 0) + 1,
+      }));
+    } catch (error) {
+      setUserLocation(null);
+      setLocationError(
+        error instanceof Error
+          ? error.message
+          : 'Could not find your location.',
+      );
+    } finally {
+      setLocating(false);
+    }
   };
   const onViewChange = useCallback(
     (camera: IExploreCamera) => {
@@ -575,6 +628,7 @@ export function FeaturedPlace() {
           camera={explore.camera}
           dark={scheme === 'dark'}
           focus={focus}
+          userLocation={userLocation}
           onViewChange={onViewChange}
           onOpen={(place) => {
             setSelected(place.slug);
@@ -602,7 +656,7 @@ export function FeaturedPlace() {
             <Text fontSize={12} style={{ color: colors.ink }}>
               Map could not load. Matching places are listed below.
             </Text>
-            <Button
+            <ExploreButton
               size="sm"
               onPress={() => {
                 setMapFailed(false);
@@ -610,7 +664,7 @@ export function FeaturedPlace() {
               }}
             >
               Retry map
-            </Button>
+            </ExploreButton>
           </YStack>
         ) : null}
       </View>
@@ -625,26 +679,46 @@ export function FeaturedPlace() {
         }}
       >
         <XStack gap="2">
-          <Button
+          <ExploreButton
             size="sm"
             onPress={() => {
               setFiltersOpen(!filtersOpen);
             }}
-            accessibilityLabel="Budget and people"
+            aria-label="Budget and people"
             aria-expanded={filtersOpen}
-            style={{ backgroundColor: colors.surface, color: colors.ink }}
+            style={{ backgroundColor: colors.surface }}
+            labelColor={colors.ink}
           >
             {pesos(explore.budget * 100)} · {String(explore.people)}{' '}
             {explore.people === 1 ? 'person' : 'people'}
-          </Button>
-          <Button
+          </ExploreButton>
+          <ExploreButton
             size="sm"
-            onPress={reset}
-            style={{ backgroundColor: colors.surface, color: colors.ink }}
+            aria-label="Center map on my location"
+            disabled={locating || mapFailed}
+            onPress={() => {
+              void recenter();
+            }}
+            style={{ backgroundColor: colors.surface }}
+            labelColor={colors.ink}
           >
-            Recenter
-          </Button>
+            {locating ? 'Finding location…' : '⊙ My location'}
+          </ExploreButton>
         </XStack>
+        {locationError === null ? null : (
+          <Text
+            accessibilityRole="alert"
+            fontSize={12}
+            style={{
+              padding: 8,
+              borderRadius: 10,
+              backgroundColor: colors.surface,
+              color: colors.ink,
+            }}
+          >
+            {locationError}
+          </Text>
+        )}
         <YStack
           gap="3"
           style={{
@@ -669,20 +743,18 @@ export function FeaturedPlace() {
             </Text>
           </XStack>
           <XStack gap="3" items="center">
-            <Button
+            <ExploreButton
               size="sm"
-              accessibilityLabel="Decrease budget by 50 pesos"
+              aria-label="Decrease budget by 50 pesos"
               disabled={explore.budget <= 0}
               onPress={() => {
                 setBudget(explore.budget - INCREMENT);
               }}
-              style={{
-                backgroundColor: colors.accentSoft,
-                color: colors.accent,
-              }}
+              style={{ backgroundColor: colors.accentSoft }}
+              labelColor={colors.accent}
             >
               − ₱50
-            </Button>
+            </ExploreButton>
             <YStack flex={1}>
               <Slider
                 min={0}
@@ -700,20 +772,18 @@ export function FeaturedPlace() {
                 <Slider.Thumb index={0} circular />
               </Slider>
             </YStack>
-            <Button
+            <ExploreButton
               size="sm"
-              accessibilityLabel="Increase budget by 50 pesos"
+              aria-label="Increase budget by 50 pesos"
               disabled={explore.budget >= MAX_BUDGET}
               onPress={() => {
                 setBudget(explore.budget + INCREMENT);
               }}
-              style={{
-                backgroundColor: colors.accentSoft,
-                color: colors.accent,
-              }}
+              style={{ backgroundColor: colors.accentSoft }}
+              labelColor={colors.accent}
             >
               + ₱50
-            </Button>
+            </ExploreButton>
           </XStack>
           <XStack justify="space-between" items="center" gap="3">
             <Input
@@ -741,9 +811,9 @@ export function FeaturedPlace() {
               >
                 People
               </Text>
-              <Button
+              <ExploreButton
                 size="sm"
-                accessibilityLabel="Remove one person"
+                aria-label="Remove one person"
                 disabled={explore.people <= 1}
                 onPress={() => {
                   setSelected(null);
@@ -754,13 +824,13 @@ export function FeaturedPlace() {
                 }}
               >
                 −
-              </Button>
+              </ExploreButton>
               <Text style={{ color: colors.ink }} fontWeight="800">
                 {String(explore.people)}
               </Text>
-              <Button
+              <ExploreButton
                 size="sm"
-                accessibilityLabel="Add one person"
+                aria-label="Add one person"
                 disabled={explore.people >= 20}
                 onPress={() => {
                   setSelected(null);
@@ -771,7 +841,7 @@ export function FeaturedPlace() {
                 }}
               >
                 +
-              </Button>
+              </ExploreButton>
             </XStack>
           </XStack>
         </YStack>
@@ -818,7 +888,10 @@ export function FeaturedPlace() {
               backgroundColor: colors.muted,
             }}
           />
-          <Text fontWeight="700" style={{ color: colors.ink }}>
+          <Text
+            fontWeight="700"
+            style={{ color: scheme === 'dark' ? '#fff' : colors.ink }}
+          >
             {String(matches.length)} {matches.length === 1 ? 'place' : 'places'}
           </Text>
         </MenuHandle>
@@ -839,7 +912,7 @@ export function FeaturedPlace() {
         >
           <XStack justify="flex-end">
             {catalogStatus !== 'live' ? (
-              <Button
+              <ExploreButton
                 size="sm"
                 onPress={() => {
                   setCatalogStatus('loading');
@@ -847,7 +920,7 @@ export function FeaturedPlace() {
                 }}
               >
                 {catalogStatus === 'loading' ? 'Syncing' : 'Retry'}
-              </Button>
+              </ExploreButton>
             ) : null}
           </XStack>
           {catalogStatus !== 'live' ? (
@@ -876,14 +949,14 @@ export function FeaturedPlace() {
               <Text fontSize={12} style={{ color: colors.muted }}>
                 Prices alone cannot confirm servings for the whole group.
               </Text>
-              <Button
+              <ExploreButton
                 size="sm"
                 onPress={() => {
                   setBudget(MAX_BUDGET);
                 }}
               >
                 Increase budget
-              </Button>
+              </ExploreButton>
             </YStack>
           ) : (
             matches.map((match) => (

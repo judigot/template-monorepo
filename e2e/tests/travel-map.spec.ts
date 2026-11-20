@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 test.use({
+  geolocation: { longitude: 123.915, latitude: 10.34 },
+  permissions: ['geolocation'],
+  colorScheme: 'dark',
   launchOptions: { args: ['--enable-unsafe-swiftshader'] },
 });
 
@@ -135,4 +138,17 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   await locate.click();
   await expect(marker).toBeInViewport();
   await expect(marker).toContainText("Tatang's");
+
+  const recenter = page.getByRole('button', {
+    name: 'Center map on my location',
+  });
+  await expect(recenter.getByText('My location', { exact: false })).toHaveCSS(
+    'color',
+    'rgb(255, 255, 255)',
+  );
+  await recenter.click();
+  await expect(
+    page.getByRole('img', { name: 'Your current location' }),
+  ).toBeInViewport();
+  await expect(marker).not.toBeInViewport();
 });

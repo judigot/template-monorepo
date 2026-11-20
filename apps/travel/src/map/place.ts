@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { ICuratedPlace, IViewport } from './catalog';
+import type { IMapLocation } from './current-location';
 
 const httpsUrl = z.url().refine((value) => value.startsWith('https://'));
 
@@ -77,5 +78,6 @@ export interface IExploreMapProps {
   onViewChange: (camera: IExploreCamera) => void;
   onError: () => void;
   dark: boolean;
-  focus: { longitude: number; latitude: number; request: number } | null;
+  focus: (IMapLocation & { request: number }) | null;
+  userLocation: IMapLocation | null;
 }

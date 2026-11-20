@@ -21,6 +21,7 @@ export function PlaceMap({
   onError,
   dark,
   focus,
+  userLocation,
 }: IExploreMapProps) {
   const mapRef = useRef<MapRef>(null);
   const cameraRef = useRef<CameraRef>(null);
@@ -96,12 +97,35 @@ export function PlaceMap({
           </View>
         </Marker>
       ))}
+      {userLocation === null ? null : (
+        <Marker
+          id="wanderapp-current-location"
+          lngLat={[userLocation.longitude, userLocation.latitude]}
+          anchor="center"
+          accessibilityRole="image"
+          accessibilityLabel="Your current location"
+        >
+          <View
+            collapsable={false}
+            pointerEvents="none"
+            style={styles.locationDot}
+          />
+        </Marker>
+      )}
     </Map>
   );
 }
 
 const styles = StyleSheet.create({
   map: { width: '100%', height: '100%' },
+  locationDot: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderColor: '#fff',
+    borderWidth: 3,
+    backgroundColor: '#1a73e8',
+  },
   marker: {
     flexDirection: 'row',
     alignItems: 'center',
