@@ -165,7 +165,6 @@ function ItemEditor({
                 value={draft[key]}
                 accessibilityLabel={label}
                 placeholder={placeholder}
-                editable={true}
                 keyboardType={
                   key === 'price' || key === 'serves'
                     ? 'decimal-pad'

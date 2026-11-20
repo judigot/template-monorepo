@@ -88,8 +88,7 @@ export default function SavedScreen() {
           </Text>
           <Text
             fontSize={13}
-            textAlign="center"
-            style={{ color: colors.muted }}
+            style={{ color: colors.muted, textAlign: 'center' }}
           >
             Explore curated places and tap the save button to keep them handy.
           </Text>
