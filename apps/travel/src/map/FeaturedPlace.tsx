@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Image,
   Linking,
@@ -636,32 +637,7 @@ export function FeaturedPlace() {
             {pesos(explore.budget * 100)} · {String(explore.people)}{' '}
             {explore.people === 1 ? 'person' : 'people'}
           </TravelButton>
-          <TravelButton
-            size="sm"
-            aria-label="Center map on my location"
-            disabled={locating || mapFailed}
-            onPress={() => {
-              void recenter();
-            }}
-            tone="surface"
-          >
-            {locating ? 'Finding location…' : '⊙ My location'}
-          </TravelButton>
         </XStack>
-        {locationError === null ? null : (
-          <Text
-            accessibilityRole="alert"
-            fontSize={12}
-            style={{
-              padding: 8,
-              borderRadius: 10,
-              backgroundColor: colors.surface,
-              color: colors.ink,
-            }}
-          >
-            {locationError}
-          </Text>
-        )}
         <YStack
           gap="3"
           style={{
@@ -785,6 +761,83 @@ export function FeaturedPlace() {
           </XStack>
         </YStack>
       </YStack>
+      <Animated.View
+        style={{
+          position: 'absolute',
+          right: 12,
+          bottom: sheetProgress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [
+              COLLAPSED_SHEET_HEIGHT + 12,
+              COLLAPSED_SHEET_HEIGHT + sheetTravel + 12,
+            ],
+          }),
+          alignItems: 'flex-end',
+          gap: 8,
+        }}
+      >
+        {locationError === null ? null : (
+          <Text
+            accessibilityRole="alert"
+            fontSize={12}
+            style={{
+              maxWidth: 240,
+              padding: 8,
+              borderRadius: 10,
+              backgroundColor: colors.surface,
+              color: colors.ink,
+            }}
+          >
+            {locationError}
+          </Text>
+        )}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Center map on my location"
+          accessibilityState={{
+            busy: locating,
+            disabled: locating || mapFailed,
+          }}
+          disabled={locating || mapFailed}
+          onPress={() => {
+            void recenter();
+          }}
+          style={({ pressed }) => ({
+            width: 48,
+            height: 48,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 24,
+            backgroundColor: pressed ? colors.accentSoft : colors.surface,
+            opacity: mapFailed ? 0.5 : 1,
+          })}
+        >
+          {locating ? (
+            <ActivityIndicator color={colors.accent} />
+          ) : (
+            <View
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: 12,
+                borderWidth: 2,
+                borderColor: colors.accent,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: colors.accent,
+                }}
+              />
+            </View>
+          )}
+        </Pressable>
+      </Animated.View>
       {mapFailed ? null : (
         <Animated.View
           style={{

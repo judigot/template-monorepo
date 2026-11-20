@@ -172,10 +172,16 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   const recenter = page.getByRole('button', {
     name: 'Center map on my location',
   });
-  await expect(recenter.getByText('My location', { exact: false })).toHaveCSS(
-    'color',
-    'rgb(255, 255, 255)',
+  await expect(recenter).toHaveText('');
+  const locationBox = await recenter.boundingBox();
+  if (locationBox === null) {
+    throw new Error('Missing location control');
+  }
+  expect(locationBox.x + locationBox.width).toBeCloseTo(
+    mapBox.x + mapBox.width - 12,
+    0,
   );
+  expect(locationBox.y + locationBox.height).toBeCloseTo(menuBox.y - 12, 0);
   await recenter.click();
   await expect(
     page.getByRole('img', { name: 'Your current location' }),
