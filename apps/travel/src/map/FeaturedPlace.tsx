@@ -6,10 +6,17 @@ import { authBaseUrl } from '../auth/auth-client';
 import { useTravel } from '../state/travel-context';
 import { useTravelColors } from '../theme';
 import {
-  fetchCuratedPlaces, inViewport, OFFLINE_CURATED_PLACES,
+  fetchCuratedPlaces,
+  inViewport,
+  OFFLINE_CURATED_PLACES,
   type ICuratedPlace,
 } from './catalog';
-import { estimateGroup, orderSummary, pesos, type IGroupEstimate } from './estimate';
+import {
+  estimateGroup,
+  orderSummary,
+  pesos,
+  type IGroupEstimate,
+} from './estimate';
 import { PlaceMap } from './PlaceMap';
 
 interface IMatch {
@@ -18,7 +25,9 @@ interface IMatch {
 }
 
 function PlaceProfile({
-  match, people, onClose,
+  match,
+  people,
+  onClose,
 }: {
   match: IMatch | null;
   people: number;
@@ -26,51 +35,98 @@ function PlaceProfile({
 }) {
   const colors = useTravelColors();
   return (
-    <Modal visible={match !== null} animationType="fade" transparent onRequestClose={onClose}>
+    <Modal
+      visible={match !== null}
+      animationType="fade"
+      transparent
+      onRequestClose={onClose}
+    >
       {match === null ? null : (
-        <View style={{ flex: 1, backgroundColor: '#0009', justifyContent: 'center', padding: 16 }}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#0009',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+        >
           <YStack
             accessibilityViewIsModal
             rounded={20}
             gap="3"
-            style={{ backgroundColor: colors.surface, padding: 18, maxHeight: '88%', maxWidth: 650, width: '100%', alignSelf: 'center' }}
+            style={{
+              backgroundColor: colors.surface,
+              padding: 18,
+              maxHeight: '88%',
+              maxWidth: 650,
+              width: '100%',
+              alignSelf: 'center',
+            }}
           >
             <ScrollView>
               <YStack gap="3">
                 <H2 style={{ color: colors.ink }}>{match.place.name}</H2>
-                <Text style={{ color: colors.muted }}>{match.place.locality} · {match.place.address}</Text>
-                <Text style={{ color: colors.ink }}>{match.place.description}</Text>
+                <Text style={{ color: colors.muted }}>
+                  {match.place.locality} · {match.place.address}
+                </Text>
+                <Text style={{ color: colors.ink }}>
+                  {match.place.description}
+                </Text>
                 <Text fontWeight="800" style={{ color: colors.accent }}>
-                  {pesos(match.estimate.totalCentavos)} for {people} {people === 1 ? 'person' : 'people'}
+                  {pesos(match.estimate.totalCentavos)} for {people}{' '}
+                  {people === 1 ? 'person' : 'people'}
                 </Text>
-                <Text style={{ color: colors.ink }}>Estimated menu order: {orderSummary(match.estimate)}</Text>
+                <Text style={{ color: colors.ink }}>
+                  Estimated menu order: {orderSummary(match.estimate)}
+                </Text>
                 <Text fontSize={12} style={{ color: colors.muted }}>
-                  Menu-based estimate only. Transportation and unlisted charges are excluded.
-                  Individual value meals are assumed to serve one diner.
+                  Menu-based estimate only. Transportation and unlisted charges
+                  are excluded. Individual value meals are assumed to serve one
+                  diner.
                 </Text>
-                <Text fontWeight="800" fontSize={18} style={{ color: colors.ink }}>Menu · November 2026</Text>
+                <Text
+                  fontWeight="800"
+                  fontSize={18}
+                  style={{ color: colors.ink }}
+                >
+                  Menu · November 2026
+                </Text>
                 {match.place.menuItems.map((item) => (
                   <XStack key={item.id} justify="space-between" gap="2">
                     <YStack flex={1}>
-                      <Text style={{ color: colors.ink }}>{item.name}{item.variant === null ? '' : ` · ${item.variant}`}</Text>
+                      <Text style={{ color: colors.ink }}>
+                        {item.name}
+                        {item.variant === null ? '' : ` · ${item.variant}`}
+                      </Text>
                       <Text fontSize={12} style={{ color: colors.muted }}>
-                        {item.serves === null ? 'Serving count unknown' : `Serves ${item.serves} (${item.servingBasis})`}
+                        {item.serves === null
+                          ? 'Serving count unknown'
+                          : `Serves ${item.serves} (${item.servingBasis})`}
                       </Text>
                     </YStack>
                     <Text fontWeight="700" style={{ color: colors.ink }}>
-                      {item.priceCentavos === null ? 'Price unknown' : pesos(item.priceCentavos)}
+                      {item.priceCentavos === null
+                        ? 'Price unknown'
+                        : pesos(item.priceCentavos)}
                     </Text>
                   </XStack>
                 ))}
                 <Button
-                  onPress={() => { void Linking.openURL(match.place.directionsUrl); }}
-                  style={{ backgroundColor: colors.accentSoft, color: colors.accent }}
+                  onPress={() => {
+                    void Linking.openURL(match.place.directionsUrl);
+                  }}
+                  style={{
+                    backgroundColor: colors.accentSoft,
+                    color: colors.accent,
+                  }}
                 >
                   Open directions in Google Maps
                 </Button>
               </YStack>
             </ScrollView>
-            <Button onPress={onClose} accessibilityLabel="Close place details">Close</Button>
+            <Button onPress={onClose} accessibilityLabel="Close place details">
+              Close
+            </Button>
           </YStack>
         </View>
       )}
@@ -81,8 +137,12 @@ function PlaceProfile({
 export function FeaturedPlace() {
   const colors = useTravelColors();
   const { explore, setExplore } = useTravel();
-  const [places, setPlaces] = useState<readonly ICuratedPlace[]>(OFFLINE_CURATED_PLACES);
-  const [catalogStatus, setCatalogStatus] = useState<'cached' | 'live' | 'loading'>('cached');
+  const [places, setPlaces] = useState<readonly ICuratedPlace[]>(
+    OFFLINE_CURATED_PLACES,
+  );
+  const [catalogStatus, setCatalogStatus] = useState<
+    'cached' | 'live' | 'loading'
+  >('cached');
   const [retry, setRetry] = useState(0);
   const [mapFailed, setMapFailed] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);

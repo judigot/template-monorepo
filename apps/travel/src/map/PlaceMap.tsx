@@ -2,10 +2,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 import type { Map as MapView, Marker as MapMarker } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
-import {
-  type IExploreMapProps,
-  MAP_STYLE,
-} from './place';
+import { type IExploreMapProps, MAP_STYLE } from './place';
 
 export function PlaceMap({
   places,
@@ -51,8 +48,10 @@ export function PlaceMap({
             center: [center.lng, center.lat],
             zoom: map.getZoom(),
             bounds: {
-              west: bounds.getWest(), south: bounds.getSouth(),
-              east: bounds.getEast(), north: bounds.getNorth(),
+              west: bounds.getWest(),
+              south: bounds.getSouth(),
+              east: bounds.getEast(),
+              north: bounds.getNorth(),
             },
           });
         };
@@ -77,29 +76,33 @@ export function PlaceMap({
 
   useEffect(() => {
     let cancelled = false;
-    void import('maplibre-gl').then(({ Marker }) => {
-      if (cancelled) return;
-      const map = mapRef.current;
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = [];
-      if (map === null) return;
-      for (const place of places) {
-        const element = document.createElement('button');
-        element.type = 'button';
-        element.setAttribute('aria-label', `Open ${place.name}`);
-        element.title = place.name;
-        element.style.cssText =
-          'background:#fff;border:2px solid #b4233d;border-radius:22px;padding:6px 10px;box-shadow:0 2px 8px #0003;cursor:pointer;font-size:14px;font-weight:700;white-space:nowrap';
-        element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0]}`;
-        element.addEventListener('click', () => onOpenRef.current(place));
-        markersRef.current.push(
-          new Marker({ element, anchor: 'bottom' })
-            .setLngLat([place.longitude, place.latitude])
-            .addTo(map),
-        );
-      }
-    }).catch(() => onErrorRef.current());
-    return () => { cancelled = true; };
+    void import('maplibre-gl')
+      .then(({ Marker }) => {
+        if (cancelled) return;
+        const map = mapRef.current;
+        markersRef.current.forEach((marker) => marker.remove());
+        markersRef.current = [];
+        if (map === null) return;
+        for (const place of places) {
+          const element = document.createElement('button');
+          element.type = 'button';
+          element.setAttribute('aria-label', `Open ${place.name}`);
+          element.title = place.name;
+          element.style.cssText =
+            'background:#fff;border:2px solid #b4233d;border-radius:22px;padding:6px 10px;box-shadow:0 2px 8px #0003;cursor:pointer;font-size:14px;font-weight:700;white-space:nowrap';
+          element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0]}`;
+          element.addEventListener('click', () => onOpenRef.current(place));
+          markersRef.current.push(
+            new Marker({ element, anchor: 'bottom' })
+              .setLngLat([place.longitude, place.latitude])
+              .addTo(map),
+          );
+        }
+      })
+      .catch(() => onErrorRef.current());
+    return () => {
+      cancelled = true;
+    };
   }, [places, ready]);
 
   return (

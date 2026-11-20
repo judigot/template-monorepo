@@ -61,8 +61,6 @@ export async function fetchFeaturedPlace(baseUrl: string, signal: AbortSignal) {
 export const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
 export const MAP_ZOOM = 15.5;
 
-
-
 export interface IExploreCamera {
   center: [number, number];
   zoom: number;

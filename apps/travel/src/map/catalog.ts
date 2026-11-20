@@ -25,27 +25,41 @@ export const curatedPlaceSchema = z.object({
   latitude: z.number().min(-90).max(90),
   directionsUrl: z.url(),
   iconKey: z.string(),
-  badges: z.array(z.object({
-    slug: z.string(),
-    label: z.string(),
-    edition: z.number().nullable(),
-    sourceUrl: z.url().nullable(),
-  })),
+  badges: z.array(
+    z.object({
+      slug: z.string(),
+      label: z.string(),
+      edition: z.number().nullable(),
+      sourceUrl: z.url().nullable(),
+    }),
+  ),
   menuItems: z.array(menuItemSchema),
 });
 export type ICuratedPlace = z.infer<typeof curatedPlaceSchema>;
 
 const SOURCE_MONTH = '2026-11';
-const SOURCE_REFERENCE = "Tatang's Extra Crispy Boneless Cebu Lechon menu photograph (November 2026)";
+const SOURCE_REFERENCE =
+  "Tatang's Extra Crispy Boneless Cebu Lechon menu photograph (November 2026)";
 function item(
-  id: string, name: string, variant: string | null, pesos: number | null,
-  serves: number | null, servingBasis: IMenuItem['servingBasis'], eligible = serves !== null,
+  id: string,
+  name: string,
+  variant: string | null,
+  pesos: number | null,
+  serves: number | null,
+  servingBasis: IMenuItem['servingBasis'],
+  eligible = serves !== null,
 ): IMenuItem {
   return {
-    id, name, variant,
+    id,
+    name,
+    variant,
     priceCentavos: pesos === null ? null : pesos * 100,
-    currency: 'PHP', serves, eligible, servingBasis,
-    sourceMonth: SOURCE_MONTH, sourceReference: SOURCE_REFERENCE,
+    currency: 'PHP',
+    serves,
+    eligible,
+    servingBasis,
+    sourceMonth: SOURCE_MONTH,
+    sourceReference: SOURCE_REFERENCE,
   };
 }
 
@@ -53,29 +67,89 @@ export const TATANGS_CURATED: ICuratedPlace = {
   ...TATANGS,
   iconKey: 'lechon',
   menuItems: [
-    item('value-belly', 'Value meal', 'Lechon belly (2 puso + soft drink)', 80, 1, 'assumed'),
-    item('value-sisig', 'Value meal', 'Lechon sisig (2 puso + soft drink)', 80, 1, 'assumed'),
-    item('value-flakes', 'Value meal', 'Lechon flakes (2 puso + soft drink)', 80, 1, 'assumed'),
-    item('classic-quarter', 'Classic lechon belly', '¼ kg', 265, null, 'unknown'),
+    item(
+      'value-belly',
+      'Value meal',
+      'Lechon belly (2 puso + soft drink)',
+      80,
+      1,
+      'assumed',
+    ),
+    item(
+      'value-sisig',
+      'Value meal',
+      'Lechon sisig (2 puso + soft drink)',
+      80,
+      1,
+      'assumed',
+    ),
+    item(
+      'value-flakes',
+      'Value meal',
+      'Lechon flakes (2 puso + soft drink)',
+      80,
+      1,
+      'assumed',
+    ),
+    item(
+      'classic-quarter',
+      'Classic lechon belly',
+      '¼ kg',
+      265,
+      null,
+      'unknown',
+    ),
     item('classic-half', 'Classic lechon belly', '½ kg', 530, null, 'unknown'),
     item('classic-kilo', 'Classic lechon belly', '1 kg', 1060, null, 'unknown'),
     item('spicy-quarter', 'Spicy lechon belly', '¼ kg', 270, null, 'unknown'),
     item('spicy-half', 'Spicy lechon belly', '½ kg', 540, null, 'unknown'),
     item('spicy-kilo', 'Spicy lechon belly', '1 kg', 1080, null, 'unknown'),
-    item('angus-baka', 'US Black Angus lechon baka and garlic rice', null, 480, 2, 'printed'),
+    item(
+      'angus-baka',
+      'US Black Angus lechon baka and garlic rice',
+      null,
+      480,
+      2,
+      'printed',
+    ),
     item('flakes-sharing', 'Lechon flakes', 'Good for 2', 200, 2, 'printed'),
     item('sisig-sharing', 'Sizzling sisig', 'Good for 2', 200, 2, 'printed'),
     item('dinuguan', 'Crispy dinuguan', null, 60, null, 'unknown'),
     item('bicol', 'Bicol Express', null, 60, null, 'unknown'),
-    item('scallops', 'Scallops with garlic and cheese', null, 220, null, 'unknown'),
+    item(
+      'scallops',
+      'Scallops with garlic and cheese',
+      null,
+      220,
+      null,
+      'unknown',
+    ),
     item('puso', 'Puso (hanging rice)', 'Extra', 10, null, 'unknown', false),
     item('soft-drink', 'Soft drink', 'Extra', 25, null, 'unknown', false),
     item('water', 'Water', 'Extra', 25, null, 'unknown', false),
-    item('half-belly', 'Half belly', 'Approx. 2–2.5 kg', null, null, 'unknown', false),
-    item('whole-belly', 'Whole belly', 'Approx. 4–5 kg', null, null, 'unknown', false),
+    item(
+      'half-belly',
+      'Half belly',
+      'Approx. 2–2.5 kg',
+      null,
+      null,
+      'unknown',
+      false,
+    ),
+    item(
+      'whole-belly',
+      'Whole belly',
+      'Approx. 4–5 kg',
+      null,
+      null,
+      'unknown',
+      false,
+    ),
   ],
 };
-export const OFFLINE_CURATED_PLACES: readonly ICuratedPlace[] = [TATANGS_CURATED];
+export const OFFLINE_CURATED_PLACES: readonly ICuratedPlace[] = [
+  TATANGS_CURATED,
+];
 
 const catalogSchema = z.object({ places: z.array(curatedPlaceSchema) });
 

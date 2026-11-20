@@ -60,7 +60,11 @@ export function estimateGroup(
       const next = covered + servings;
       if (next > limit) continue;
       const ids = [...current.ids, item.id].sort();
-      const candidate = { cost: current.cost + price, count: current.count + 1, ids };
+      const candidate = {
+        cost: current.cost + price,
+        count: current.count + 1,
+        ids,
+      };
       if (preferred(candidate, dp[next])) dp[next] = candidate;
     }
   }
@@ -82,7 +86,8 @@ export function estimateGroup(
   }
   if (winner === undefined) return null;
   const quantities = new Map<string, number>();
-  for (const id of winner.path.ids) quantities.set(id, (quantities.get(id) ?? 0) + 1);
+  for (const id of winner.path.ids)
+    quantities.set(id, (quantities.get(id) ?? 0) + 1);
   const lines = eligible
     .filter((item) => quantities.has(item.id))
     .map((item) => {
@@ -99,12 +104,17 @@ export function estimateGroup(
 }
 
 export function pesos(centavos: number): string {
-  return '₱' + (centavos / 100).toLocaleString('en-PH', {
-    minimumFractionDigits: centavos % 100 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
-  });
+  return (
+    '₱' +
+    (centavos / 100).toLocaleString('en-PH', {
+      minimumFractionDigits: centavos % 100 === 0 ? 0 : 2,
+      maximumFractionDigits: 2,
+    })
+  );
 }
 
 export function orderSummary(estimate: IGroupEstimate): string {
-  return estimate.lines.map((line) => `${line.quantity} × ${line.name}`).join(', ');
+  return estimate.lines
+    .map((line) => `${line.quantity} × ${line.name}`)
+    .join(', ');
 }

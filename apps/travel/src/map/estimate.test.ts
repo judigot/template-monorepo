@@ -1,9 +1,15 @@
 import { describe, expect, test } from 'bun:test';
-import { TATANGS_CURATED, inViewport, CEBU_VIEWPORT, type IMenuItem } from './catalog';
+import {
+  TATANGS_CURATED,
+  inViewport,
+  CEBU_VIEWPORT,
+  type IMenuItem,
+} from './catalog';
 import { estimateGroup } from './estimate';
 
 const menu = TATANGS_CURATED.menuItems;
-const total = (people: number) => estimateGroup(menu, people)?.totalCentavos ?? null;
+const total = (people: number) =>
+  estimateGroup(menu, people)?.totalCentavos ?? null;
 
 describe('Explore group budgeting', () => {
   test('never qualifies Tatangs with a cheap side or unpriced portion', () => {
@@ -26,8 +32,12 @@ describe('Explore group budgeting', () => {
       name: 'Single',
     };
     const platter: IMenuItem = {
-      ...singles, id: 'platter', name: 'Platter',
-      priceCentavos: 14000, serves: 2, servingBasis: 'printed',
+      ...singles,
+      id: 'platter',
+      name: 'Platter',
+      priceCentavos: 14000,
+      serves: 2,
+      servingBasis: 'printed',
     };
     const outcome = estimateGroup([singles, platter], 3);
     expect(outcome?.totalCentavos).toBe(22000);
@@ -47,6 +57,13 @@ describe('Explore group budgeting', () => {
   });
   test('viewport excludes places after panning away', () => {
     expect(inViewport(TATANGS_CURATED, CEBU_VIEWPORT)).toBe(true);
-    expect(inViewport(TATANGS_CURATED, { west: 124, east: 124.1, south: 10.3, north: 10.4 })).toBe(false);
+    expect(
+      inViewport(TATANGS_CURATED, {
+        west: 124,
+        east: 124.1,
+        south: 10.3,
+        north: 10.4,
+      }),
+    ).toBe(false);
   });
 });

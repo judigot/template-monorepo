@@ -1,5 +1,4 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
-import type { IExploreCamera } from '../map/place';
 import {
   createContext,
   useCallback,
@@ -7,6 +6,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import type { IExploreCamera } from '../map/place';
 
 export interface IExploreState {
   budget: number;
