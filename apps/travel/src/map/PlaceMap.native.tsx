@@ -38,6 +38,8 @@ export function PlaceMap({
     <Map
       ref={mapRef}
       androidView="texture"
+      logo={false}
+      attribution={false}
       style={styles.map}
       mapStyle={dark ? MAP_STYLES.dark : MAP_STYLES.light}
       onDidFailLoadingMap={onError}
@@ -129,19 +131,17 @@ const styles = StyleSheet.create({
   marker: {
     flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 44,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    minHeight: 34,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     backgroundColor: '#fff',
-    borderColor: '#b4233d',
-    borderWidth: 2,
-    borderRadius: 22,
+    borderRadius: 18,
     gap: 4,
   },
-  markerDark: { backgroundColor: '#142337', borderColor: '#4fd1c5' },
-  markerLight: { backgroundColor: '#fff', borderColor: '#0f766e' },
+  markerDark: { backgroundColor: '#142337' },
+  markerLight: { backgroundColor: '#fff' },
   labelDark: { color: '#e8f7f4' },
   labelLight: { color: '#122b31' },
-  icon: { fontSize: 20 },
+  icon: { fontSize: 17 },
   label: { color: '#27272a', fontWeight: '700', maxWidth: 90 },
 });

@@ -64,7 +64,11 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   expect(mapBox.width).toBeGreaterThanOrEqual(389);
   expect(mapBox.height).toBeGreaterThan(700);
   expect(menuBox.y).toBeGreaterThan(mapBox.y);
-  expect(menuBox.y + menuBox.height).toBeLessThan(mapBox.y + mapBox.height);
+  expect(menuBox.x).toBeCloseTo(mapBox.x, 0);
+  expect(menuBox.width).toBeCloseTo(mapBox.width, 0);
+  expect(menuBox.y + menuBox.height).toBeCloseTo(mapBox.y + mapBox.height, 0);
+  await expect(menu).toHaveText('1 place fits your budget');
+  await expect(page.getByRole('link', { name: /OpenStreetMap/ })).toBeVisible();
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
   const x = menuBox.x + menuBox.width / 2;
   const y = menuBox.y + menuBox.height / 2;
@@ -143,21 +147,23 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   await expect(marker).toContainText("Tatang's");
 
   await marker.click();
-  const dismissHandle = page.getByRole('button', {
-    name: 'Swipe down to close venue details',
-  });
-  await dismissHandle.scrollIntoViewIfNeeded();
-  const handleBox = await dismissHandle.boundingBox();
-  if (handleBox === null) {
-    throw new Error('Missing venue swipe handle');
+  const venueBody = page.getByTestId('venue-sheet-body');
+  const venueTitle = venueBody.getByText(/^Tatang/);
+  await venueTitle.scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole('button', { name: 'Close place details' }),
+  ).toHaveCount(0);
+  const titleBox = await venueTitle.boundingBox();
+  if (titleBox === null) {
+    throw new Error('Missing venue title');
   }
-  const handleX = handleBox.x + handleBox.width / 2;
-  const handleY = handleBox.y + handleBox.height / 2;
-  await page.mouse.move(handleX, handleY);
+  const dragX = titleBox.x + titleBox.width / 2;
+  const dragY = titleBox.y + titleBox.height / 2;
+  await page.mouse.move(dragX, dragY);
   await page.mouse.down();
-  await page.mouse.move(handleX, handleY + 160, { steps: 12 });
+  await page.mouse.move(dragX, dragY + 160, { steps: 12 });
   await page.mouse.up();
-  await expect(dismissHandle).toBeHidden();
+  await expect(venueBody).toBeHidden();
 
   const recenter = page.getByRole('button', {
     name: 'Center map on my location',

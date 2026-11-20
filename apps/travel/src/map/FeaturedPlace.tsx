@@ -42,11 +42,18 @@ import { MenuHandle } from './MenuHandle';
 import { PlaceMap } from './PlaceMap';
 import type { IExploreCamera } from './place';
 import { VenueDismissHandle } from './VenueDismissHandle';
+import { VenueSheetBody } from './VenueSheetBody';
 
 const GOOGLE_MAPS_ICON =
   'https://www.gstatic.com/images/branding/product/1x/maps_48dp.png';
+const MAP_CREDITS = [
+  { label: 'OpenFreeMap', url: 'https://openfreemap.org/' },
+  { label: '© OpenMapTiles', url: 'https://openmaptiles.org/' },
+  { label: '© OpenStreetMap', url: 'https://www.openstreetmap.org/copyright' },
+];
 const INCREMENT = 50;
 const MAX_BUDGET = 5000;
+const COLLAPSED_SHEET_HEIGHT = 46;
 const AnimatedSafeAreaView = Reanimated.createAnimatedComponent(SafeAreaView);
 
 interface IMatch {
@@ -77,8 +84,7 @@ function DirectionsButton({
         paddingHorizontal: compact ? 10 : 14,
         minHeight: 40,
         borderRadius: 12,
-        borderWidth: 1,
-        borderColor: colors.line,
+
         backgroundColor: colors.surface,
       }}
     >
@@ -142,34 +148,7 @@ function VenueDetails({
           ]}
         >
           <VenueDismissHandle offset={offset} onClose={onClose} />
-          <XStack
-            justify="space-between"
-            items="center"
-            style={{ padding: 20, paddingBottom: 10 }}
-          >
-            <Text
-              fontSize={12}
-              fontWeight="800"
-              letterSpacing={1.5}
-              style={{ color: colors.accent }}
-            >
-              VENUE DETAILS
-            </Text>
-            <TravelButton
-              size="sm"
-              aria-label="Close place details"
-              onPress={onClose}
-            >
-              Close
-            </TravelButton>
-          </XStack>
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: 20,
-              paddingBottom: 26,
-              gap: 16,
-            }}
-          >
+          <VenueSheetBody offset={offset} onClose={onClose}>
             <YStack gap="2">
               <Text
                 fontSize={26}
@@ -280,7 +259,7 @@ function VenueDetails({
                   </XStack>
                 );
               })}
-          </ScrollView>
+          </VenueSheetBody>
         </AnimatedSafeAreaView>
       </GestureHandlerRootView>
     </Modal>
@@ -315,8 +294,6 @@ function VenueCard({
       testID={`venue-card-${match.place.slug}`}
       gap="3"
       style={{
-        borderWidth: 1,
-        borderColor: colors.line,
         borderRadius: 20,
         backgroundColor: colors.surface,
         padding: 16,
@@ -618,8 +595,6 @@ export function FeaturedPlace() {
               padding: 12,
               borderRadius: 14,
               backgroundColor: colors.surface,
-              borderColor: colors.line,
-              borderWidth: 1,
             }}
           >
             <Text fontSize={12} style={{ color: colors.ink }}>
@@ -693,8 +668,6 @@ export function FeaturedPlace() {
             display: filtersOpen ? 'flex' : 'none',
             padding: 14,
             borderRadius: 20,
-            borderWidth: 1,
-            borderColor: colors.line,
             backgroundColor: colors.surface,
           }}
         >
@@ -812,21 +785,57 @@ export function FeaturedPlace() {
           </XStack>
         </YStack>
       </YStack>
+      {mapFailed ? null : (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            left: 8,
+            bottom: sheetProgress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [
+                COLLAPSED_SHEET_HEIGHT + 4,
+                COLLAPSED_SHEET_HEIGHT + sheetTravel + 4,
+              ],
+            }),
+            borderRadius: 6,
+            backgroundColor: colors.surface,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+          }}
+        >
+          <XStack gap="2">
+            {MAP_CREDITS.map(({ label, url }) => (
+              <Pressable
+                key={url}
+                accessibilityRole="link"
+                onPress={() => {
+                  void Linking.openURL(url);
+                }}
+              >
+                <Text fontSize={10} style={{ color: colors.ink }}>
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </XStack>
+        </Animated.View>
+      )}
       <Animated.View
         style={{
           position: 'absolute',
-          left: 12,
-          right: 12,
-          bottom: 24,
-          maxWidth: 460,
+          left: 0,
+          right: 0,
+          bottom: 0,
           height: sheetProgress.interpolate({
             inputRange: [0, 1],
-            outputRange: [48, 48 + sheetTravel],
+            outputRange: [
+              COLLAPSED_SHEET_HEIGHT,
+              COLLAPSED_SHEET_HEIGHT + sheetTravel,
+            ],
           }),
-          borderRadius: 18,
+          borderTopLeftRadius: 22,
+          borderTopRightRadius: 22,
           overflow: 'hidden',
-          borderWidth: 1,
-          borderColor: colors.line,
           backgroundColor: colors.surface,
         }}
       >
@@ -858,7 +867,8 @@ export function FeaturedPlace() {
             fontWeight="700"
             style={{ color: scheme === 'dark' ? '#fff' : colors.ink }}
           >
-            {String(matches.length)} {matches.length === 1 ? 'place' : 'places'}
+            {String(matches.length)}{' '}
+            {matches.length === 1 ? 'place fits' : 'places fit'} your budget
           </Text>
         </MenuHandle>
         <ScrollView
@@ -868,16 +878,20 @@ export function FeaturedPlace() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: 16,
-            paddingTop: 4,
-            paddingBottom: 32,
+            paddingVertical: 16,
             gap: 14,
             maxWidth: 1020,
             width: '100%',
             alignSelf: 'center',
           }}
         >
-          <XStack justify="flex-end">
-            {catalogStatus !== 'live' ? (
+          {catalogStatus !== 'live' ? (
+            <XStack justify="space-between" items="center" gap="2">
+              <Text flex={1} fontSize={12} style={{ color: colors.muted }}>
+                {catalogStatus === 'loading'
+                  ? 'Refreshing venue menus…'
+                  : 'Offline menu snapshot. Live prices may differ.'}
+              </Text>
               <TravelButton
                 size="sm"
                 tone="accent"
@@ -889,14 +903,7 @@ export function FeaturedPlace() {
               >
                 {catalogStatus === 'loading' ? 'Syncing' : 'Retry'}
               </TravelButton>
-            ) : null}
-          </XStack>
-          {catalogStatus !== 'live' ? (
-            <Text fontSize={12} style={{ color: colors.muted }}>
-              {catalogStatus === 'loading'
-                ? 'Refreshing venue menus…'
-                : 'Offline menu snapshot. Live prices may differ.'}
-            </Text>
+            </XStack>
           ) : null}
           {matches.length === 0 ? (
             <YStack
