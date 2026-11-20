@@ -1,8 +1,15 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import type { Marker as MapMarker, Map as MapView } from 'maplibre-gl';
+import mapPackage from 'maplibre-gl/package.json';
 import { useEffect, useRef, useState } from 'react';
 import { type IExploreMapProps, MAP_STYLES } from './place';
+
+// Keep MapLibre's published renderer and its worker together as browser modules.
+function loadRenderer(): Promise<typeof import('maplibre-gl')> {
+  const url = `/maplibre/${mapPackage.version}/maplibre-gl.mjs`;
+  return import(/* @metro-ignore */ url);
+}
 
 export function PlaceMap({
   places,
@@ -35,12 +42,11 @@ export function PlaceMap({
       return;
     }
     let disposed = false;
-    void import('maplibre-gl')
-      .then(({ getVersion, Map, NavigationControl, setWorkerUrl }) => {
+    void loadRenderer()
+      .then(({ Map, NavigationControl }) => {
         if (disposed) {
           return;
         }
-        setWorkerUrl(`/maplibre-gl-worker.mjs?v=${getVersion()}`);
         const map = new Map({
           container: node,
           style: initialDark.current ? MAP_STYLES.dark : MAP_STYLES.light,
@@ -69,6 +75,7 @@ export function PlaceMap({
         };
         map.on('error', (event) => {
           if (map.isStyleLoaded() !== true && !('tile' in event)) {
+            console.warn('Explore map style failed to load', event.error);
             onErrorRef.current();
           }
         });
@@ -76,8 +83,9 @@ export function PlaceMap({
         map.on('moveend', report);
         map.addControl(new NavigationControl({ showCompass: false }));
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!disposed) {
+          console.warn('Explore map initialization failed', error);
           onErrorRef.current();
         }
       });
@@ -93,7 +101,7 @@ export function PlaceMap({
 
   useEffect(() => {
     let cancelled = false;
-    void import('maplibre-gl')
+    void loadRenderer()
       .then(({ Marker }) => {
         if (cancelled) {
           return;

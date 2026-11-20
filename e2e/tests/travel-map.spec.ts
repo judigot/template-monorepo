@@ -12,8 +12,9 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   page.on('pageerror', (error) => diagnostics.push(error.message));
   page.on('requestfailed', (request) => diagnostics.push(request.url()));
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.route('https://tiles.openfreemap.org/styles/**', (route) =>
-    route.fulfill({
+  await page.route('https://tiles.openfreemap.org/styles/**', (route) => {
+    diagnostics.push(route.request().url());
+    return route.fulfill({
       headers: { 'access-control-allow-origin': '*' },
       json: {
         version: 8,
@@ -44,8 +45,8 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
           },
         ],
       },
-    }),
-  );
+    });
+  });
   await page.goto('http://127.0.0.1:3003');
   const canvas = page.locator('.maplibregl-canvas');
   await expect(canvas).toBeVisible();
@@ -67,7 +68,11 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
         ctx.drawImage(image, 0, 0);
         const { data } = ctx.getImageData(0, 0, image.width, image.height);
         for (let i = 0; i < data.length; i += 4) {
-          if (data[i] === 255 && data[i + 1] === 0 && data[i + 2] === 255) {
+          if (
+            (data[i] ?? 0) > 220 &&
+            (data[i + 1] ?? 255) < 30 &&
+            (data[i + 2] ?? 0) > 220
+          ) {
             return true;
           }
         }

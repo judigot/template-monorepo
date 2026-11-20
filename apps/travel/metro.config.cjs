@@ -3,10 +3,15 @@ const path = require('node:path');
 const { getDefaultConfig } = require('expo/metro-config');
 
 // Expo serves public/ during development and copies it into static web exports.
-const worker = require.resolve('maplibre-gl/dist/maplibre-gl-worker.mjs');
-const publicDir = path.join(__dirname, 'public');
+const { version } = require('maplibre-gl/package.json');
+const publicDir = path.join(__dirname, 'public', 'maplibre', version);
 fs.mkdirSync(publicDir, { recursive: true });
-fs.copyFileSync(worker, path.join(publicDir, path.basename(worker)));
+for (const name of ['maplibre-gl.mjs', 'maplibre-gl-worker.mjs']) {
+  fs.copyFileSync(
+    require.resolve(`maplibre-gl/dist/${name}`),
+    path.join(publicDir, name),
+  );
+}
 
 const config = getDefaultConfig(__dirname);
 
