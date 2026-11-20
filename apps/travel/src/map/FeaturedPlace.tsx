@@ -440,9 +440,7 @@ export function FeaturedPlace() {
       },
       onPanResponderRelease: (_, { dy, vy }) => {
         const open =
-          Math.abs(vy) > 0.35
-            ? vy < 0
-            : dragStart - dy / sheetTravel >= 0.5;
+          Math.abs(vy) > 0.35 ? vy < 0 : dragStart - dy / sheetTravel >= 0.5;
         settleMenu(open);
       },
       onPanResponderTerminate: () => {
