@@ -59,10 +59,20 @@ export async function fetchFeaturedPlace(baseUrl: string, signal: AbortSignal) {
 
 export const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
 export const MAP_ZOOM = 15.5;
-export const PIN_COLOR = '#b4233d';
 
-export interface IPlaceMapProps {
-  place: IPlace;
-  onOpen: () => void;
+
+
+import type { ICuratedPlace, IViewport } from './catalog';
+
+export interface IExploreCamera {
+  center: [number, number];
+  zoom: number;
+  bounds: IViewport;
+}
+export interface IExploreMapProps {
+  places: readonly ICuratedPlace[];
+  camera: IExploreCamera;
+  onOpen: (place: ICuratedPlace) => void;
+  onViewChange: (camera: IExploreCamera) => void;
   onError: () => void;
 }

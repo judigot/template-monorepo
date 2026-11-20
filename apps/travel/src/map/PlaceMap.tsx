@@ -1,78 +1,111 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-import type { Map as MapView } from 'maplibre-gl';
+import type { Map as MapView, Marker as MapMarker } from 'maplibre-gl';
 import { useEffect, useRef } from 'react';
-import { type IPlaceMapProps, MAP_STYLE, MAP_ZOOM, PIN_COLOR } from './place';
+import type { ICuratedPlace } from './catalog';
+import {
+  type IExploreMapProps,
+  MAP_STYLE,
+} from './place';
 
-export function PlaceMap({ place, onOpen, onError }: IPlaceMapProps) {
+export function PlaceMap({
+  places,
+  camera,
+  onOpen,
+  onViewChange,
+  onError,
+}: IExploreMapProps) {
   const container = useRef<HTMLDivElement>(null);
-  const { latitude, locality, longitude, name } = place;
+  const mapRef = useRef<MapView | null>(null);
+  const markersRef = useRef<MapMarker[]>([]);
+  const onOpenRef = useRef(onOpen);
+  const onViewChangeRef = useRef(onViewChange);
+  const onErrorRef = useRef(onError);
+  onOpenRef.current = onOpen;
+  onViewChangeRef.current = onViewChange;
+  onErrorRef.current = onError;
 
   useEffect(() => {
     const node = container.current;
-    if (node === null) {
-      return;
-    }
-
+    if (node === null) return;
     let disposed = false;
-    let map: MapView | undefined;
-    const center: [number, number] = [longitude, latitude];
-
     void import('maplibre-gl')
-      .then(({ getVersion, Map, Marker, NavigationControl, setWorkerUrl }) => {
-        if (disposed) {
-          return;
-        }
-
-        // Metro bundles the renderer, while MapLibre loads its worker separately.
+      .then(({ getVersion, Map, NavigationControl, setWorkerUrl }) => {
+        if (disposed) return;
         setWorkerUrl(
           `https://cdn.jsdelivr.net/npm/maplibre-gl@${getVersion()}/dist/maplibre-gl-worker.mjs`,
         );
-        map = new Map({
+        const map = new Map({
           container: node,
           style: MAP_STYLE,
-          center,
-          zoom: MAP_ZOOM,
-          cooperativeGestures: true,
+          center: camera.center,
+          zoom: camera.zoom,
+          cooperativeGestures: false,
         });
-        map.once('error', () => {
-          if (map?.isStyleLoaded() !== true) {
-            onError();
-          }
+        mapRef.current = map;
+        const report = () => {
+          const bounds = map.getBounds();
+          const center = map.getCenter();
+          onViewChangeRef.current({
+            center: [center.lng, center.lat],
+            zoom: map.getZoom(),
+            bounds: {
+              west: bounds.getWest(), south: bounds.getSouth(),
+              east: bounds.getEast(), north: bounds.getNorth(),
+            },
+          });
+        };
+        map.on('load', report);
+        map.on('moveend', report);
+        map.on('error', () => {
+          if (!map.isStyleLoaded()) onErrorRef.current();
         });
         map.addControl(new NavigationControl({ showCompass: false }));
-        const marker = new Marker({ color: PIN_COLOR })
-          .setLngLat(center)
-          .addTo(map);
-        const pin = marker.getElement();
-        pin.setAttribute('role', 'button');
-        pin.setAttribute('aria-label', `Open ${name}`);
-        pin.tabIndex = 0;
-        pin.style.cursor = 'pointer';
-        pin.addEventListener('click', onOpen);
-        pin.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            onOpen();
-          }
-        });
       })
       .catch(() => {
-        if (!disposed) {
-          onError();
-        }
+        if (!disposed) onErrorRef.current();
       });
-
     return () => {
       disposed = true;
-      map?.remove();
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
+      mapRef.current?.remove();
+      mapRef.current = null;
     };
-  }, [latitude, longitude, name, onError, onOpen]);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void import('maplibre-gl').then(({ Marker }) => {
+      if (cancelled) return;
+      const map = mapRef.current;
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
+      if (map === null) return;
+      for (const place of places) {
+        const element = document.createElement('button');
+        element.type = 'button';
+        element.setAttribute('aria-label', `Open ${place.name}`);
+        element.title = place.name;
+        element.style.cssText =
+          'background:#fff;border:2px solid #b4233d;border-radius:22px;padding:6px 10px;box-shadow:0 2px 8px #0003;cursor:pointer;font-size:14px;font-weight:700;white-space:nowrap';
+        element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0]}`;
+        element.addEventListener('click', () => onOpenRef.current(place));
+        markersRef.current.push(
+          new Marker({ element, anchor: 'bottom' })
+            .setLngLat([place.longitude, place.latitude])
+            .addTo(map),
+        );
+      }
+    }).catch(() => onErrorRef.current());
+    return () => { cancelled = true; };
+  }, [places]);
 
   return (
     <div
       ref={container}
-      aria-label={`Map of ${locality}`}
+      role="region"
+      aria-label="Interactive map of curated Cebu City places"
       style={{ width: '100%', height: '100%' }}
     />
   );
