@@ -63,7 +63,7 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
         sample.height = image.height;
         const ctx = sample.getContext('2d');
         if (ctx === null) {
-          return false;
+          return 'no canvas context';
         }
         ctx.drawImage(image, 0, 0);
         const { data } = ctx.getImageData(0, 0, image.width, image.height);
@@ -73,12 +73,19 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
             (data[i + 1] ?? 255) < 30 &&
             (data[i + 2] ?? 0) > 220
           ) {
-            return true;
+            return 'painted';
           }
         }
-        return false;
+        const colors = new Set<number>();
+        for (let i = 0; i < data.length; i += 40) {
+          colors.add(((data[i] ?? 0) << 16) + ((data[i + 1] ?? 0) << 8) + (data[i + 2] ?? 0));
+        }
+        const canvas = document.querySelector('.maplibregl-canvas');
+        const rect = canvas?.getBoundingClientRect();
+        const covering = rect ? document.elementsFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2).slice(0, 6).map((el) => el.tagName + '.' + el.className).join(' ') : '';
+        return JSON.stringify({ width: image.width, height: image.height, colors: [...colors].slice(0, 20), covering });
       }, png.toString('base64'));
-      return painted ? 'painted' : diagnostics.join('\n');
+      return painted === 'painted' ? painted : [painted, ...diagnostics].join('\n');
     })
     .toBe('painted');
 });
