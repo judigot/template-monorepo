@@ -8,6 +8,8 @@ import {
 import { estimateGroup } from './estimate';
 
 const menu = TATANGS_CURATED.menuItems;
+const valueMeal = menu.find((item) => item.id === 'value-belly');
+if (valueMeal === undefined) throw new Error('Missing test menu item');
 const total = (people: number) =>
   estimateGroup(menu, people)?.totalCentavos ?? null;
 
@@ -27,7 +29,7 @@ describe('Explore group budgeting', () => {
   });
   test('sharing platter beats three singles', () => {
     const singles: IMenuItem = {
-      ...menu[0]!,
+      ...valueMeal,
       id: 'single',
       name: 'Single',
     };
@@ -47,7 +49,7 @@ describe('Explore group budgeting', () => {
     ]);
   });
   test('ties prefer lower surplus, fewer orders, and stable IDs', () => {
-    const base = menu[0]!;
+    const base = valueMeal;
     const eligible: IMenuItem[] = [
       { ...base, id: 'b', priceCentavos: 10000, serves: 2 },
       { ...base, id: 'a', priceCentavos: 10000, serves: 2 },
