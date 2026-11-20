@@ -125,9 +125,9 @@ export function PlaceMap({
           element.setAttribute('aria-label', `Open ${place.name}`);
           element.style.cssText =
             (dark
-              ? 'background:#142337;color:#f6fbfa;'
-              : 'background:#fff;color:#122b31;') +
-            'border:0;border-radius:18px;min-height:34px;padding:4px 8px;box-shadow:0 3px 12px #0003;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap';
+              ? 'background:#142337;color:#f6fbfa;border:2px solid #4fd1c5;'
+              : 'background:#fff;color:#122b31;border:2px solid #0f766e;') +
+            'border-radius:18px;min-height:34px;padding:4px 8px;box-shadow:0 3px 12px #0003;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap';
           const icon = place.iconKey === 'lechon' ? '🍖' : '📍';
           const label = place.name.split(' ')[0] ?? place.name;
           element.textContent = showPlaceLabels ? `${icon} ${label}` : icon;
