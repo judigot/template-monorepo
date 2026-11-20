@@ -85,8 +85,6 @@ function DirectionsButton({
         minHeight: 40,
         borderRadius: 12,
         backgroundColor: colors.accentSoft,
-        borderWidth: 1,
-        borderColor: colors.accent,
       }}
     >
       <Image
