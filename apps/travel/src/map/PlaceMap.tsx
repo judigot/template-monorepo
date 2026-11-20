@@ -51,7 +51,9 @@ export function PlaceMap({
           cooperativeGestures: false,
         });
         mapRef.current = map;
-        activeStyle.current = initialDark.current ? MAP_STYLES.dark : MAP_STYLES.light;
+        activeStyle.current = initialDark.current
+          ? MAP_STYLES.dark
+          : MAP_STYLES.light;
         setReady(true);
         const report = () => {
           const bounds = map.getBounds();

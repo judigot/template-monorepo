@@ -27,8 +27,8 @@ import {
   orderSummary,
   pesos,
 } from './estimate';
-import { PlaceMap } from './PlaceMap';
 import { mapFrameWidth } from './map-layout';
+import { PlaceMap } from './PlaceMap';
 import type { IExploreCamera } from './place';
 
 const GOOGLE_MAPS_ICON =
@@ -738,7 +738,8 @@ export function FeaturedPlace() {
             }}
           >
             <Text fontSize={12} style={{ color: colors.ink }}>
-              Map could not load fully. Your matching places are still available below.
+              Map could not load fully. Your matching places are still available
+              below.
             </Text>
             <Button
               size="sm"
