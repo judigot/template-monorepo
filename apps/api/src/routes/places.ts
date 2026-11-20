@@ -2,7 +2,8 @@ import { Hono } from 'hono';
 import { database } from '../auth.ts';
 
 const PLACE_COLUMNS = `
-    p.slug, p.name, p.description, p.address, p.locality,
+    p.slug, p.name, p.description, p.address, p.locality, p.category,
+    p.cover_image_url AS "coverImageUrl",
     public.ST_X(p.location::public.geometry) AS longitude,
     public.ST_Y(p.location::public.geometry) AS latitude,
     p.directions_url AS "directionsUrl",
@@ -28,6 +29,7 @@ export const placesRouter = new Hono()
             'id', m.item_id, 'name', m.name, 'variant', m.variant,
             'priceCentavos', m.price_centavos, 'currency', m.currency,
             'serves', m.serves, 'eligible', m.eligible,
+            'available', m.available, 'section', m.section,
             'servingBasis', m.serving_basis,
             'sourceMonth', m.source_month, 'sourceReference', m.source_reference
           ) ORDER BY m.item_id)
