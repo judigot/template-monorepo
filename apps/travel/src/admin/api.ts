@@ -19,7 +19,7 @@ const ownerListSchema = z.object({
 
 export type IManagedPlace = z.infer<typeof managedPlaceSchema>;
 export type IAccountAccess = z.infer<typeof meSchema>;
-export type IMenuEdit = {
+export interface IMenuEdit {
   name: string;
   variant: string | null;
   section: string;
@@ -28,8 +28,8 @@ export type IMenuEdit = {
   eligible: boolean;
   available: boolean;
   servingBasis: 'printed' | 'assumed' | 'unknown';
-};
-export type IPlaceEdit = {
+}
+export interface IPlaceEdit {
   name: string;
   description: string;
   category: string;
@@ -40,7 +40,7 @@ export type IPlaceEdit = {
   directionsUrl: string;
   coverImageUrl: string | null;
   iconKey: string;
-};
+}
 
 async function authenticatedFetch(
   path: string,

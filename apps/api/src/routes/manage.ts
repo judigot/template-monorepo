@@ -50,10 +50,10 @@ const menuSchema = z
     },
   );
 
-type IActor = { id: string; email: string; admin: boolean };
-type IEnv = {
+interface IActor { id: string; email: string; admin: boolean }
+interface IEnv {
   Variables: { actor: IActor; pool: NonNullable<typeof database> };
-};
+}
 
 async function authorizedPlace(
   c: Context<IEnv>,

@@ -130,7 +130,7 @@ function AuthenticatedAccount() {
     };
   }, [refresh]);
 
-  const sessionUserId = session?.user?.id;
+  const sessionUserId = session?.user.id;
 
   useEffect(() => {
     if (sessionUserId === undefined) {
@@ -242,7 +242,7 @@ function AuthenticatedAccount() {
                   fontSize={27}
                   style={{ color: colors.onAccent }}
                 >
-                  {session.user.name?.slice(0, 1).toUpperCase() ?? 'W'}
+                  {session.user.name.slice(0, 1).toUpperCase() || 'W'}
                 </Text>
               </View>
               <YStack flex={1} gap="1">
