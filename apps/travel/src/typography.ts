@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-// Native Android already uses Roboto. On web the same family is loaded in +html.tsx.
+// Native Android already uses Roboto. On web the same family is loaded by web-fonts.web.ts.
 export const APP_FONT_FAMILY =
   Platform.select({
     android: 'Roboto',
