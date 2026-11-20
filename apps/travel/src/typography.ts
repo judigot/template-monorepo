@@ -6,7 +6,7 @@ export const APP_FONT_FAMILY =
     android: 'Roboto',
     ios: 'System',
     web: 'Roboto, Arial, sans-serif',
-  }) ?? 'System';
+  });
 
 export const TYPE_SCALE = {
   caption: 12,
