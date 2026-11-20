@@ -593,7 +593,9 @@ export function FeaturedPlace() {
         <XStack gap="2">
           <Button
             size="sm"
-            onPress={() => setFiltersOpen(!filtersOpen)}
+            onPress={() => {
+              setFiltersOpen(!filtersOpen);
+            }}
             accessibilityLabel="Budget and people"
             accessibilityState={{ expanded: filtersOpen }}
             style={{ backgroundColor: colors.surface, color: colors.ink }}
@@ -759,7 +761,9 @@ export function FeaturedPlace() {
           accessibilityRole="button"
           accessibilityLabel="Matching places and menu items"
           accessibilityState={{ expanded: menuOpen }}
-          onPress={() => setMenuOpen(!menuOpen)}
+          onPress={() => {
+            setMenuOpen(!menuOpen);
+          }}
           style={{
             paddingHorizontal: 16,
             minHeight: 44,
