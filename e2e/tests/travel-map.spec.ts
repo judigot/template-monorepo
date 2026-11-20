@@ -143,8 +143,10 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   await expect(marker).toContainText("Tatang's");
 
   await marker.click();
-  const dismissHandle = page.getByTestId('venue-dismiss-handle');
-  await expect(dismissHandle).toBeVisible();
+  const dismissHandle = page.getByRole('button', {
+    name: 'Swipe down to close venue details',
+  });
+  await dismissHandle.scrollIntoViewIfNeeded();
   const handleBox = await dismissHandle.boundingBox();
   if (handleBox === null) {
     throw new Error('Missing venue swipe handle');

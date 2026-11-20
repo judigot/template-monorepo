@@ -5,6 +5,7 @@ import type { IMenuHandleProps } from './menu-handle-props';
 export function MenuHandle({
   children,
   open,
+  label = 'Matching places and menu items',
   onToggle,
   onDrag,
   onRelease,
@@ -14,7 +15,7 @@ export function MenuHandle({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Matching places and menu items"
+      accessibilityLabel={label}
       aria-expanded={open}
       onTouchStart={(event) => {
         start.current = event.nativeEvent.pageY;

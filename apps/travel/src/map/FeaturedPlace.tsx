@@ -10,21 +10,15 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {
-  GestureDetector,
-  GestureHandlerRootView,
-  usePanGesture,
-} from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Reanimated, {
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
 } from 'react-native-reanimated';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { scheduleOnRN } from 'react-native-worklets';
 import { Input, Slider, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../auth/auth-client';
 import { TravelButton } from '../components/TravelButton';
@@ -47,6 +41,7 @@ import {
 import { MenuHandle } from './MenuHandle';
 import { PlaceMap } from './PlaceMap';
 import type { IExploreCamera } from './place';
+import { VenueDismissHandle } from './VenueDismissHandle';
 
 const GOOGLE_MAPS_ICON =
   'https://www.gstatic.com/images/branding/product/1x/maps_48dp.png';
@@ -120,42 +115,10 @@ function VenueDetails({
   onLocate: () => void;
 }) {
   const colors = useTravelColors();
-  const { height } = useWindowDimensions();
   const offset = useSharedValue(0);
-  const dismissing = useSharedValue(false);
   const sheetStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: offset.get() }],
   }));
-  const pan = usePanGesture({
-    activeOffsetY: 8,
-    failOffsetX: [-24, 24],
-    maxPointers: 1,
-    onUpdate: ({ translationY }) => {
-      if (!dismissing.get()) {
-        offset.set(Math.max(0, translationY));
-      }
-    },
-    onDeactivate: ({ canceled, translationY, velocityY }) => {
-      if (dismissing.get()) {
-        return;
-      }
-      if (
-        !canceled &&
-        (translationY >= 88 || (translationY >= 24 && velocityY >= 650))
-      ) {
-        dismissing.set(true);
-        offset.set(
-          withTiming(height, { duration: 200 }, (finished) => {
-            if (finished === true) {
-              scheduleOnRN(onClose);
-            }
-          }),
-        );
-      } else {
-        offset.set(withTiming(0, { duration: 180 }));
-      }
-    },
-  });
   const within = affordableItems(match.place, budget * 100, people);
   return (
     <Modal visible animationType="slide" transparent onRequestClose={onClose}>
@@ -178,25 +141,7 @@ function VenueDetails({
             sheetStyle,
           ]}
         >
-          <GestureDetector gesture={pan} touchAction="none">
-            <View
-              testID="venue-dismiss-handle"
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 28,
-              }}
-            >
-              <View
-                style={{
-                  width: 40,
-                  height: 4,
-                  borderRadius: 2,
-                  backgroundColor: colors.muted,
-                }}
-              />
-            </View>
-          </GestureDetector>
+          <VenueDismissHandle offset={offset} onClose={onClose} />
           <XStack
             justify="space-between"
             items="center"

@@ -4,6 +4,7 @@ import type { IMenuHandleProps } from './menu-handle-props';
 export function MenuHandle({
   children,
   open,
+  label = 'Matching places and menu items',
   onToggle,
   onDrag,
   onRelease,
@@ -13,7 +14,7 @@ export function MenuHandle({
   return (
     <button
       type="button"
-      aria-label="Matching places and menu items"
+      aria-label={label}
       aria-expanded={open}
       onPointerDown={(event) => {
         if (!event.isPrimary || event.button !== 0) {
