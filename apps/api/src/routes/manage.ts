@@ -95,7 +95,9 @@ manageRouter.use('*', async (c, next) => {
   if (auth === null || database === null) {
     return c.json({ error: 'Administration is not configured' }, 503);
   }
-  const session = await auth.api.getSession({ headers: new Headers(c.req.header()) });
+  const session = await auth.api.getSession({
+    headers: new Headers(c.req.header()),
+  });
   if (session?.user.emailVerified !== true) {
     return c.json({ error: 'Verified sign-in required' }, 401);
   }
