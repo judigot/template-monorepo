@@ -742,8 +742,7 @@ export function FeaturedPlace() {
               }}
             >
               <Text fontSize={12} style={{ color: colors.ink }}>
-                Map could not load fully. Your matching places are still available
-                below.
+                Map could not load. Matching places are listed below.
               </Text>
               <Button
                 size="sm"
