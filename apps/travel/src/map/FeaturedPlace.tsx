@@ -1,10 +1,4 @@
-import {
-  type ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Image,
@@ -17,11 +11,23 @@ import {
   View,
 } from 'react-native';
 import {
+  GestureDetector,
+  GestureHandlerRootView,
+  usePanGesture,
+} from 'react-native-gesture-handler';
+import Reanimated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { Button, Input, Slider, Text, XStack, YStack } from 'tamagui';
+import { scheduleOnRN } from 'react-native-worklets';
+import { Input, Slider, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../auth/auth-client';
+import { TravelButton } from '../components/TravelButton';
 import { useTravel } from '../state/travel-context';
 import { useTravelColors } from '../theme';
 import { useSystemScheme } from '../theme-scheme';
@@ -46,45 +52,11 @@ const GOOGLE_MAPS_ICON =
   'https://www.gstatic.com/images/branding/product/1x/maps_48dp.png';
 const INCREMENT = 50;
 const MAX_BUDGET = 5000;
+const AnimatedSafeAreaView = Reanimated.createAnimatedComponent(SafeAreaView);
 
 interface IMatch {
   place: ICuratedPlace;
   estimate: IGroupEstimate;
-}
-
-function ExploreButton({
-  children,
-  size,
-  disabled,
-  onPress,
-  style,
-  labelColor,
-  'aria-label': label,
-  'aria-expanded': expanded,
-}: Pick<
-  ComponentProps<typeof Button>,
-  | 'children'
-  | 'size'
-  | 'disabled'
-  | 'onPress'
-  | 'style'
-  | 'aria-label'
-  | 'aria-expanded'
-> & { labelColor?: string }) {
-  const scheme = useSystemScheme();
-  return (
-    <Button
-      size={size}
-      disabled={disabled}
-      onPress={onPress}
-      style={style}
-      aria-label={label}
-      aria-expanded={expanded}
-      textProps={{ style: { color: scheme === 'dark' ? '#fff' : labelColor } }}
-    >
-      {children}
-    </Button>
-  );
 }
 
 function DirectionsButton({
@@ -139,7 +111,7 @@ function VenueDetails({
   onClose,
   onLocate,
 }: {
-  match: IMatch | null;
+  match: IMatch;
   people: number;
   budget: number;
   saved: boolean;
@@ -148,28 +120,83 @@ function VenueDetails({
   onLocate: () => void;
 }) {
   const colors = useTravelColors();
-  if (match === null) {
-    return null;
-  }
+  const { height } = useWindowDimensions();
+  const offset = useSharedValue(0);
+  const dismissing = useSharedValue(false);
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: offset.get() }],
+  }));
+  const pan = usePanGesture({
+    activeOffsetY: 8,
+    failOffsetX: [-24, 24],
+    maxPointers: 1,
+    onUpdate: ({ translationY }) => {
+      if (!dismissing.get()) {
+        offset.set(Math.max(0, translationY));
+      }
+    },
+    onDeactivate: ({ canceled, translationY, velocityY }) => {
+      if (dismissing.get()) {
+        return;
+      }
+      if (
+        !canceled &&
+        (translationY >= 88 || (translationY >= 24 && velocityY >= 650))
+      ) {
+        dismissing.set(true);
+        offset.set(
+          withTiming(height, { duration: 200 }, (finished) => {
+            if (finished === true) {
+              scheduleOnRN(onClose);
+            }
+          }),
+        );
+      } else {
+        offset.set(withTiming(0, { duration: 180 }));
+      }
+    },
+  });
   const within = affordableItems(match.place, budget * 100, people);
   return (
     <Modal visible animationType="slide" transparent onRequestClose={onClose}>
-      <View
+      <GestureHandlerRootView
         style={{
           flex: 1,
           backgroundColor: '#0009',
           justifyContent: 'flex-end',
         }}
       >
-        <SafeAreaView
+        <AnimatedSafeAreaView
           edges={['bottom']}
-          style={{
-            backgroundColor: colors.surface,
-            borderTopLeftRadius: 26,
-            borderTopRightRadius: 26,
-            maxHeight: '88%',
-          }}
+          style={[
+            {
+              backgroundColor: colors.surface,
+              borderTopLeftRadius: 26,
+              borderTopRightRadius: 26,
+              maxHeight: '88%',
+            },
+            sheetStyle,
+          ]}
         >
+          <GestureDetector gesture={pan} touchAction="none">
+            <View
+              testID="venue-dismiss-handle"
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 28,
+              }}
+            >
+              <View
+                style={{
+                  width: 40,
+                  height: 4,
+                  borderRadius: 2,
+                  backgroundColor: colors.muted,
+                }}
+              />
+            </View>
+          </GestureDetector>
           <XStack
             justify="space-between"
             items="center"
@@ -183,13 +210,13 @@ function VenueDetails({
             >
               VENUE DETAILS
             </Text>
-            <ExploreButton
+            <TravelButton
               size="sm"
               aria-label="Close place details"
               onPress={onClose}
             >
               Close
-            </ExploreButton>
+            </TravelButton>
           </XStack>
           <ScrollView
             contentContainerStyle={{
@@ -245,17 +272,13 @@ function VenueDetails({
               </Text>
             </YStack>
             <XStack gap="2" flexWrap="wrap">
-              <ExploreButton
-                onPress={onLocate}
-                style={{ backgroundColor: colors.accentSoft }}
-                labelColor={colors.accent}
-              >
+              <TravelButton onPress={onLocate} tone="accent">
                 Locate on map
-              </ExploreButton>
+              </TravelButton>
               <DirectionsButton url={match.place.directionsUrl} />
-              <ExploreButton onPress={onSave} labelColor={colors.accent}>
+              <TravelButton onPress={onSave} labelColor={colors.accent}>
                 {saved ? '♥ Saved' : '♡ Save place'}
-              </ExploreButton>
+              </TravelButton>
             </XStack>
             <Text fontSize={19} fontWeight="800" style={{ color: colors.ink }}>
               Menu and prices
@@ -301,7 +324,9 @@ function VenueDetails({
                     <Text
                       fontSize={15}
                       fontWeight="800"
-                      style={{ color: affordable ? colors.accent : colors.ink }}
+                      style={{
+                        color: affordable ? colors.accent : colors.ink,
+                      }}
                     >
                       {item.priceCentavos === null
                         ? 'Ask venue'
@@ -311,8 +336,8 @@ function VenueDetails({
                 );
               })}
           </ScrollView>
-        </SafeAreaView>
-      </View>
+        </AnimatedSafeAreaView>
+      </GestureHandlerRootView>
     </Modal>
   );
 }
@@ -458,24 +483,23 @@ function VenueCard({
         </YStack>
       ) : null}
       <XStack gap="2" flexWrap="wrap">
-        <ExploreButton
+        <TravelButton
           size="sm"
           onPress={onLocate}
-          style={{ backgroundColor: colors.accentSoft }}
-          labelColor={colors.accent}
+          tone="accent"
           aria-label={`Show ${match.place.name} on map`}
         >
           ⌖ Show on map
-        </ExploreButton>
+        </TravelButton>
         <DirectionsButton url={match.place.directionsUrl} compact />
-        <ExploreButton
+        <TravelButton
           size="sm"
           onPress={onSave}
           aria-label="Save venue"
           labelColor={colors.accent}
         >
           {saved ? '♥' : '♡'}
-        </ExploreButton>
+        </TravelButton>
       </XStack>
     </YStack>
   );
@@ -656,15 +680,16 @@ export function FeaturedPlace() {
             <Text fontSize={12} style={{ color: colors.ink }}>
               Map could not load. Matching places are listed below.
             </Text>
-            <ExploreButton
+            <TravelButton
               size="sm"
+              tone="accent"
               onPress={() => {
                 setMapFailed(false);
                 setMapKey((previous) => previous + 1);
               }}
             >
               Retry map
-            </ExploreButton>
+            </TravelButton>
           </YStack>
         ) : null}
       </View>
@@ -679,31 +704,29 @@ export function FeaturedPlace() {
         }}
       >
         <XStack gap="2">
-          <ExploreButton
+          <TravelButton
             size="sm"
             onPress={() => {
               setFiltersOpen(!filtersOpen);
             }}
             aria-label="Budget and people"
             aria-expanded={filtersOpen}
-            style={{ backgroundColor: colors.surface }}
-            labelColor={colors.ink}
+            tone="surface"
           >
             {pesos(explore.budget * 100)} · {String(explore.people)}{' '}
             {explore.people === 1 ? 'person' : 'people'}
-          </ExploreButton>
-          <ExploreButton
+          </TravelButton>
+          <TravelButton
             size="sm"
             aria-label="Center map on my location"
             disabled={locating || mapFailed}
             onPress={() => {
               void recenter();
             }}
-            style={{ backgroundColor: colors.surface }}
-            labelColor={colors.ink}
+            tone="surface"
           >
             {locating ? 'Finding location…' : '⊙ My location'}
-          </ExploreButton>
+          </TravelButton>
         </XStack>
         {locationError === null ? null : (
           <Text
@@ -743,18 +766,17 @@ export function FeaturedPlace() {
             </Text>
           </XStack>
           <XStack gap="3" items="center">
-            <ExploreButton
+            <TravelButton
               size="sm"
               aria-label="Decrease budget by 50 pesos"
               disabled={explore.budget <= 0}
               onPress={() => {
                 setBudget(explore.budget - INCREMENT);
               }}
-              style={{ backgroundColor: colors.accentSoft }}
-              labelColor={colors.accent}
+              tone="accent"
             >
               − ₱50
-            </ExploreButton>
+            </TravelButton>
             <YStack flex={1}>
               <Slider
                 min={0}
@@ -772,18 +794,17 @@ export function FeaturedPlace() {
                 <Slider.Thumb index={0} circular />
               </Slider>
             </YStack>
-            <ExploreButton
+            <TravelButton
               size="sm"
               aria-label="Increase budget by 50 pesos"
               disabled={explore.budget >= MAX_BUDGET}
               onPress={() => {
                 setBudget(explore.budget + INCREMENT);
               }}
-              style={{ backgroundColor: colors.accentSoft }}
-              labelColor={colors.accent}
+              tone="accent"
             >
               + ₱50
-            </ExploreButton>
+            </TravelButton>
           </XStack>
           <XStack justify="space-between" items="center" gap="3">
             <Input
@@ -811,7 +832,7 @@ export function FeaturedPlace() {
               >
                 People
               </Text>
-              <ExploreButton
+              <TravelButton
                 size="sm"
                 aria-label="Remove one person"
                 disabled={explore.people <= 1}
@@ -824,11 +845,11 @@ export function FeaturedPlace() {
                 }}
               >
                 −
-              </ExploreButton>
+              </TravelButton>
               <Text style={{ color: colors.ink }} fontWeight="800">
                 {String(explore.people)}
               </Text>
-              <ExploreButton
+              <TravelButton
                 size="sm"
                 aria-label="Add one person"
                 disabled={explore.people >= 20}
@@ -841,7 +862,7 @@ export function FeaturedPlace() {
                 }}
               >
                 +
-              </ExploreButton>
+              </TravelButton>
             </XStack>
           </XStack>
         </YStack>
@@ -912,15 +933,17 @@ export function FeaturedPlace() {
         >
           <XStack justify="flex-end">
             {catalogStatus !== 'live' ? (
-              <ExploreButton
+              <TravelButton
                 size="sm"
+                tone="accent"
+                disabled={catalogStatus === 'loading'}
                 onPress={() => {
                   setCatalogStatus('loading');
                   setRetry((value) => value + 1);
                 }}
               >
                 {catalogStatus === 'loading' ? 'Syncing' : 'Retry'}
-              </ExploreButton>
+              </TravelButton>
             ) : null}
           </XStack>
           {catalogStatus !== 'live' ? (
@@ -949,14 +972,14 @@ export function FeaturedPlace() {
               <Text fontSize={12} style={{ color: colors.muted }}>
                 Prices alone cannot confirm servings for the whole group.
               </Text>
-              <ExploreButton
+              <TravelButton
                 size="sm"
                 onPress={() => {
                   setBudget(MAX_BUDGET);
                 }}
               >
                 Increase budget
-              </ExploreButton>
+              </TravelButton>
             </YStack>
           ) : (
             matches.map((match) => (
@@ -980,25 +1003,24 @@ export function FeaturedPlace() {
           )}
         </ScrollView>
       </Animated.View>
-      <VenueDetails
-        match={selectedMatch}
-        people={explore.people}
-        budget={explore.budget}
-        saved={selectedMatch !== null && isSaved(selectedMatch.place.slug)}
-        onSave={() => {
-          if (selectedMatch !== null) {
+      {selectedMatch === null ? null : (
+        <VenueDetails
+          key={selectedMatch.place.slug}
+          match={selectedMatch}
+          people={explore.people}
+          budget={explore.budget}
+          saved={isSaved(selectedMatch.place.slug)}
+          onSave={() => {
             toggleSaved(selectedMatch.place.slug);
-          }
-        }}
-        onClose={() => {
-          setSelected(null);
-        }}
-        onLocate={() => {
-          if (selectedMatch !== null) {
+          }}
+          onClose={() => {
+            setSelected(null);
+          }}
+          onLocate={() => {
             locate(selectedMatch.place);
-          }
-        }}
-      />
+          }}
+        />
+      )}
     </View>
   );
 }

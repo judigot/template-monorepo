@@ -111,6 +111,9 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
     })
     .toBe('painted');
 
+  const retry = page.getByRole('button', { name: 'Retry', exact: true });
+  await expect(retry).toHaveCSS('background-color', 'rgb(19, 78, 74)');
+
   const placeCard = page.getByTestId('venue-card-tatangs-lechon');
   const locate = placeCard.getByRole('button', {
     name: /^Show Tatang's.* on map$/,
@@ -138,6 +141,21 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
   await locate.click();
   await expect(marker).toBeInViewport();
   await expect(marker).toContainText("Tatang's");
+
+  await marker.click();
+  const dismissHandle = page.getByTestId('venue-dismiss-handle');
+  await expect(dismissHandle).toBeVisible();
+  const handleBox = await dismissHandle.boundingBox();
+  if (handleBox === null) {
+    throw new Error('Missing venue swipe handle');
+  }
+  const handleX = handleBox.x + handleBox.width / 2;
+  const handleY = handleBox.y + handleBox.height / 2;
+  await page.mouse.move(handleX, handleY);
+  await page.mouse.down();
+  await page.mouse.move(handleX, handleY + 160, { steps: 12 });
+  await page.mouse.up();
+  await expect(dismissHandle).toBeHidden();
 
   const recenter = page.getByRole('button', {
     name: 'Center map on my location',

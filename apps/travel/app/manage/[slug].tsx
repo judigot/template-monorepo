@@ -1,6 +1,14 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { Modal, ScrollView, Switch, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  Animated,
+  Modal,
+  Platform,
+  ScrollView,
+  Switch,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { Button, Input, Text, XStack, YStack } from 'tamagui';
 import {
   addOwner,
@@ -115,6 +123,8 @@ function ItemEditor({
   draft,
   onChange,
   onCancel,
+  onDismiss,
+  closing,
   onSave,
   busy,
   error,
@@ -122,17 +132,56 @@ function ItemEditor({
   draft: IItemDraft;
   onChange: (value: IItemDraft) => void;
   onCancel: () => void;
+  onDismiss: () => void;
+  closing: boolean;
   onSave: () => void;
   busy: boolean;
   error: string | null;
 }) {
   const colors = useTravelColors();
+  const { width } = useWindowDimensions();
+  const [progress] = useState(() => new Animated.Value(1));
+  useEffect(() => {
+    const transition = Animated.timing(progress, {
+      toValue: closing ? 1 : 0,
+      duration: closing ? 180 : 240,
+      useNativeDriver: Platform.OS !== 'web',
+    });
+    transition.start(({ finished }) => {
+      if (finished && closing) {
+        onDismiss();
+      }
+    });
+    return () => {
+      transition.stop();
+    };
+  }, [closing, onDismiss, progress]);
+
+  const cancel = () => {
+    if (!busy && !closing) {
+      onCancel();
+    }
+  };
   const change = (field: keyof IItemDraft, value: string | boolean) => {
     onChange({ ...draft, [field]: value });
   };
   return (
-    <Modal visible animationType="slide" onRequestClose={onCancel}>
-      <View style={{ flex: 1, backgroundColor: colors.canvas }}>
+    <Modal visible transparent animationType="none" onRequestClose={cancel}>
+      <Animated.View
+        pointerEvents={closing ? 'none' : 'auto'}
+        style={{
+          flex: 1,
+          backgroundColor: colors.canvas,
+          transform: [
+            {
+              translateX: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, width],
+              }),
+            },
+          ],
+        }}
+      >
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ padding: 20, paddingTop: 56, gap: 16 }}
@@ -242,9 +291,11 @@ function ItemEditor({
           >
             {busy ? 'Saving…' : 'Publish menu item'}
           </Button>
-          <Button onPress={onCancel}>Cancel</Button>
+          <Button disabled={busy} onPress={cancel}>
+            Cancel
+          </Button>
         </ScrollView>
-      </View>
+      </Animated.View>
     </Modal>
   );
 }
@@ -257,6 +308,11 @@ export default function ManageVenueScreen() {
   const [access, setAccess] = useState<IAccountAccess | null>(null);
   const [draft, setDraft] = useState<IPlaceDraft | null>(null);
   const [itemDraft, setItemDraft] = useState<IItemDraft | null>(null);
+  const [closingItem, setClosingItem] = useState(false);
+  const dismissItem = useCallback(() => {
+    setItemDraft(null);
+    setClosingItem(false);
+  }, []);
   const [editingPlace, setEditingPlace] = useState(false);
   const [owners, setOwners] = useState<string[]>([]);
   const [ownerEmail, setOwnerEmail] = useState('');
@@ -320,7 +376,7 @@ export default function ManageVenueScreen() {
     setItemError(null);
     try {
       await saveMenuItem(slug, itemDraft.id, validItem(itemDraft));
-      setItemDraft(null);
+      setClosingItem(true);
       setNotice('Menu updated and published.');
       refresh();
     } catch (cause) {
@@ -566,8 +622,10 @@ export default function ManageVenueScreen() {
         <ItemEditor
           draft={itemDraft}
           onChange={setItemDraft}
+          closing={closingItem}
+          onDismiss={dismissItem}
           onCancel={() => {
-            setItemDraft(null);
+            setClosingItem(true);
           }}
           onSave={() => {
             void updateItem();

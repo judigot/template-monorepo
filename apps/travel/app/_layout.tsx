@@ -6,6 +6,8 @@ import { TravelProvider } from '../src/state/travel-context';
 import { useSystemScheme } from '../src/theme-scheme';
 import { tamaguiConfig } from '../tamagui.config';
 
+const managementTransition = { animation: 'slide_from_right' } as const;
+
 export default function RootLayout() {
   const isDark = useSystemScheme() === 'dark';
 
@@ -22,6 +24,18 @@ export default function RootLayout() {
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="destination/[id]" />
+                <Stack.Screen
+                  name="manage/index"
+                  options={managementTransition}
+                />
+                <Stack.Screen
+                  name="manage/new"
+                  options={managementTransition}
+                />
+                <Stack.Screen
+                  name="manage/[slug]"
+                  options={managementTransition}
+                />
               </Stack>
             </TravelProvider>
           </SafeAreaProvider>
