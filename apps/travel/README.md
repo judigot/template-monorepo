@@ -5,7 +5,7 @@ and Tamagui components run on every platform, with responsive two-column
 web cards and one-column phone cards.
 
 Wanderapp lives on `app/travel-app` in `judigot/template-monorepo`. The Hono API
-handles Google sign-in. Destination content is illustrative, and saved places
+handles Google sign-in. The Explore catalog is curated from restaurant menus, and saved places
 are held in the app's local state.
 
 ## Development and release workflow
@@ -247,3 +247,28 @@ bun expo install --check  # from apps/travel
 Manually confirm search, region filters, saved items, and detail navigation
 on the browser and a real Android device. iOS is a supported target but
 requires independent device verification.
+
+## Venue administration and ownership
+
+Migrations `003_wanderapp_explore_menu.sql` and `004_wanderapp_management.sql`
+configure editable venues, menu data, roles, and an audit trail on a target Neon branch.
+The initial administrator invitation is `judigot@gmail.com`. A verified
+Google sign-in for that email activates its administrator role. Additional
+administrators can be granted by email; venue owners are granted for specific
+places and cannot edit other venues or grant elevated roles. The server
+checks Better Auth sessions and database grants before every write.
+
+Open **Account → Manage places** to add venues, edit place details and menu
+items, publish prices, and assign owners. All menu writes are stored in
+integer centavos and retain source/provenance metadata. An item without
+known servings can appear as an affordable individual item but cannot
+qualify a venue for the entire group budget.
+
+Explore follows the system color scheme on all platforms, including map
+tiles. The budget defaults to one person and supports ₱50 slider/button
+steps as well as an exact peso input. Show on map animates the camera
+without changing the current filter. Map markers open venue details.
+Google Maps directions open through the existing official directions URL.
+
+Do not apply the migrations to the live database until the authorization
+flow and current schema have been validated on a separate Neon branch.
