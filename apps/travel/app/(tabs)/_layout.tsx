@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTravelColors } from '../../src/theme';
+import { APP_FONT_FAMILY, FONT_WEIGHT } from '../../src/typography';
 
 const icons = { index: '⌕', saved: '♡', account: '◉' } as const;
 
@@ -14,7 +15,11 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.muted,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+        tabBarLabelStyle: {
+          fontFamily: APP_FONT_FAMILY,
+          fontSize: 11,
+          fontWeight: FONT_WEIGHT.semibold,
+        },
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopWidth: 0,
