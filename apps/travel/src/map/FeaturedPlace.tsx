@@ -3,7 +3,6 @@ import { Linking, Modal, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, H2, Input, Slider, Text, XStack, YStack } from 'tamagui';
 import { authBaseUrl } from '../auth/auth-client';
-import type { IExploreCamera } from './place';
 import { useTravel } from '../state/travel-context';
 import { useTravelColors } from '../theme';
 import {
@@ -19,6 +18,7 @@ import {
   pesos,
 } from './estimate';
 import { PlaceMap } from './PlaceMap';
+import type { IExploreCamera } from './place';
 
 interface IMatch {
   place: ICuratedPlace;
