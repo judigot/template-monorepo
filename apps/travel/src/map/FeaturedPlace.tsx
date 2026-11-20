@@ -23,7 +23,6 @@ import {
   affordableItems,
   fetchCuratedPlaces,
   type ICuratedPlace,
-  inViewport,
   OFFLINE_CURATED_PLACES,
 } from './catalog';
 import {
@@ -295,9 +294,14 @@ function VenueCard({
   onLocate: () => void;
 }) {
   const colors = useTravelColors();
-  const matchedItems = affordableItems(match.place, budget * 100, people);
+  const affordable = affordableItems(match.place, budget * 100, people);
+  const groupItems = affordable.filter(({ groupTotal }) => groupTotal !== null);
+  const individualItems = affordable.filter(
+    ({ groupTotal }) => groupTotal === null,
+  );
   return (
     <YStack
+      testID={`venue-card-${match.place.slug}`}
       gap="3"
       style={{
         borderWidth: 1,
@@ -329,7 +333,7 @@ function VenueCard({
           Estimated for {String(people)} · {orderSummary(match.estimate)}
         </Text>
       </Pressable>
-      {matchedItems.length > 0 ? (
+      {groupItems.length > 0 ? (
         <YStack
           gap="2"
           style={{
@@ -346,7 +350,7 @@ function VenueCard({
           >
             ITEMS WITHIN BUDGET
           </Text>
-          {matchedItems.slice(0, 5).map(({ item, groupTotal, quantity }) => (
+          {groupItems.slice(0, 5).map(({ item, groupTotal, quantity }) => (
             <XStack
               key={item.id}
               gap="2"
@@ -373,11 +377,43 @@ function VenueCard({
               </Text>
             </XStack>
           ))}
-          {matchedItems.some(({ groupTotal }) => groupTotal === null) ? (
-            <Text fontSize={10} style={{ color: colors.muted }}>
-              * Serving count not confirmed
-            </Text>
-          ) : null}
+        </YStack>
+      ) : null}
+      {individualItems.length > 0 ? (
+        <YStack
+          gap="2"
+          style={{
+            borderTopWidth: 1,
+            borderColor: colors.line,
+            paddingTop: 12,
+          }}
+        >
+          <Text fontSize={13} fontWeight="800" style={{ color: colors.ink }}>
+            Individual menu prices in budget
+          </Text>
+          <Text fontSize={11} style={{ color: colors.muted }}>
+            Listed prices per item. Serving sizes are unconfirmed.
+          </Text>
+          {individualItems.map(({ item }) => (
+            <XStack
+              key={item.id}
+              gap="2"
+              justify="space-between"
+              items="center"
+            >
+              <Text flex={1} fontSize={12} style={{ color: colors.ink }}>
+                {item.name}
+                {item.variant === null ? '' : ` · ${item.variant}`}
+              </Text>
+              <Text
+                fontSize={12}
+                fontWeight="700"
+                style={{ color: colors.accent }}
+              >
+                {pesos(item.priceCentavos ?? 0)}
+              </Text>
+            </XStack>
+          ))}
         </YStack>
       ) : null}
       <XStack gap="2" flexWrap="wrap">
@@ -481,9 +517,6 @@ export function FeaturedPlace() {
     () =>
       places
         .flatMap((place) => {
-          if (!inViewport(place, explore.camera.bounds)) {
-            return [];
-          }
           const estimate = estimateGroup(place.menuItems, explore.people);
           if (
             estimate === null ||
@@ -499,26 +532,9 @@ export function FeaturedPlace() {
             a.place.name.localeCompare(b.place.name) ||
             a.place.slug.localeCompare(b.place.slug),
         ),
-    [places, explore.budget, explore.people, explore.camera.bounds],
+    [places, explore.budget, explore.people],
   );
-
-  const nearby = useMemo(
-    () => places.filter((place) => inViewport(place, explore.camera.bounds)),
-    [places, explore.camera.bounds],
-  );
-  const independentItems = useMemo(
-    () =>
-      nearby
-        .flatMap((place) =>
-          affordableItems(place, explore.budget * 100, explore.people)
-            .filter(({ item }) => item.serves === null)
-            .map(({ item }) => ({ place, item })),
-        )
-        .sort(
-          (a, b) => (a.item.priceCentavos ?? 0) - (b.item.priceCentavos ?? 0),
-        ),
-    [nearby, explore.budget, explore.people],
-  );
+  const mapPlaces = useMemo(() => matches.map(({ place }) => place), [matches]);
   const selectedMatch =
     matches.find(({ place }) => place.slug === selected) ?? null;
   const locate = (place: ICuratedPlace) => {
@@ -555,7 +571,7 @@ export function FeaturedPlace() {
       <View style={StyleSheet.absoluteFill}>
         <PlaceMap
           key={mapKey}
-          places={matches.map(({ place }) => place)}
+          places={mapPlaces}
           camera={explore.camera}
           dark={scheme === 'dark'}
           focus={focus}
@@ -855,24 +871,18 @@ export function FeaturedPlace() {
                 fontWeight="800"
                 style={{ color: colors.ink }}
               >
-                {nearby.length === 0
-                  ? 'No curated places in this area'
-                  : 'No restaurant covers this group budget'}
+                No restaurant covers this group budget
               </Text>
               <Text fontSize={12} style={{ color: colors.muted }}>
                 Prices alone cannot confirm servings for the whole group.
               </Text>
               <Button
                 size="sm"
-                onPress={
-                  nearby.length === 0
-                    ? reset
-                    : () => {
-                        setBudget(MAX_BUDGET);
-                      }
-                }
+                onPress={() => {
+                  setBudget(MAX_BUDGET);
+                }}
               >
-                {nearby.length === 0 ? 'Explore Cebu City' : 'Increase budget'}
+                Increase budget
               </Button>
             </YStack>
           ) : (
@@ -895,52 +905,6 @@ export function FeaturedPlace() {
               />
             ))
           )}
-          {independentItems.length > 0 ? (
-            <YStack gap="3" style={{ paddingTop: 8 }}>
-              <Text
-                fontWeight="800"
-                fontSize={18}
-                style={{ color: colors.ink }}
-              >
-                Individual menu prices in budget
-              </Text>
-              <Text fontSize={12} style={{ color: colors.muted }}>
-                The items below have a listed unit price within your budget, but
-                their serving sizes are unconfirmed. They do not qualify the
-                restaurant for your full group.
-              </Text>
-              {independentItems.slice(0, 12).map(({ place, item }) => (
-                <XStack
-                  key={`${place.slug}:${item.id}`}
-                  items="center"
-                  justify="space-between"
-                  gap="3"
-                  style={{
-                    paddingVertical: 11,
-                    borderBottomWidth: 1,
-                    borderColor: colors.line,
-                  }}
-                >
-                  <YStack flex={1} gap="1">
-                    <Text
-                      fontSize={13}
-                      fontWeight="700"
-                      style={{ color: colors.ink }}
-                    >
-                      {item.name}
-                      {item.variant === null ? '' : ` · ${item.variant}`}
-                    </Text>
-                    <Text fontSize={11} style={{ color: colors.muted }}>
-                      {place.name}
-                    </Text>
-                  </YStack>
-                  <Text fontWeight="800" style={{ color: colors.accent }}>
-                    {pesos(item.priceCentavos ?? 0)}
-                  </Text>
-                </XStack>
-              ))}
-            </YStack>
-          ) : null}
         </ScrollView>
       </Animated.View>
       <VenueDetails

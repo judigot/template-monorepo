@@ -107,4 +107,32 @@ test('Explore draws a geographic feature on a phone-sized map', async ({
         : [painted, ...diagnostics].join('\n');
     })
     .toBe('painted');
+
+  const placeCard = page.getByTestId('venue-card-tatangs-lechon');
+  const locate = placeCard.getByRole('button', {
+    name: /^Show Tatang's.* on map$/,
+  });
+  await expect(
+    placeCard.getByText('Individual menu prices in budget'),
+  ).toBeVisible();
+  await menu.click();
+
+  const marker = page
+    .getByRole('button', { name: /^Open Tatang's/ })
+    .and(page.locator('.maplibregl-marker'));
+  await expect(marker).toContainText("Tatang's");
+  await page.getByRole('button', { name: 'Zoom out' }).click();
+  await expect(marker).not.toContainText("Tatang's");
+  await expect(marker).toBeInViewport();
+
+  await page.mouse.move(350, 395);
+  await page.mouse.down();
+  await page.mouse.move(35, 395, { steps: 12 });
+  await page.mouse.up();
+  await expect(marker).not.toBeInViewport();
+  await menu.click();
+  await expect(locate).toBeVisible();
+  await locate.click();
+  await expect(marker).toBeInViewport();
+  await expect(marker).toContainText("Tatang's");
 });

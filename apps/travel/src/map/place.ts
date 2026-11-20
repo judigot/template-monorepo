@@ -63,6 +63,7 @@ export const MAP_STYLES = {
   dark: 'https://tiles.openfreemap.org/styles/dark',
 } as const;
 export const MAP_ZOOM = 15.5;
+export const PLACE_LABEL_MIN_ZOOM = 15;
 
 export interface IExploreCamera {
   center: [number, number];

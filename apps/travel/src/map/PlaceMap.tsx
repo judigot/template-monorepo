@@ -3,7 +3,11 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Marker as MapMarker, Map as MapView } from 'maplibre-gl';
 import mapPackage from 'maplibre-gl/package.json';
 import { useEffect, useRef, useState } from 'react';
-import { type IExploreMapProps, MAP_STYLES } from './place';
+import {
+  type IExploreMapProps,
+  MAP_STYLES,
+  PLACE_LABEL_MIN_ZOOM,
+} from './place';
 
 // Keep MapLibre's published renderer and its worker together as browser modules.
 function loadRenderer(): Promise<typeof import('maplibre-gl')> {
@@ -24,6 +28,7 @@ export function PlaceMap({
   const [ready, setReady] = useState(false);
   const mapRef = useRef<MapView | null>(null);
   const markersRef = useRef<MapMarker[]>([]);
+  const showPlaceLabels = camera.zoom >= PLACE_LABEL_MIN_ZOOM;
   const initialCamera = useRef(camera);
   const initialDark = useRef(dark);
   const activeStyle = useRef<string | null>(null);
@@ -116,13 +121,14 @@ export function PlaceMap({
           const element = document.createElement('button');
           element.type = 'button';
           element.setAttribute('aria-label', `Open ${place.name}`);
-          element.title = place.name;
           element.style.cssText =
             (dark
               ? 'background:#142337;color:#f6fbfa;border:2px solid #4fd1c5;'
               : 'background:#fff;color:#122b31;border:2px solid #0f766e;') +
             'border-radius:24px;padding:7px 11px;box-shadow:0 3px 12px #0003;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap';
-          element.textContent = `${place.iconKey === 'lechon' ? '🍖' : '📍'} ${place.name.split(' ')[0] ?? place.name}`;
+          const icon = place.iconKey === 'lechon' ? '🍖' : '📍';
+          const label = place.name.split(' ')[0] ?? place.name;
+          element.textContent = showPlaceLabels ? `${icon} ${label}` : icon;
           element.addEventListener('click', () => {
             onOpenRef.current(place);
           });
@@ -139,7 +145,7 @@ export function PlaceMap({
     return () => {
       cancelled = true;
     };
-  }, [places, ready, dark]);
+  }, [places, ready, dark, showPlaceLabels]);
 
   useEffect(() => {
     const map = mapRef.current;

@@ -7,7 +7,11 @@ import {
 } from '@maplibre/maplibre-react-native';
 import { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { type IExploreMapProps, MAP_STYLES } from './place';
+import {
+  type IExploreMapProps,
+  MAP_STYLES,
+  PLACE_LABEL_MIN_ZOOM,
+} from './place';
 
 export function PlaceMap({
   places,
@@ -78,15 +82,17 @@ export function PlaceMap({
             <Text style={styles.icon}>
               {place.iconKey === 'lechon' ? '🍖' : '📍'}
             </Text>
-            <Text
-              style={[
-                styles.label,
-                dark ? styles.labelDark : styles.labelLight,
-              ]}
-              numberOfLines={1}
-            >
-              {place.name.split(' ')[0]}
-            </Text>
+            {camera.zoom >= PLACE_LABEL_MIN_ZOOM ? (
+              <Text
+                style={[
+                  styles.label,
+                  dark ? styles.labelDark : styles.labelLight,
+                ]}
+                numberOfLines={1}
+              >
+                {place.name.split(' ')[0]}
+              </Text>
+            ) : null}
           </View>
         </Marker>
       ))}
