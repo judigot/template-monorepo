@@ -302,17 +302,47 @@ export function FeaturedPlace() {
                 size="sm"
                 accessibilityLabel="Add one person"
                 disabled={explore.people >= 20}
-                onPress={() => setExplore((p) => ({ ...p, people: Math.min(20, p.people + 1) }))}
-              >+</Button>
+                onPress={() =>
+                  setExplore((p) => ({
+                    ...p,
+                    people: Math.min(20, p.people + 1),
+                  }))
+                }
+              >
+                +
+              </Button>
             </XStack>
           </YStack>
         </XStack>
       </YStack>
-      <View style={{ height: 310, marginHorizontal: 16, borderRadius: 16, overflow: 'hidden', backgroundColor: colors.imageFallback }}>
+      <View
+        style={{
+          height: 310,
+          marginHorizontal: 16,
+          borderRadius: 16,
+          overflow: 'hidden',
+          backgroundColor: colors.imageFallback,
+        }}
+      >
         {mapFailed ? (
-          <YStack flex={1} justify="center" items="center" gap="2" style={{ padding: 20 }}>
-            <Text style={{ color: colors.muted }}>Map tiles unavailable. Showing results for your last known area.</Text>
-            <Button onPress={() => { setMapFailed(false); setMapKey((key) => key + 1); }}>Retry map</Button>
+          <YStack
+            flex={1}
+            justify="center"
+            items="center"
+            gap="2"
+            style={{ padding: 20 }}
+          >
+            <Text style={{ color: colors.muted }}>
+              Map tiles unavailable. Showing results for your last known area.
+            </Text>
+            <Button
+              onPress={() => {
+                setMapFailed(false);
+                setMapKey((key) => key + 1);
+              }}
+            >
+              Retry map
+            </Button>
           </YStack>
         ) : (
           <PlaceMap
@@ -332,7 +362,8 @@ export function FeaturedPlace() {
       >
         <XStack justify="space-between" items="center">
           <Text fontSize={18} fontWeight="800" style={{ color: colors.ink }}>
-            {matches.length} {matches.length === 1 ? 'place' : 'places'} in this area
+            {matches.length} {matches.length === 1 ? 'place' : 'places'} in this
+            area
           </Text>
           {catalogStatus !== 'live' && (
             <Button size="sm" onPress={() => setRetry((value) => value + 1)}>
@@ -348,33 +379,69 @@ export function FeaturedPlace() {
           </Text>
         )}
         {matches.length === 0 ? (
-          <YStack gap="2" rounded={14} style={{ backgroundColor: colors.surface, padding: 16 }}>
+          <YStack
+            gap="2"
+            rounded={14}
+            style={{ backgroundColor: colors.surface, padding: 16 }}
+          >
             <Text fontWeight="700" style={{ color: colors.ink }}>
-              {availableMatches.length === 0 ? 'No curated places in this area' : 'No places within your total budget'}
+              {availableMatches.length === 0
+                ? 'No curated places in this area'
+                : 'No places within your total budget'}
             </Text>
-            <Button onPress={availableMatches.length === 0 ? resetCebu : () => setBudget(5000)}>
-              {availableMatches.length === 0 ? 'Explore Cebu City' : 'Increase budget'}
+            <Button
+              onPress={
+                availableMatches.length === 0
+                  ? resetCebu
+                  : () => setBudget(5000)
+              }
+            >
+              {availableMatches.length === 0
+                ? 'Explore Cebu City'
+                : 'Increase budget'}
             </Button>
           </YStack>
-        ) : matches.map((match) => (
-          <Pressable
-            key={match.place.slug}
-            accessibilityRole="button"
-            accessibilityLabel={`View ${match.place.name}, ${pesos(match.estimate.totalCentavos)} for ${explore.people}`}
-            onPress={() => setSelected(match.place.slug)}
-          >
-            <YStack rounded={14} gap="1" style={{ backgroundColor: colors.surface, padding: 14, borderColor: colors.line, borderWidth: 1 }}>
-              <Text fontWeight="800" style={{ color: colors.ink }}>{match.place.name}</Text>
-              <Text fontSize={13} style={{ color: colors.muted }}>{match.place.locality}</Text>
-              <Text fontWeight="700" style={{ color: colors.accent }}>
-                From {pesos(match.estimate.totalCentavos)} for {explore.people} · {orderSummary(match.estimate)}
-              </Text>
-              <Text fontSize={12} style={{ color: colors.muted }}>Menu-based estimate</Text>
-            </YStack>
-          </Pressable>
-        ))}
+        ) : (
+          matches.map((match) => (
+            <Pressable
+              key={match.place.slug}
+              accessibilityRole="button"
+              accessibilityLabel={`View ${match.place.name}, ${pesos(match.estimate.totalCentavos)} for ${explore.people}`}
+              onPress={() => setSelected(match.place.slug)}
+            >
+              <YStack
+                rounded={14}
+                gap="1"
+                style={{
+                  backgroundColor: colors.surface,
+                  padding: 14,
+                  borderColor: colors.line,
+                  borderWidth: 1,
+                }}
+              >
+                <Text fontWeight="800" style={{ color: colors.ink }}>
+                  {match.place.name}
+                </Text>
+                <Text fontSize={13} style={{ color: colors.muted }}>
+                  {match.place.locality}
+                </Text>
+                <Text fontWeight="700" style={{ color: colors.accent }}>
+                  From {pesos(match.estimate.totalCentavos)} for{' '}
+                  {explore.people}   {orderSummary(match.estimate)}
+                </Text>
+                <Text fontSize={12} style={{ color: colors.muted }}>
+                  Menu-based estimate
+                </Text>
+              </YStack>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
-      <PlaceProfile match={selectedMatch} people={explore.people} onClose={() => setSelected(null)} />
+      <PlaceProfile
+        match={selectedMatch}
+        people={explore.people}
+        onClose={() => setSelected(null)}
+      />
     </SafeAreaView>
   );
 }
