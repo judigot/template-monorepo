@@ -18,10 +18,9 @@ export function TravelButton({
 > & { labelColor?: string; tone?: 'default' | 'accent' | 'surface' }) {
   const colors = useTravelColors();
   const backgroundColor =
-    tone === 'accent'
-      ? colors.accentSoft
-      : colors.surface;
-  const foregroundColor = labelColor ?? (tone === 'accent' ? colors.accent : colors.ink);
+    tone === 'accent' ? colors.accentSoft : colors.surface;
+  const foregroundColor =
+    labelColor ?? (tone === 'accent' ? colors.accent : colors.ink);
   return (
     <Button
       size={size}
