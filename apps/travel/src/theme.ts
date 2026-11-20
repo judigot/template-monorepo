@@ -18,6 +18,7 @@ const lightColors = {
   imageFallback: '#c6d9ca',
   error: '#b42318',
   saved: '#be185d',
+  favorite: '#dc2626',
 };
 
 const darkColors: typeof lightColors = {
@@ -33,6 +34,7 @@ const darkColors: typeof lightColors = {
   imageFallback: '#334155',
   error: THEMES.dark.red['700'],
   saved: '#f9a8d4',
+  favorite: '#f87171',
 };
 
 export function useTravelColors() {
