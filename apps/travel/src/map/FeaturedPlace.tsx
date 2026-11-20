@@ -803,8 +803,7 @@ export function FeaturedPlace() {
             }}
           />
           <Text fontWeight="700" style={{ color: colors.ink }}>
-            {String(matches.length)}{' '}
-            {matches.length === 1 ? 'place' : 'places'}
+            {String(matches.length)} {matches.length === 1 ? 'place' : 'places'}
           </Text>
         </MenuHandle>
         <ScrollView
